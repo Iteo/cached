@@ -1,0 +1,8 @@
+name: cached
+
+packages:
+  - packages/**
+
+scripts:
+  get:
+    run: melos exec fvm flutter pub get
