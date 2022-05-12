@@ -1,7 +1,5 @@
 library cached_annotation;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/cashed.dart';
+export 'src/ignore_cache.dart';
+export 'src/with_cache.dart';
