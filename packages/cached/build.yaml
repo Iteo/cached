@@ -1,0 +1,10 @@
+builders:
+  cached:
+    import: "package:cached/cached.dart"
+    builder_factories:
+      - cachedBuilder
+    build_extensions:
+      .dart:
+        - cached.dart
+      auto_apply: dependents
+      build_to: source

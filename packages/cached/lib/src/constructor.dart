@@ -1,0 +1,3 @@
+class Constructor {
+  const Constructor();
+}
