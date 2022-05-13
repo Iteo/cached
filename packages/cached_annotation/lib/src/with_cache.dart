@@ -4,5 +4,9 @@ const withCache = WithCache();
 
 @Target({TargetKind.classType})
 class WithCache {
-  const WithCache();
+  const WithCache({
+    this.useStaticCache,
+  });
+
+  final bool? useStaticCache;
 }
