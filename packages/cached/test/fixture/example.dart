@@ -6,11 +6,11 @@ part 'example.cached.dart';
 class Example with _$Example {
   const factory Example(int a) = _Example;
 
-  @Cached(syncWrite: true)
+  @Cached(syncWrite: true, ttl: 30)
   Future<int> call(
     String arg1, {
     @IgnoreCache(useCacheOnError: true) bool? ignoreCache,
-  }) async {
+  }) {
     return Future.value(5);
   }
 }
