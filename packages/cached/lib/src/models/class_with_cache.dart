@@ -1,6 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:cached/src/cached_method.dart';
+import 'package:cached/src/asserts.dart';
 import 'package:cached/src/config.dart';
+import 'package:cached/src/models/cached_method.dart';
+import 'package:cached/src/models/constructor.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -11,10 +13,12 @@ class ClassWithCache {
     required this.name,
     required this.useStaticCache,
     required this.methods,
+    required this.constructor,
   });
 
   final bool useStaticCache;
   final String name;
+  final Constructor constructor;
   final Iterable<CachedMethod> methods;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
@@ -31,18 +35,26 @@ class ClassWithCache {
       }
     }
 
+    assertOneConstFactoryConstructor(element);
+    final constructor = element.constructors
+        .map((element) => Constructor.fromElement(element, config))
+        .first;
+
+    final methods = element.methods
+        .where(
+          (element) =>
+              !element.isAbstract &&
+              !element.isSynthetic &&
+              CachedMethod.getAnnotation(element) != null,
+        )
+        .map((e) => CachedMethod.fromElement(e, config));
+
     return ClassWithCache(
       name: element.name,
       useStaticCache:
           useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
-      methods: element.methods
-          .where(
-            (element) =>
-                !element.isAbstract &&
-                !element.isSynthetic &&
-                CachedMethod.getAnnotation(element) != null,
-          )
-          .map((e) => CachedMethod.fromElement(e, config)),
+      methods: methods,
+      constructor: constructor,
     );
   }
 }
