@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
 const _defaultOnCacheOnError = false;
@@ -20,18 +21,19 @@ class Param {
     required this.isNamed,
     required this.isOptinal,
     this.ignoreCacheAnnotation,
+    this.defaultValue,
   });
 
   final String name;
   final String type;
+  final String? defaultValue;
   final bool isPositional;
   final bool isNamed;
   final bool isOptinal;
   final IgnoreCacheAnnotation? ignoreCacheAnnotation;
 
   factory Param.fromElement(ParameterElement element, Config config) {
-    const paramAnnotationChecker =
-        TypeChecker.fromRuntime(IgnoreCacheAnnotation);
+    const paramAnnotationChecker = TypeChecker.fromRuntime(IgnoreCache);
     final annotation = paramAnnotationChecker.firstAnnotationOf(element);
 
     IgnoreCacheAnnotation? annotationData;
@@ -48,7 +50,7 @@ class Param {
         );
       }
     }
-
+    
     return Param(
       name: element.name,
       type: element.type.getDisplayString(withNullability: true),
@@ -56,6 +58,9 @@ class Param {
       isNamed: element.isNamed,
       isOptinal: element.isOptional,
       ignoreCacheAnnotation: annotationData,
+      defaultValue: element.defaultValueCode,
     );
   }
+
+  String get typeWithName => '$type $name';
 }
