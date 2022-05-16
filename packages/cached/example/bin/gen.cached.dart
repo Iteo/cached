@@ -8,35 +8,31 @@ part of 'gen.dart';
 
 abstract class _$Gen {
   int get a;
-  String? get b;
+  String get b;
   String? get c;
 }
 
 class _Gen with Gen implements _$Gen {
-  const _Gen(this.a, {this.b, this.c});
+  const _Gen(this.a, {required this.b, this.c});
 
-  @override
   final int a;
-  @override
-  final String? b;
-  @override
+  final String b;
   final String? c;
+
+  static final _callSync = <String, Future<int>>{};
 
   static final _callCached = <String, int>{};
   static final _somethingCached = <String, int>{};
 
-  static final _callSync = <String, Future<int>>{};
-
-  static final _ttlMap = <String, DateTime>{};
+  static final _callTtl = <String, DateTime>{};
 
   @override
   Future<int> call(String arg1, {bool ignoreCache = true}) async {
-    final ttlKey = "call${arg1.hashCode}";
     final now = DateTime.now();
-    final currentTtl = _ttlMap[ttlKey];
+    final currentTtl = _callTtl["${arg1.hashCode}"];
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
-      _ttlMap.remove(ttlKey);
+      _callTtl.remove("${arg1.hashCode}");
       _callCached.remove("${arg1.hashCode}");
     }
 
@@ -69,7 +65,8 @@ class _Gen with Gen implements _$Gen {
         _callCached.remove(_callCached.entries.last.key);
       }
 
-      _ttlMap[ttlKey] = DateTime.now().add(const Duration(seconds: 30));
+      _callTtl["${arg1.hashCode}"] =
+          DateTime.now().add(const Duration(seconds: 30));
 
       return toReturn;
     }
@@ -83,10 +80,7 @@ class _Gen with Gen implements _$Gen {
     if (cachedValue == null) {
       final int toReturn;
       try {
-        final result = super.something(
-          a,
-          b,
-        );
+        final result = super.something(a, b);
 
         toReturn = result;
       } catch (_) {

@@ -17,19 +17,17 @@ class Param {
   const Param({
     required this.name,
     required this.type,
-    required this.isPositional,
     required this.isNamed,
-    required this.isOptinal,
+    required this.isOptional,
     this.ignoreCacheAnnotation,
     this.defaultValue,
   });
 
   final String name;
   final String type;
-  final String? defaultValue;
-  final bool isPositional;
   final bool isNamed;
-  final bool isOptinal;
+  final bool isOptional;
+  final String? defaultValue;
   final IgnoreCacheAnnotation? ignoreCacheAnnotation;
 
   factory Param.fromElement(ParameterElement element, Config config) {
@@ -54,13 +52,24 @@ class Param {
     return Param(
       name: element.name,
       type: element.type.getDisplayString(withNullability: true),
-      isPositional: element.isPositional,
-      isNamed: element.isNamed,
-      isOptinal: element.isOptional,
       ignoreCacheAnnotation: annotationData,
       defaultValue: element.defaultValueCode,
+      isNamed: element.isNamed,
+      isOptional: element.isOptional,
     );
   }
+
+  bool get isPositional => !isNamed;
+
+  bool get isRequired => !isOptional;
+
+  bool get isRequiredPositional => isRequired && isPositional;
+
+  bool get isOptionalPositional => isOptional && isPositional;
+
+  bool get isRequiredNamed => isRequired && isNamed;
+
+  bool get isOptionalNamed => isOptional && isNamed;
 
   String get typeWithName => '$type $name';
 }

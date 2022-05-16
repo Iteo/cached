@@ -6,7 +6,7 @@ part 'gen.cached.dart';
 abstract class Gen implements _$Gen {
   const factory Gen(
     int a, {
-    String? b,
+    required String b,
     String? c,
   }) = _Gen;
 
