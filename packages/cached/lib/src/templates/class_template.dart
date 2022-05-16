@@ -14,8 +14,8 @@ class ClassTemplate implements Template {
   @override
   String generate() {
     return '''
-class _${classWithCache.name} extends ${classWithCache.name} {
-  const _${classWithCache.name}(${classWithCache.constructor.params.generateParams()});
+class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {
+  const _${classWithCache.name}(${classWithCache.constructor.params.generateParamsWithThis()});
 
   ${classWithCache.constructor.params.generateFields()}
 
@@ -40,7 +40,7 @@ extension on Iterable<CachedMethod> {
   String generateTtlMap({bool useStatic = false}) {
     final needTtl = any((element) => element.ttl != null);
     if (needTtl) {
-      return 'final ${useStatic.tryStatic()} $_ttlMapName = Map<String, Timer>();';
+      return '${useStatic.tryStatic()} final $_ttlMapName = <String, DateTime>{};';
     }
     return '';
   }
@@ -49,7 +49,7 @@ extension on Iterable<CachedMethod> {
     return where((e) => e.returnsFuture && e.syncWrite)
         .map(
           (e) =>
-              'final ${useStatic.tryStatic()} ${e.syncMapName} = Map<String, Future<${e.syncReturnType}>>();',
+              '${useStatic.tryStatic()} final ${e.syncMapName} = <String, Future<${e.syncReturnType}>>{};',
         )
         .join('\n');
   }
@@ -57,7 +57,7 @@ extension on Iterable<CachedMethod> {
   String generateCacheMaps({bool useStatic = false}) {
     return map(
       (e) =>
-          'final ${useStatic.tryStatic()} ${e.cacheMapName} = Map<String, ${e.syncReturnType}>();',
+          '${useStatic.tryStatic()} final ${e.cacheMapName} = <String, ${e.syncReturnType}>{};',
     ).join('\n');
   }
 
@@ -111,24 +111,26 @@ if ($cacheMapName.length >= $limit) {
     return '''
 @override
 $returnType $name(${params.generateParams()}) $syncModifier$asyncModifier$generatorModifier {
-  final cachedValue = $cacheMapName[$paramsKey];
+  ${generateRemoveTtlLogic()}
+  final cachedValue = $cacheMapName["$paramsKey"];
   if (cachedValue == null $ignoreCacheCondition) {
     ${generateGetSyncedLogic()}
 
     final $syncReturnType toReturn;
     try {
       final result = super.$name(${params.useParams()});
-      ${syncWrite && returnsFuture ? "$syncMapName[$paramsKey];" : ""}
+      ${syncWrite && returnsFuture ? "$syncMapName['$paramsKey'];" : ""}
       toReturn = $awaitIfNeeded result;
     } catch(_) {
       ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
+      ${syncWrite && returnsFuture ? "$syncMapName.remove('$paramsKey');" : ""} 
       rethrow;
     } finally {
-      ${syncWrite && returnsFuture ? "$syncMapName.remove($paramsKey);" : ""} 
+      ${syncWrite && returnsFuture ? "$syncMapName.remove('$paramsKey');" : ""} 
     }
 
     ${generateLimitLogic()}
-    ${generateTtlLogic()}
+    ${generateAddTtlLogic()}
     return toReturn;
   }
 
@@ -141,7 +143,7 @@ $returnType $name(${params.generateParams()}) $syncModifier$asyncModifier$genera
     if (!syncWrite || !returnsFuture) return '';
 
     return '''
-final cachedFuture = $syncMapName[$paramsKey];
+final cachedFuture = $syncMapName["$paramsKey"];
 
 if (cachedFuture != null) {
   return cachedFuture;
@@ -149,17 +151,26 @@ if (cachedFuture != null) {
 ''';
   }
 
-  String generateTtlLogic() {
+  String generateRemoveTtlLogic() {
     if (ttl == null) return '';
 
     return '''
-final key = "$name$paramsKey";
-$_ttlMapName[key]?.cancel();
-$_ttlMapName[key] = Timer(const Duration(seconds: $ttl), () {
-  $cacheMapName[$paramsKey] = null;
-  $_ttlMapName[key]?.cancel();
-  $_ttlMapName[key] = null;
-});
+final ttlKey = "$name$paramsKey";
+final now = DateTime.now();
+final currentTtl = $_ttlMapName[ttlKey];
+
+if (currentTtl != null && currentTtl.isBefore(now)) {
+  $_ttlMapName.remove(ttlKey);
+  $cacheMapName.remove("$paramsKey");
+} 
+''';
+  }
+
+  String generateAddTtlLogic() {
+    if (ttl == null) return '';
+
+    return '''
+$_ttlMapName[ttlKey] = DateTime.now().add(const Duration(seconds: $ttl));
 ''';
   }
 
@@ -168,17 +179,49 @@ $_ttlMapName[key] = Timer(const Duration(seconds: $ttl), () {
 
 extension on Iterable<Param> {
   String generateFields() {
-    return map((e) => 'final ${e.typeWithName};').join('\n');
+    return map((e) => '@override\nfinal ${e.typeWithName};').join('\n');
   }
 
   String generateParams() {
     final positionalParams =
-        where((element) => element.isPositional).map((e) => e.typeWithName);
-    final namedParams =
-        where((element) => element.isNamed).map((e) => e.typeWithName);
-    final joinedNamed = namedParams.isEmpty ? '' : '{${namedParams.join(',')}}';
+        where((element) => element.isPositional && !element.isOptinal);
+    final optionalParams = where((element) => element.isOptinal);
 
-    return [positionalParams.join(','), joinedNamed].join(',');
+    final positionalParamsNames = positionalParams.map((e) => e.typeWithName);
+    final optionalParamsNames = optionalParams.map(
+      (e) =>
+          '${e.typeWithName}${e.defaultValue != null ? " = ${e.defaultValue}" : ""}',
+    );
+
+    final isNamed = optionalParams.every((element) => element.isNamed);
+
+    final brackets = isNamed ? '{...}' : '[...]';
+    final joinedNamed = optionalParamsNames.isEmpty
+        ? ''
+        : brackets.replaceFirst('...', optionalParamsNames.join(','));
+
+    return [positionalParamsNames.join(','), joinedNamed].join(',');
+  }
+
+  String generateParamsWithThis() {
+    final positionalParams =
+        where((element) => element.isPositional && !element.isOptinal);
+    final optionalParams = where((element) => element.isOptinal);
+
+    final positionalParamsNames = positionalParams.map((e) => 'this.${e.name}');
+    final optionalParamsNames = optionalParams.map(
+      (e) =>
+          'this.${e.name}${e.defaultValue != null ? " = ${e.defaultValue}" : ""}',
+    );
+
+    final isNamed = optionalParams.every((element) => element.isNamed);
+
+    final brackets = isNamed ? '{...}' : '[...]';
+    final joinedNamed = optionalParamsNames.isEmpty
+        ? ''
+        : brackets.replaceFirst('...', optionalParamsNames.join(','));
+
+    return [positionalParamsNames.join(','), joinedNamed].join(',');
   }
 
   String useParams() {
