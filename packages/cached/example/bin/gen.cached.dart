@@ -15,8 +15,11 @@ abstract class _$Gen {
 class _Gen with Gen implements _$Gen {
   const _Gen(this.a, {required this.b, this.c});
 
+  @override
   final int a;
+  @override
   final String b;
+  @override
   final String? c;
 
   static final _callSync = <String, Future<int>>{};

@@ -15,18 +15,30 @@ class AllParamsTemplate {
     return _generateParams((param) => param.generateThisParam());
   }
 
-  String generateFields() {
-    return params.map((e) => ParamTemplate(e)).map((e) => e.generateField()).join('\n');
+  String generateFields({bool addOverrideAnnotation = false}) {
+    return params
+        .map((e) => ParamTemplate(e))
+        .map((e) => e.generateField())
+        .map((e) => '${addOverrideAnnotation ? "@override\n" : ''}$e')
+        .join('\n');
   }
 
   String generateParamsUsage() {
-    final positional = params.where((e) => e.isPositional).map((e) => ParamTemplate(e)).map((e) => e.generateParameterUsage());
-    final named = params.where((e) => e.isNamed).map((e) => ParamTemplate(e)).map((e) => e.generateParameterUsage());
+    final positional = params
+        .where((e) => e.isPositional)
+        .map((e) => ParamTemplate(e))
+        .map((e) => e.generateParameterUsage());
+    final named = params
+        .where((e) => e.isNamed)
+        .map((e) => ParamTemplate(e))
+        .map((e) => e.generateParameterUsage());
 
     return [...positional, ...named].join(',');
   }
 
-  String _generateParams(String Function(ParamTemplate) paramGeneratorSelector) {
+  String _generateParams(
+    String Function(ParamTemplate) paramGeneratorSelector,
+  ) {
     final paramTemeplates = params.map((e) => ParamTemplate(e));
     final positional =
         paramTemeplates.where((e) => e.param.isRequiredPositional);

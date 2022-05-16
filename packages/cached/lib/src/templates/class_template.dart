@@ -22,7 +22,7 @@ class ClassTemplate {
 class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {
   const _${classWithCache.name}(${constructorParamTemplates.generateThisParams()});
 
-  ${constructorParamTemplates.generateFields()}
+  ${constructorParamTemplates.generateFields(addOverrideAnnotation: true)}
 
   ${methodTemplates.map((e) => e.generateSyncMap()).join('\n')}
 

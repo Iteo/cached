@@ -36,6 +36,12 @@ class Param {
 
     IgnoreCacheAnnotation? annotationData;
     if (annotation != null) {
+      if (element.type.getDisplayString(withNullability: true) != 'bool') {
+        throw InvalidGenerationSourceError(
+          'Ignore cache param need to be not nullable bool',
+          element: element,
+        );
+      }
       annotationData = IgnoreCacheAnnotation(
         useCacheOnError: config.onCacheOnError ?? _defaultOnCacheOnError,
       );
@@ -48,7 +54,7 @@ class Param {
         );
       }
     }
-    
+
     return Param(
       name: element.name,
       type: element.type.getDisplayString(withNullability: true),
