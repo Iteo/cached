@@ -119,15 +119,17 @@ $returnType $name(${params.generateParams()}) $syncModifier$asyncModifier$genera
     final $syncReturnType toReturn;
     try {
       final result = super.$name(${params.useParams()});
-      ${syncWrite && returnsFuture ? "$syncMapName['$paramsKey'];" : ""}
+      ${syncWrite && returnsFuture ? "$syncMapName['$paramsKey'] = result;" : ""}
       toReturn = $awaitIfNeeded result;
     } catch(_) {
-      ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
       ${syncWrite && returnsFuture ? "$syncMapName.remove('$paramsKey');" : ""} 
+      ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
       rethrow;
     } finally {
       ${syncWrite && returnsFuture ? "$syncMapName.remove('$paramsKey');" : ""} 
     }
+
+    $cacheMapName["$paramsKey"] = toReturn;
 
     ${generateLimitLogic()}
     ${generateAddTtlLogic()}
@@ -174,7 +176,10 @@ $_ttlMapName[ttlKey] = DateTime.now().add(const Duration(seconds: $ttl));
 ''';
   }
 
-  String get paramsKey => params.map((e) => '\${${e.name}.hashCode}').join();
+  String get paramsKey => params
+      .where((element) => element.ignoreCacheAnnotation == null)
+      .map((e) => '\${${e.name}.hashCode}')
+      .join();
 }
 
 extension on Iterable<Param> {

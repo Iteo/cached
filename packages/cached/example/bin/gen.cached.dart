@@ -8,17 +8,22 @@ part of 'gen.dart';
 
 abstract class _$Gen {
   int get a;
+  String? get b;
+  String? get c;
 }
 
 class _Gen with Gen implements _$Gen {
-  const _Gen(
-    this.a,
-  );
+  const _Gen(this.a, {this.b, this.c});
 
   @override
   final int a;
+  @override
+  final String? b;
+  @override
+  final String? c;
 
   static final _callCached = <String, int>{};
+  static final _somethingCached = <String, int>{};
 
   static final _callSync = <String, Future<int>>{};
 
@@ -26,18 +31,18 @@ class _Gen with Gen implements _$Gen {
 
   @override
   Future<int> call(String arg1, {bool ignoreCache = true}) async {
-    final ttlKey = "call${arg1.hashCode}${ignoreCache.hashCode}";
+    final ttlKey = "call${arg1.hashCode}";
     final now = DateTime.now();
     final currentTtl = _ttlMap[ttlKey];
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
       _ttlMap.remove(ttlKey);
-      _callCached.remove("${arg1.hashCode}${ignoreCache.hashCode}");
+      _callCached.remove("${arg1.hashCode}");
     }
 
-    final cachedValue = _callCached["${arg1.hashCode}${ignoreCache.hashCode}"];
+    final cachedValue = _callCached["${arg1.hashCode}"];
     if (cachedValue == null || ignoreCache) {
-      final cachedFuture = _callSync["${arg1.hashCode}${ignoreCache.hashCode}"];
+      final cachedFuture = _callSync["${arg1.hashCode}"];
 
       if (cachedFuture != null) {
         return cachedFuture;
@@ -46,23 +51,49 @@ class _Gen with Gen implements _$Gen {
       final int toReturn;
       try {
         final result = super.call(arg1, ignoreCache: ignoreCache);
-        _callSync['${arg1.hashCode}${ignoreCache.hashCode}'];
+        _callSync['${arg1.hashCode}'] = result;
         toReturn = await result;
       } catch (_) {
+        _callSync.remove('${arg1.hashCode}');
         if (cachedValue != null) {
           return cachedValue;
         }
-        _callSync.remove('${arg1.hashCode}${ignoreCache.hashCode}');
         rethrow;
       } finally {
-        _callSync.remove('${arg1.hashCode}${ignoreCache.hashCode}');
+        _callSync.remove('${arg1.hashCode}');
       }
+
+      _callCached["${arg1.hashCode}"] = toReturn;
 
       if (_callCached.length >= 10) {
         _callCached.remove(_callCached.entries.last.key);
       }
 
       _ttlMap[ttlKey] = DateTime.now().add(const Duration(seconds: 30));
+
+      return toReturn;
+    }
+
+    return cachedValue;
+  }
+
+  @override
+  int something(String a, [int? b]) {
+    final cachedValue = _somethingCached["${a.hashCode}${b.hashCode}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.something(
+          a,
+          b,
+        );
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _somethingCached["${a.hashCode}${b.hashCode}"] = toReturn;
 
       return toReturn;
     }

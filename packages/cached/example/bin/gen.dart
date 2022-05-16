@@ -4,7 +4,11 @@ part 'gen.cached.dart';
 
 @WithCache(useStaticCache: true)
 abstract class Gen implements _$Gen {
-  const factory Gen(int a) = _Gen;
+  const factory Gen(
+    int a, {
+    String? b,
+    String? c,
+  }) = _Gen;
 
   @Cached(syncWrite: true, ttl: 30, limit: 10)
   Future<int> call(
@@ -12,5 +16,10 @@ abstract class Gen implements _$Gen {
     @IgnoreCache(useCacheOnError: true) bool ignoreCache = true,
   }) {
     return Future.value(5);
+  }
+
+  @cached
+  int something(String a, [int? b]) {
+    return 3;
   }
 }
