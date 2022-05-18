@@ -43,6 +43,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 - [Basics](#basics)
   - [withCache](#withcache)
   - [cached](#cached)
+  - [clearCached](#clearcached)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -152,6 +153,31 @@ There are 3 possible additional parameters:
 - `syncWrite` - Affects only async methods ( those one that returns Future ) If set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call. Default value is set to `false`;
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null, means no limit.
 
+### ClearCached
+
+Method decorator that flag it as needing to be processed by `Cached` code generator.
+Method annotated with this annotation can be used to clear result of method annotated with `Cached` annotation.
+\
+Constructor of this annotation can take one possible argument. It is method name, that we want to clear the cache.
+
+Let say there is existing cached method:
+```dart
+  @Cached()
+  Future<SomeResponseType> getSthData() {
+    return  dataSource.getData();
+  }
+```
+to generate clearing cache method we can write:
+```dart
+  @ClearCached
+  Future<SomeResponseType> clearGetSthData();
+```
+or
+```dart
+  @ClearCached('getSthData')
+  Future<SomeResponseType> clearMe();
+```
+The `ClearCached` argument or method name has to correspond to cached method name. Also, clearing method should be abstract, without body.
 
 ## Contribution
 
