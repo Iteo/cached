@@ -3,7 +3,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 part 'example.cached.dart';
 
 @WithCache(useStaticCache: true)
-class Example with _$Example {
+abstract class Example implements _$Example {
   const factory Example(int a) = _Example;
 
   @Cached(syncWrite: true, ttl: 30, limit: 10)
@@ -13,4 +13,7 @@ class Example with _$Example {
   }) {
     return Future.value(5);
   }
+
+  @ClearCached('getString')
+  void clearStrings();
 }
