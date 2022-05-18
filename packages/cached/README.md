@@ -69,9 +69,9 @@ class RemoteRepository implements Repository {
 So, instead of doing it manually we can use library and write our `RemoteRepository` in that way:
 
 ```dart
-@WithCache(useStaticCache: true)
+@WithCache()
 abstract class RemoteRepository implements Repository, _$RemoteRepository {
-  const factory RemoteRepository({required SomeApiDataSource dataSource,}) = _RemoteRepository;
+  factory RemoteRepository({required SomeApiDataSource dataSource,}) = _RemoteRepository;
 
   @Cached()
   Future<SomeResponseType> getSthData() {
@@ -113,11 +113,6 @@ Suggestions of a new feature or fix should be created via pull-request or issue.
 
   The minimum requirement to report a bug fix is a reproduction path. Write steps that should be followed to find a
   problem in code. Perfect situation is when you give full description why some code doesn't work and a solution code.
-
-- Add it to the README and write documentation for it
-
-  If your fix changed behavior of the library or requires any other extra steps from user, this should be fully
-  described in README.
 
 ## Contributors
 
