@@ -39,29 +39,49 @@ class ClassWithCache {
     }
 
     assertOneConstFactoryConstructor(element);
-    final constructor = element.constructors.map((element) => Constructor.fromElement(element, config)).first;
+    final constructor = element.constructors
+        .map((element) => Constructor.fromElement(element, config))
+        .first;
 
     final methods = element.methods
         .where(
-          (element) => !element.isAbstract && !element.isSynthetic && CachedMethod.getAnnotation(element) != null,
+          (element) =>
+              !element.isAbstract &&
+              !element.isSynthetic &&
+              CachedMethod.getAnnotation(element) != null,
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
-    final clearMethods = element.methods
-        .where(
-          (element) =>
-              element.isAbstract &&
-              !element.isAsynchronous &&
-              element.returnType.isVoid &&
-              ClearCachedMethod.getAnnotation(element) != null,
-        )
-        .map((e) => ClearCachedMethod.fromElement(e));
+    final clearMethods = element.methods.where((element) {
+      if (ClearCachedMethod.getAnnotation(element) == null) return false;
+
+      if (!element.isAbstract) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be abstract',
+        );
+      }
+
+      if (element.isAsynchronous) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be not async method',
+        );
+      }
+
+      if (!element.returnType.isVoid) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be a void method',
+        );
+      }
+
+      return true;
+    }).map((e) => ClearCachedMethod.fromElement(e));
 
     assertValidateClearCachedMethods(clearMethods, methods);
 
     return ClassWithCache(
       name: element.name,
-      useStaticCache: useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
+      useStaticCache:
+          useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
       methods: methods,
       clearMethods: clearMethods,
       constructor: constructor,
