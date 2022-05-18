@@ -2,6 +2,8 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:collection/collection.dart';
 
+final _futureRegexp = RegExp(r'^Future<(.+)>$');
+
 class CachedMethodTemplate {
   CachedMethodTemplate(
     this.method, {
@@ -58,7 +60,6 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
       ${method.syncWrite && _returnsFuture ? "$_syncMapName['$_paramsKey'] = result;" : ""}
       toReturn = $awaitIfNeeded result;
     } catch(_) {
-      ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""} 
       ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
       rethrow;
     } finally {
@@ -128,14 +129,12 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
   String get _syncMapName => '_${method.name}Sync';
 
   bool get _returnsFuture {
-    final futureRegexp = RegExp(r'^Future<(.+)>$');
-    return futureRegexp.hasMatch(method.returnType);
+    return _futureRegexp.hasMatch(method.returnType);
   }
 
   String get _syncReturnType {
-    final futureRegexp = RegExp(r'^Future<(.+)>$');
-    if (futureRegexp.hasMatch(method.returnType)) {
-      return futureRegexp.firstMatch(method.returnType)?.group(1) ?? '';
+    if (_futureRegexp.hasMatch(method.returnType)) {
+      return _futureRegexp.firstMatch(method.returnType)?.group(1) ?? '';
     }
 
     return method.returnType;
