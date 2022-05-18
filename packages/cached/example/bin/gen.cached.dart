@@ -13,7 +13,7 @@ abstract class _$Gen {
 }
 
 class _Gen with Gen implements _$Gen {
-  const _Gen(this.a, {required this.b, this.c});
+  _Gen(this.a, {required this.b, this.c});
 
   @override
   final int a;
@@ -53,7 +53,6 @@ class _Gen with Gen implements _$Gen {
         _callSync['${arg1.hashCode}'] = result;
         toReturn = await result;
       } catch (_) {
-        _callSync.remove('${arg1.hashCode}');
         if (cachedValue != null) {
           return cachedValue;
         }
