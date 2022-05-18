@@ -12,7 +12,10 @@ and the Flutter guide for
 -->
 
 
-[![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml)
+[![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml) &nbsp;
+[![stars](https://img.shields.io/github/stars/Iteo/cached.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/Iteo/cached)
+&nbsp;
+[![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE) &nbsp;
 
 ---
 
@@ -145,9 +148,9 @@ It can take one additional boolean parameter `useStaticCache`. If this parameter
 Method decorator that flag it as needing to be processed by `Cached` code generator.
 
 There are 3 possible additional parameters:
-- `ttl` - time to live. In seconds. Set how long cache will be alive. 
-- `syncWrite` - if set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call.
-- `limit` - limit how many results for different method call arguments combination will be cached
+- `ttl` - time to live. In seconds. Set how long cache will be alive. Default value is set to  null, means infinitive ttl.
+- `syncWrite` - Affects only async methods ( those one that returns Future ) If set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call. Default value is set to `false`;
+- `limit` - limit how many results for different method call arguments combination will be cached. Default value null, means no limit.
 
 
 ## Contribution
