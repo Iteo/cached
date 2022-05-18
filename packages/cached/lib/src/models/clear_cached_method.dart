@@ -30,11 +30,12 @@ class ClearCachedMethod {
     if (methodName == null || methodName.isEmpty) {
       if (!element.name.contains(_clearPrefix)) {
         throw InvalidGenerationSourceError(
-          'Set in method ${element.name} argument or add `$_clearPrefix` to cached name function i.e. ${_clearPrefix}Strings',
+          'Set in method ${element.name} argument or add `$_clearPrefix` to cached name function i.e. $_clearPrefix}Strings',
         );
       }
 
-      methodName = element.name.replaceAll(_clearPrefix, '').toMethodName();
+      methodName =
+          element.name.replaceAll(_clearPrefix, '').startsWithLowerCase();
     }
 
     return ClearCachedMethod(element.name, methodName);

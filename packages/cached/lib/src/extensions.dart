@@ -1,5 +1,5 @@
 extension StringExtension on String {
-  String toMethodName() {
+  String startsWithLowerCase() {
     return "${this[0].toLowerCase()}${substring(1)}";
   }
 }

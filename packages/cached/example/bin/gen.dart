@@ -24,10 +24,10 @@ abstract class Gen implements _$Gen {
   }
 
   //Option one with argument
-  @ClearCached('something')
-  void clear();
+  // @ClearCached('something')
+  // void clear();
 
   //Option two with `clear` in name function
-  // @clearCached
-  // void clearSomething();
+  @clearCached
+  void clearSomething();
 }
