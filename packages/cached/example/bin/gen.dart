@@ -4,7 +4,7 @@ part 'gen.cached.dart';
 
 @WithCache(useStaticCache: true)
 abstract class Gen implements _$Gen {
-  const factory Gen(
+  factory Gen(
     int a, {
     required String b,
     String? c,

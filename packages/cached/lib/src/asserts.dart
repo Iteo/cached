@@ -25,9 +25,9 @@ void assertOneConstFactoryConstructor(ClassElement element) {
 
   final constructor = constructorElements.first;
 
-  if (!constructor.isConst || !constructor.isFactory) {
+  if (!constructor.isFactory) {
     throw InvalidGenerationSourceError(
-      'Class ${element.name} need to have one abstract factory constructor',
+      'Class ${element.name} need to have one factory constructor',
       element: element,
     );
   }

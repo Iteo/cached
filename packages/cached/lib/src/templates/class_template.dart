@@ -24,7 +24,7 @@ class ClassTemplate {
 
     return '''
 class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {
-  const _${classWithCache.name}(${constructorParamTemplates.generateThisParams()});
+  _${classWithCache.name}(${constructorParamTemplates.generateThisParams()});
 
   ${constructorParamTemplates.generateFields(addOverrideAnnotation: true)}
 

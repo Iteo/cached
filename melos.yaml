@@ -5,4 +5,19 @@ packages:
 
 scripts:
   get:
-    run: melos exec fvm flutter pub get
+    run: melos exec dart pub get
+
+  test:
+    run: melos exec --dir-exists="test" dart test
+
+  analyze:
+    run: melos exec dart analyze
+
+  get:fvm:
+    run: melos exec fvm dart pub get
+
+  test:fvm:
+    run: melos exec --dir-exists="test" dart test
+
+  analyze:fvm:
+    run: melos exec fvm dart analyze

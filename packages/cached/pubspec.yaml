@@ -1,17 +1,16 @@
 name: cached
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+publish_to: none #TODO: Remove when package will be published to pub.dev
 
 environment:
   sdk: ">=2.16.1 <3.0.0"
-  flutter: ">=1.17.0"
 
 dependencies:
   analyzer: ^4.0.0
   build: ^2.3.0
   cached_annotation:
-    path: ../cached_annotation
+    path: ../cached_annotation #TODO: Change to version when package will be published to pub.dev
   collection: ^1.16.0
   meta: ^1.7.0
   source_gen: ^1.2.2
