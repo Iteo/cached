@@ -36,12 +36,10 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 - [Motivation](#motivation)
 - [Setup](#setup)
+  - [Run the generator](#run-the-generator)
 - [Basics](#basics)
   - [withCache](#withcache)
-  - [useBlocFactory](#useblocfactory)
-  - [useBlocBuilder](#useblocbuilder)
-  - [useBlocListener](#usebloclistener)
-  - [useActionListener](#useactionlistener)
+  - [cached](#cached)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -106,13 +104,51 @@ dev_dependencies:
   cached:
 ```
 
-that's it! Now, you can write your own cached class :tada:
+That's it! Now, you can write your own cached class :tada:
 
+### Run the generator
+
+To run the code generator, execute the following command:
+
+```
+dart run build_runner build
+```
+
+For Flutter projects, you can run:
+
+```
+flutter pub run build_runner build
+```
+
+Note that like most code-generators, [Cached] will need you to both import the annotation ([cached_annotation])
+and use the `part` keyword on the top of your files.
+
+As such, a file that wants to use [Cached] will start with:
+
+```dart
+import 'package:cached_annotation/cached_annotation.dart';
+
+part 'some_file.cached.dart';
+```
 ## Basics
 
 ### WithCache
 
-Annotation `@WithCache` 
+Annotation for `Cached` package. 
+
+Annotating a class with `@WithCache` will flag it as a needing to be processed by `Cached` code generator.
+\
+It can take one additional boolean parameter `useStaticCache`. If this parameter is set to true, generator will generate cached class with static cache. It means each instance of this class will have access to the same cache. Default value is set to `false`
+
+### Cached
+
+Method decorator that flag it as needing to be processed by `Cached` code generator.
+
+There are 3 possible additional parameters:
+- `ttl` - time to live. In seconds. Set how long cache will be alive. 
+- `syncWrite` - if set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call.
+- `limit` - limit how many results for different method call arguments combination will be cached
+
 
 ## Contribution
 

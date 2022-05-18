@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:cached_annotation/cached_annotation.dart';
 
 part 'gen.cached.dart';
@@ -22,9 +20,6 @@ abstract class Gen implements _$Gen {
 
   @cached
   int something(String a, [int? b]) {
-    const ss = LinkedHashSet.identity;
-    final abnc = ss();
-    abnc.add("12312");
     return 3;
   }
 }
