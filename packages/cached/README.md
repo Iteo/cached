@@ -36,7 +36,12 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 - [Motivation](#motivation)
 - [Setup](#setup)
-- [Usage](#usage)
+- [Basics](#basics)
+  - [withCache](#withcache)
+  - [useBlocFactory](#useblocfactory)
+  - [useBlocBuilder](#useblocbuilder)
+  - [useBlocListener](#usebloclistener)
+  - [useActionListener](#useactionlistener)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -80,6 +85,34 @@ abstract class RemoteRepository implements Repository, _$RemoteRepository {
 }
 ```
 
+## Setup
+
+#### Install package
+
+Run command:
+
+```shell
+flutter pub add --dev cached
+flutter pub add cached_annotation
+```
+
+Or manually add the dependency in the `pubspec.yaml`
+
+```yaml
+dependencies:
+  cached_annotation:
+    
+dev_dependencies:
+  cached:
+```
+
+that's it! Now, you can write your own cached class :tada:
+
+## Basics
+
+### WithCache
+
+Annotation `@WithCache` 
 
 ## Contribution
 
