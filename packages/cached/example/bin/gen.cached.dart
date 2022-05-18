@@ -97,4 +97,7 @@ class _Gen with Gen implements _$Gen {
 
     return cachedValue;
   }
+
+  @override
+  void clear() => _somethingCached.clear();
 }
