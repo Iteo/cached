@@ -7,6 +7,9 @@ scripts:
   get:
     run: melos exec dart pub get
 
+  generate:
+    run: melos exec --depends-on="build_runner" dart run build_runner build  --delete-conflicting-outputs
+
   test:
     run: melos exec --dir-exists="test" dart test
 
@@ -21,3 +24,6 @@ scripts:
 
   analyze:fvm:
     run: melos exec fvm dart analyze
+
+  generate:fvm:
+    run: melos exec --depends-on="build_runner" fvm dart run build_runner build --delete-conflicting-outputs
