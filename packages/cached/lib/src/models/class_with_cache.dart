@@ -25,6 +25,9 @@ class ClassWithCache {
   final Iterable<ClearCachedMethod> clearMethods;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
+    assertAbstract(element);
+    assertOneConstFactoryConstructor(element);
+    
     const classAnnotationChecker = TypeChecker.fromRuntime(WithCache);
     final annotation = classAnnotationChecker.firstAnnotationOf(element);
 
@@ -38,12 +41,14 @@ class ClassWithCache {
       }
     }
 
-    assertOneConstFactoryConstructor(element);
-    final constructor = element.constructors.map((element) => Constructor.fromElement(element, config)).first;
+    final constructor = element.constructors
+        .map((element) => Constructor.fromElement(element, config))
+        .first;
 
     final methods = element.methods
         .where(
-          (element) => !element.isAbstract && !element.isSynthetic && CachedMethod.getAnnotation(element) != null,
+          (element) =>
+              CachedMethod.getAnnotation(element) != null,
         )
         .map((e) => CachedMethod.fromElement(e, config));
 

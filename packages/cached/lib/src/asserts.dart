@@ -3,6 +3,35 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:source_gen/source_gen.dart';
 
+void assertMethodNotVoid(MethodElement element) {
+  if (element.returnType.isVoid ||
+      element.returnType.getDisplayString(withNullability: false) ==
+          'Future<void>') {
+    throw InvalidGenerationSourceError(
+      'Method ${element.name} returns void or Future<void> which is not allowed',
+      element: element,
+    );
+  }
+}
+
+void assertMethodIsNotAbstract(MethodElement element) {
+  if (element.isAbstract) {
+    throw InvalidGenerationSourceError(
+      'Cached method ${element.name} is abstract which is not allowed',
+      element: element,
+    );
+  }
+}
+
+void assertAbstract(ClassElement element) {
+  if (!element.isAbstract) {
+    throw InvalidGenerationSourceError(
+      'Class ${element.name} need to be abstract',
+      element: element,
+    );
+  }
+}
+
 void assertOneIgnoreCacheParam(CachedMethod method) {
   final ignoraCacheParams =
       method.params.where((element) => element.ignoreCacheAnnotation != null);
