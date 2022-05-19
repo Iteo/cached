@@ -12,14 +12,12 @@ class ClearCachedMethodTemplate {
     if (method.isAbstract) return generateAbstractMethod();
     if (isVoidMethod(method.returnType)) return generateVoidMethod();
 
-    final syncModifier = method.isGenerator && !isReturnsFuture(method.returnType) ? 'sync' : '';
     final asyncModifier = isReturnsFuture(method.returnType) ? 'async' : '';
-    final generatorModifier = method.isGenerator ? '*' : '';
     final awaitIfNeeded = isReturnsFuture(method.returnType) ? 'await' : '';
 
     return '''
     @override
-    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncModifier$asyncModifier$generatorModifier {
+    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
       final ${syncReturnType(method.returnType)} toReturn;
 
       final result = super.${method.name}(${paramsTemplate.generateParamsUsage()});
