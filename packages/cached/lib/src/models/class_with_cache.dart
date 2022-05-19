@@ -70,14 +70,10 @@ class ClassWithCache {
           );
         }
       } else {
-        if (!element.returnType.isVoid) {
-          if (!(isReturnsFutureBool(element.returnType.getDisplayString(withNullability: true)) ||
-                  element.returnType.isDartCoreBool) &&
-              (!element.returnType.isVoid || !element.returnType.isDartAsyncFuture)) {
-            throw InvalidGenerationSourceError(
-              '[ERROR] `${element.name}` must return bool, Future<bool> or void',
-            );
-          }
+        if (validateReturnType(element)) {
+          throw InvalidGenerationSourceError(
+            '[ERROR] `${element.name}` must return bool, Future<bool> or void',
+          );
         }
       }
 
