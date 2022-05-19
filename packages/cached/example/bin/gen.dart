@@ -25,7 +25,11 @@ abstract class Gen implements _$Gen {
 
   //Option one with argument
   @ClearCached('something')
-  void clear();
+  Future<bool> clear(String siema) async {
+    return Future<bool>.value(() {
+      return siema == "siema2";
+    }());
+  }
 
   //Option two with `clear` in name function
   // @clearCached

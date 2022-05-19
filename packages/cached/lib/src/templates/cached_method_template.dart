@@ -3,8 +3,6 @@ import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:collection/collection.dart';
 
-final _futureRegexp = RegExp(r'^Future<(.+)>$');
-
 class CachedMethodTemplate {
   CachedMethodTemplate(
     this.method, {
@@ -39,14 +37,11 @@ class CachedMethodTemplate {
     final syncModifier = method.isGenerator && !_returnsFuture ? 'sync' : '';
     final asyncModifier = _returnsFuture ? 'async' : '';
     final generatorModifier = method.isGenerator ? '*' : '';
-    final ignoreCacheParam = method.params
-        .firstWhereOrNull((element) => element.ignoreCacheAnnotation != null);
-    final useCacheOnError =
-        ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
+    final ignoreCacheParam = method.params.firstWhereOrNull((element) => element.ignoreCacheAnnotation != null);
+    final useCacheOnError = ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
     final awaitIfNeeded = _returnsFuture ? 'await' : '';
 
-    final ignoreCacheCondition =
-        ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
+    final ignoreCacheCondition = ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
     return '''
 @override
 ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncModifier$asyncModifier$generatorModifier {
@@ -129,17 +124,9 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
 
   String get _syncMapName => '_${method.name}Sync';
 
-  bool get _returnsFuture {
-    return _futureRegexp.hasMatch(method.returnType);
-  }
+  bool get _returnsFuture => isReturnsFuture(method.returnType);
 
-  String get _syncReturnType {
-    if (_futureRegexp.hasMatch(method.returnType)) {
-      return _futureRegexp.firstMatch(method.returnType)?.group(1) ?? '';
-    }
-
-    return method.returnType;
-  }
+  String get _syncReturnType => syncReturnType(method.returnType);
 
   String _generateLimitLogic() {
     if (method.limit == null) return '';
