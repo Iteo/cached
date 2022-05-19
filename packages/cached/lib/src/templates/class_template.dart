@@ -1,6 +1,7 @@
 import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/templates/cached_method_template.dart';
+import 'package:cached/src/templates/clear_cached_method_template.dart';
 
 class ClassTemplate {
   ClassTemplate(this.classWithCache);
@@ -15,8 +16,11 @@ class ClassTemplate {
       ),
     );
 
-    final constructorParamTemplates =
-        AllParamsTemplate(classWithCache.constructor.params);
+    final clearMethodTemplates = classWithCache.clearMethods.map(
+      (e) => ClearCachedMethodTemplate(e),
+    );
+
+    final constructorParamTemplates = AllParamsTemplate(classWithCache.constructor.params);
 
     return '''
 class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {
@@ -31,6 +35,8 @@ class _${classWithCache.name} with ${classWithCache.name} implements _\$${classW
   ${methodTemplates.map((e) => e.generateTtlMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateMethod()).join('\n\n')}
+
+  ${clearMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 }
 ''';
   }

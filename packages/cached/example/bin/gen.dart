@@ -22,4 +22,12 @@ abstract class Gen implements _$Gen {
   int something(String a, [int? b]) {
     return 3;
   }
+
+  //Option one with argument
+  @ClearCached('something')
+  void clear();
+
+  //Option two with `clear` in name function
+  // @clearCached
+  // void clearSomething();
 }

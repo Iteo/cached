@@ -1,5 +1,6 @@
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
+import 'package:cached/src/utils/utils.dart';
 import 'package:collection/collection.dart';
 
 final _futureRegexp = RegExp(r'^Future<(.+)>$');
@@ -31,7 +32,7 @@ class CachedMethodTemplate {
       return '';
     }
 
-    return '${_getStaticModifier()} final $_ttlMapName = <String, DateTime>{};'; 
+    return '${_getStaticModifier()} final $_ttlMapName = <String, DateTime>{};';
   }
 
   String generateMethod() {
@@ -63,7 +64,7 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
       ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
       rethrow;
     } finally {
-      ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""} 
+      ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""}
     }
 
     $_cacheMapName["$_paramsKey"] = toReturn;
@@ -105,7 +106,7 @@ final currentTtl = $_ttlMapName["$_paramsKey"];
 if (currentTtl != null && currentTtl.isBefore(now)) {
   $_ttlMapName.remove("$_paramsKey");
   $_cacheMapName.remove("$_paramsKey");
-} 
+}
 ''';
   }
 
@@ -122,7 +123,7 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
       .map((e) => '\${${e.name}.hashCode}')
       .join();
 
-  String get _cacheMapName => '_${method.name}Cached';
+  String get _cacheMapName => getCacheMapName(method.name);
 
   String get _ttlMapName => '_${method.name}Ttl';
 

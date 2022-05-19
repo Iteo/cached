@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/asserts.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cached_method.dart';
+import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -14,12 +15,14 @@ class ClassWithCache {
     required this.useStaticCache,
     required this.methods,
     required this.constructor,
+    required this.clearMethods,
   });
 
   final bool useStaticCache;
   final String name;
   final Constructor constructor;
   final Iterable<CachedMethod> methods;
+  final Iterable<ClearCachedMethod> clearMethods;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
     const classAnnotationChecker = TypeChecker.fromRuntime(WithCache);
@@ -49,11 +52,38 @@ class ClassWithCache {
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
+    final clearMethods = element.methods.where((element) {
+      if (ClearCachedMethod.getAnnotation(element) == null) return false;
+
+      if (!element.isAbstract) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be abstract',
+        );
+      }
+
+      if (element.isAsynchronous) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be not async method',
+        );
+      }
+
+      if (!element.returnType.isVoid) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` must be a void method',
+        );
+      }
+
+      return true;
+    }).map((e) => ClearCachedMethod.fromElement(e));
+
+    assertValidateClearCachedMethods(clearMethods, methods);
+
     return ClassWithCache(
       name: element.name,
       useStaticCache:
           useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
       methods: methods,
+      clearMethods: clearMethods,
       constructor: constructor,
     );
   }

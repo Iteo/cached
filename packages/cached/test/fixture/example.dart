@@ -1,7 +1,5 @@
 import 'package:cached_annotation/cached_annotation.dart';
 
-part 'example.cached.dart';
-
 @WithCache(useStaticCache: true)
 class Example with _$Example {
   factory Example(int a) = _Example;
