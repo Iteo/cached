@@ -39,16 +39,11 @@ class ClassWithCache {
     }
 
     assertOneConstFactoryConstructor(element);
-    final constructor = element.constructors
-        .map((element) => Constructor.fromElement(element, config))
-        .first;
+    final constructor = element.constructors.map((element) => Constructor.fromElement(element, config)).first;
 
     final methods = element.methods
         .where(
-          (element) =>
-              !element.isAbstract &&
-              !element.isSynthetic &&
-              CachedMethod.getAnnotation(element) != null,
+          (element) => !element.isAbstract && !element.isSynthetic && CachedMethod.getAnnotation(element) != null,
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
@@ -73,6 +68,12 @@ class ClassWithCache {
         );
       }
 
+      if (element.parameters.isNotEmpty) {
+        throw InvalidGenerationSourceError(
+          '[ERROR] `${element.name}` method cant have arguments',
+        );
+      }
+
       return true;
     }).map((e) => ClearCachedMethod.fromElement(e));
 
@@ -80,8 +81,7 @@ class ClassWithCache {
 
     return ClassWithCache(
       name: element.name,
-      useStaticCache:
-          useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
+      useStaticCache: useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
       methods: methods,
       clearMethods: clearMethods,
       constructor: constructor,
