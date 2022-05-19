@@ -93,7 +93,7 @@ packages:
     source: path
     version: "0.0.1"
   cached_annotation:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       path: "../../cached_annotation"
       relative: true
