@@ -50,32 +50,28 @@ class ClassWithCache {
     final clearMethods = element.methods.where((element) {
       if (ClearCachedMethod.getAnnotation(element) == null) return false;
 
-      if (!element.isAbstract) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] `${element.name}` must be abstract',
-        );
-      }
+      if (element.isAbstract) {
+        if (element.isAsynchronous) {
+          throw InvalidGenerationSourceError(
+            '[ERROR] `${element.name}` must be not async method',
+          );
+        }
 
-      if (element.isAsynchronous) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] `${element.name}` must be not async method',
-        );
-      }
+        if (!element.returnType.isVoid) {
+          throw InvalidGenerationSourceError(
+            '[ERROR] `${element.name}` must be a void method',
+          );
+        }
 
-      if (!element.returnType.isVoid) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] `${element.name}` must be a void method',
-        );
-      }
-
-      if (element.parameters.isNotEmpty) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] `${element.name}` method cant have arguments',
-        );
+        if (element.parameters.isNotEmpty) {
+          throw InvalidGenerationSourceError(
+            '[ERROR] `${element.name}` method cant have arguments',
+          );
+        }
       }
 
       return true;
-    }).map((e) => ClearCachedMethod.fromElement(e));
+    }).map((e) => ClearCachedMethod.fromElement(e, config));
 
     assertValidateClearCachedMethods(clearMethods, methods);
 
