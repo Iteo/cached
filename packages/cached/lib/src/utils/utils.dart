@@ -20,3 +20,13 @@ String syncReturnType(String returnType) {
 
   return returnType;
 }
+
+bool checkIsVoidOrReturnsBoolOrFutureBool(String returnType) {
+  if (isVoidMethod(returnType)) return false;
+
+  if (isReturnsFutureBool(returnType)) return false;
+
+  if (isReturnsBool(returnType)) return false;
+
+  return true;
+}

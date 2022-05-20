@@ -9,18 +9,8 @@ class ClearCachedMethodTemplate {
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
 
-  bool _checkIsVoidOrReturnsBoolOrFutureBool() {
-    if (isVoidMethod(method.returnType)) return false;
-
-    if (isReturnsFutureBool(method.returnType)) return false;
-
-    if (isReturnsBool(method.returnType)) return false;
-
-    return true;
-  }
-
   String generateMethod() {
-    if (_checkIsVoidOrReturnsBoolOrFutureBool()) {
+    if (checkIsVoidOrReturnsBoolOrFutureBool(method.returnType)) {
       throw InvalidGenerationSourceError(
         '[ERROR] `${method.name}` must be a void method or return bool, Future<bool>',
       );
