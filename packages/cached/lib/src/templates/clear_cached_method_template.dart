@@ -26,8 +26,8 @@ class ClearCachedMethodTemplate {
       );
     }
 
-    if (method.isAbstract) return generateAbstractMethod();
-    if (isVoidMethod(method.returnType)) return generateVoidMethod();
+    if (method.isAbstract) return _generateAbstractMethod();
+    if (isVoidMethod(method.returnType)) return _generateVoidMethod();
 
     final asyncModifier = isReturnsFuture(method.returnType) ? 'async' : '';
     final awaitIfNeeded = isReturnsFuture(method.returnType) ? 'await' : '';
@@ -49,7 +49,7 @@ class ClearCachedMethodTemplate {
     ''';
   }
 
-  String generateVoidMethod() {
+  String _generateVoidMethod() {
     return '''
     @override
       ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) {
@@ -60,7 +60,7 @@ class ClearCachedMethodTemplate {
     ''';
   }
 
-  String generateAbstractMethod() {
+  String _generateAbstractMethod() {
     return '''
     @override
     void ${method.name}() => ${getCacheMapName(method.methodName)}.clear();
