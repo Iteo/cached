@@ -1,0 +1,78 @@
+import 'package:cached/src/models/cached_method.dart';
+import 'package:cached/src/models/clear_all_cached_method.dart';
+import 'package:cached/src/templates/all_params_template.dart';
+import 'package:cached/src/utils/utils.dart';
+import 'package:source_gen/source_gen.dart';
+
+class ClearAllCachedMethodTemplate {
+  ClearAllCachedMethodTemplate({this.method, required this.cachedMethods})
+      : paramsTemplate = AllParamsTemplate(method?.params ?? {});
+
+  final ClearAllCachedMethod? method;
+  final Iterable<CachedMethod> cachedMethods;
+  final AllParamsTemplate paramsTemplate;
+
+  bool _checkIsVoidOrReturnsBoolOrFutureBool() {
+    if (isVoidMethod(method!.returnType)) return false;
+
+    if (isReturnsFutureBool(method!.returnType)) return false;
+
+    if (isReturnsBool(method!.returnType)) return false;
+
+    return true;
+  }
+
+  String _generateCacheClearMethods() => cachedMethods.map((e) => "${getCacheMapName(e.name)}.clear();").join("\n");
+
+  String generateMethod() {
+    if (method == null) return '';
+
+    if (_checkIsVoidOrReturnsBoolOrFutureBool()) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${method!.name}` must be a void method or return bool, Future<bool>',
+      );
+    }
+
+    if (method!.isAbstract) return generateAbstractMethod();
+    if (isVoidMethod(method!.returnType)) return generateVoidMethod();
+
+    final asyncModifier = isReturnsFuture(method!.returnType) ? 'async' : '';
+    final awaitIfNeeded = isReturnsFuture(method!.returnType) ? 'await' : '';
+
+    return '''
+    @override
+    ${method!.returnType} ${method!.name}(${paramsTemplate.generateParams()}) $asyncModifier {
+      final ${syncReturnType(method!.returnType)} toReturn;
+
+      final result = super.${method!.name}(${paramsTemplate.generateParamsUsage()});
+      toReturn = $awaitIfNeeded result;
+
+      if(toReturn) {
+        ${_generateCacheClearMethods()}
+      }
+
+      return toReturn;
+    }
+    ''';
+  }
+
+  String generateVoidMethod() {
+    return '''
+    @override
+      ${method!.returnType} ${method!.name}(${paramsTemplate.generateParams()}) {
+      super.${method!.name}(${paramsTemplate.generateParamsUsage()});
+
+      ${_generateCacheClearMethods()}
+    }
+    ''';
+  }
+
+  String generateAbstractMethod() {
+    return '''
+    @override
+    void ${method!.name}() {
+      ${_generateCacheClearMethods()}
+    }
+    ''';
+  }
+}

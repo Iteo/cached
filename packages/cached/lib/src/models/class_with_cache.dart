@@ -17,7 +17,7 @@ class ClassWithCache {
     required this.methods,
     required this.constructor,
     required this.clearMethods,
-    this.clearAllCachedMethod,
+    this.clearAllMethod,
   });
 
   final bool useStaticCache;
@@ -25,7 +25,7 @@ class ClassWithCache {
   final Constructor constructor;
   final Iterable<CachedMethod> methods;
   final Iterable<ClearCachedMethod> clearMethods;
-  final ClearAllCachedMethod? clearAllCachedMethod;
+  final ClearAllCachedMethod? clearAllMethod;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
     const classAnnotationChecker = TypeChecker.fromRuntime(WithCache);
@@ -112,7 +112,7 @@ class ClassWithCache {
       methods: methods,
       clearMethods: clearMethods,
       constructor: constructor,
-      clearAllCachedMethod: clearAllMethod.isNotEmpty ? clearAllMethod.first : null,
+      clearAllMethod: clearAllMethod.isNotEmpty ? clearAllMethod.first : null,
     );
   }
 }

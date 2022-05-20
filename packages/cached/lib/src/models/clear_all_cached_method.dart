@@ -32,7 +32,7 @@ class ClearAllCachedMethod {
   }
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(ClearCached);
+    const methodAnnotationChecker = TypeChecker.fromRuntime(ClearAllCached);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }
