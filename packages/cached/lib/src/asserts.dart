@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
 void assertOneIgnoreCacheParam(CachedMethod method) {

@@ -5,6 +5,7 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
+import 'package:cached/src/utils/utils.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
@@ -51,59 +52,25 @@ class ClassWithCache {
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
-    final clearMethods = element.methods.where((element) {
-      if (ClearCachedMethod.getAnnotation(element) == null) return false;
-
-      if (element.isAbstract) {
-        if (element.isAsynchronous) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` must be not async method',
-          );
-        }
-
-        if (!element.returnType.isVoid) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` must be a void method',
-          );
-        }
-
-        if (element.parameters.isNotEmpty) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` method cant have arguments',
-          );
-        }
-      }
-
-      return true;
-    }).map((e) => ClearCachedMethod.fromElement(e, config));
+    final clearMethods = element.methods
+        .where(
+          (element) => checkIfClearMethodsElementIsCorrect(
+            element: element,
+            isClearAllMethod: false,
+          ),
+        )
+        .map((e) => ClearCachedMethod.fromElement(e, config));
 
     assertValidateClearCachedMethods(clearMethods, methods);
 
-    final clearAllMethod = element.methods.where((element) {
-      if (ClearAllCachedMethod.getAnnotation(element) == null) return false;
-
-      if (element.isAbstract) {
-        if (element.isAsynchronous) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` must be not async method',
-          );
-        }
-
-        if (!element.returnType.isVoid) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` must be a void method',
-          );
-        }
-
-        if (element.parameters.isNotEmpty) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` method cant have arguments',
-          );
-        }
-      }
-
-      return true;
-    }).map((e) => ClearAllCachedMethod.fromElement(e, config));
+    final clearAllMethod = element.methods
+        .where(
+          (element) => checkIfClearMethodsElementIsCorrect(
+            element: element,
+            isClearAllMethod: true,
+          ),
+        )
+        .map((e) => ClearAllCachedMethod.fromElement(e, config));
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
 

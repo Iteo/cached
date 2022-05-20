@@ -1,3 +1,8 @@
+import 'package:analyzer/dart/element/element.dart';
+import 'package:cached/src/models/clear_all_cached_method.dart';
+import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:source_gen/source_gen.dart';
+
 final futureRegexp = RegExp(r'^Future<(.+)>$');
 final futureBoolRegexp = RegExp(r'^Future<bool>$');
 final voidRegexp = RegExp(r'^void$');
@@ -27,6 +32,36 @@ bool checkIsVoidOrReturnsBoolOrFutureBool(String returnType) {
   if (isReturnsFutureBool(returnType)) return false;
 
   if (isReturnsBool(returnType)) return false;
+
+  return true;
+}
+
+bool checkIfClearMethodsElementIsCorrect({
+  required MethodElement element,
+  required bool isClearAllMethod,
+}) {
+  if (!isClearAllMethod) if (ClearCachedMethod.getAnnotation(element) == null) return false;
+  if (isClearAllMethod) if (ClearAllCachedMethod.getAnnotation(element) == null) return false;
+
+  if (element.isAbstract) {
+    if (element.isAsynchronous) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` must be not async method',
+      );
+    }
+
+    if (!element.returnType.isVoid) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` must be a void method',
+      );
+    }
+
+    if (element.parameters.isNotEmpty) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` method cant have arguments',
+      );
+    }
+  }
 
   return true;
 }
