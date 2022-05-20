@@ -6,6 +6,7 @@ import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
 import 'package:cached_annotation/cached_annotation.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 
 const _defaultUseStaticCache = false;
@@ -112,7 +113,7 @@ class ClassWithCache {
       methods: methods,
       clearMethods: clearMethods,
       constructor: constructor,
-      clearAllMethod: clearAllMethod.isNotEmpty ? clearAllMethod.first : null,
+      clearAllMethod: clearAllMethod.firstOrNull,
     );
   }
 }
