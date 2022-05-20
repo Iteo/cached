@@ -4,7 +4,6 @@ import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
-import 'package:cached/src/utils/utils.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -69,13 +68,14 @@ class ClassWithCache {
             '[ERROR] `${element.name}` method cant have arguments',
           );
         }
-      } else {
-        if (validateReturnType(element)) {
-          throw InvalidGenerationSourceError(
-            '[ERROR] `${element.name}` must return bool, Future<bool> or void',
-          );
-        }
       }
+      // else {
+      //   if (element.) {
+      //     throw InvalidGenerationSourceError(
+      //       '[ERROR] `${element.name}` must be a void method or return bool, Future<bool>',
+      //     );
+      //   }
+      // }
 
       return true;
     }).map((e) => ClearCachedMethod.fromElement(e, config));
