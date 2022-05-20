@@ -69,13 +69,6 @@ class ClassWithCache {
           );
         }
       }
-      // else {
-      //   if (element.) {
-      //     throw InvalidGenerationSourceError(
-      //       '[ERROR] `${element.name}` must be a void method or return bool, Future<bool>',
-      //     );
-      //   }
-      // }
 
       return true;
     }).map((e) => ClearCachedMethod.fromElement(e, config));
