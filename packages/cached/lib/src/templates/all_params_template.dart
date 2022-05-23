@@ -61,6 +61,7 @@ class AllParamsTemplate {
 
     return [positionalParams, optionalParams, namedParams]
         .whereType<String>()
+        .where((element) => element.isNotEmpty)
         .join(',');
   }
 }

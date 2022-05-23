@@ -34,12 +34,16 @@ class CachedMethodTemplate {
   }
 
   String generateMethod() {
-    final syncModifier = method.isGenerator && !_returnsFuture ? 'sync' : '';
-    final asyncModifier = _returnsFuture ? 'async' : '';
+    final syncModifier = method.isGenerator && !method.isAsync ? 'sync' : '';
+    final asyncModifier = _returnsFuture || method.isAsync ? 'async' : '';
     final generatorModifier = method.isGenerator ? '*' : '';
-    final ignoreCacheParam = method.params.firstWhereOrNull((element) => element.ignoreCacheAnnotation != null);
-    final useCacheOnError = ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
+    final returnKeyword = method.isGenerator ? 'yield*' : 'return';
     final awaitIfNeeded = _returnsFuture ? 'await' : '';
+
+    final ignoreCacheParam = method.params
+        .firstWhereOrNull((element) => element.ignoreCacheAnnotation != null);
+    final useCacheOnError =
+        ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
 
     final ignoreCacheCondition = ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
     return '''
@@ -66,10 +70,10 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
 
     ${_generateLimitLogic()}
     ${_generateAddTtlLogic()}
-    return toReturn;
+    $returnKeyword toReturn;
+  } else {
+    $returnKeyword cachedValue;
   }
-
-  return cachedValue;
 }
 
 ''';

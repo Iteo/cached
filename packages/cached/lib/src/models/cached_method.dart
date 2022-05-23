@@ -30,6 +30,8 @@ class CachedMethod {
   final int? ttl;
 
   factory CachedMethod.fromElement(MethodElement element, Config config) {
+    assertMethodNotVoid(element);
+    assertMethodIsNotAbstract(element);
     final annotation = getAnnotation(element);
 
     bool? syncWrite;
