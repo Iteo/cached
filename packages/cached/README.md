@@ -187,6 +187,12 @@ The `ClearCached` argument or method name has to correspond to cached method nam
 ```
 If the user is logged out, the user cache will be cleared.
 
+Possible reasons why the generator gives an error
+
+  * if method with `@cached` annotation doesn’t exist
+  * if method to pair doesn’t exist
+  * if method don't return `bool`, `Future<bool>` or not a `void`
+
 ### ClearAllCached
 
 This is exactly the same as `ClearCached`, except you don't pass any arguments and you don't add a clear statement before the method name, all you have to do is add `@clearAllCached` above the method, this annotation will clear cached values for all methods in the class with the `@WithCache`.
@@ -204,6 +210,11 @@ or we can also create a method that returns a bool, and then write our own logic
   };
 ```
 If the user is logged out, will clear cached values for all methods
+
+Possible reasons why the generator gives an error
+
+  * if we have too many `clearAllCached` annotation, only one can be
+  * if method don't return `bool`, `Future<bool>` or not a `void`
 
 ## Contribution
 
