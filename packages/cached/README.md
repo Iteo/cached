@@ -1,14 +1,14 @@
-<!-- 
+<!--
 This README describes the package. If you publish this package to pub.dev,
 this README's contents appear on the landing page for your package.
 
 For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
 
 For general information about developing packages, see the Dart guide for
 [creating packages](https://dart.dev/guides/libraries/create-library-packages)
 and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
+[developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
 
@@ -103,7 +103,7 @@ Or manually add the dependency in the `pubspec.yaml`
 ```yaml
 dependencies:
   cached_annotation:
-    
+
 dev_dependencies:
   cached:
 ```
@@ -138,7 +138,7 @@ part 'some_file.cached.dart';
 
 ### WithCache
 
-Annotation for `Cached` package. 
+Annotation for `Cached` package.
 
 Annotating a class with `@WithCache` will flag it as a needing to be processed by `Cached` code generator.
 \
@@ -163,21 +163,28 @@ Constructor of this annotation can take one possible argument. It is method name
 Let say there is existing cached method:
 ```dart
   @Cached()
-  Future<SomeResponseType> getSthData() {
-    return  dataSource.getData();
+  Future<SomeResponseType> getUserData() {
+    return userDataSource.getData();
   }
 ```
 to generate clearing cache method we can write:
 ```dart
-  @ClearCached
-  Future<SomeResponseType> clearGetSthData();
+  @clearCached
+  void clearGetUserData();
 ```
 or
 ```dart
-  @ClearCached('getSthData')
-  Future<SomeResponseType> clearMe();
+  @ClearCached('getUserData')
+  void clearUserData();
 ```
-The `ClearCached` argument or method name has to correspond to cached method name. Also, clearing method should be abstract, without body.
+The `ClearCached` argument or method name has to correspond to cached method name. We can also create a method that returns a bool, and then write our own logic to check if the cache should be cleared or not.
+```dart
+  @ClearCached('getUserData')
+  Future<bool> clearUserData() {
+    return userDataSource.isLoggedOut();
+  };
+```
+If the user is logged out, the user cache will be cleared
 
 ## Contribution
 
