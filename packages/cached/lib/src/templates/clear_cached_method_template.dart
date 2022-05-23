@@ -9,25 +9,15 @@ class ClearCachedMethodTemplate {
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
 
-  bool _checkIsVoidOrReturnsBoolOrFutureBool() {
-    if (isVoidMethod(method.returnType)) return false;
-
-    if (isReturnsFutureBool(method.returnType)) return false;
-
-    if (isReturnsBool(method.returnType)) return false;
-
-    return true;
-  }
-
   String generateMethod() {
-    if (_checkIsVoidOrReturnsBoolOrFutureBool()) {
+    if (checkIsVoidOrReturnsBoolOrFutureBool(method.returnType)) {
       throw InvalidGenerationSourceError(
         '[ERROR] `${method.name}` must be a void method or return bool, Future<bool>',
       );
     }
 
-    if (method.isAbstract) return generateAbstractMethod();
-    if (isVoidMethod(method.returnType)) return generateVoidMethod();
+    if (method.isAbstract) return _generateAbstractMethod();
+    if (isVoidMethod(method.returnType)) return _generateVoidMethod();
 
     final asyncModifier = isReturnsFuture(method.returnType) ? 'async' : '';
     final awaitIfNeeded = isReturnsFuture(method.returnType) ? 'await' : '';
@@ -49,7 +39,7 @@ class ClearCachedMethodTemplate {
     ''';
   }
 
-  String generateVoidMethod() {
+  String _generateVoidMethod() {
     return '''
     @override
       ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) {
@@ -60,7 +50,7 @@ class ClearCachedMethodTemplate {
     ''';
   }
 
-  String generateAbstractMethod() {
+  String _generateAbstractMethod() {
     return '''
     @override
     void ${method.name}() => ${getCacheMapName(method.methodName)}.clear();

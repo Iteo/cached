@@ -1,6 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cached_method.dart';
+import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
 void assertMethodNotVoid(MethodElement element) {
@@ -33,8 +35,7 @@ void assertAbstract(ClassElement element) {
 }
 
 void assertOneIgnoreCacheParam(CachedMethod method) {
-  final ignoraCacheParams =
-      method.params.where((element) => element.ignoreCacheAnnotation != null);
+  final ignoraCacheParams = method.params.where((element) => element.ignoreCacheAnnotation != null);
 
   if (ignoraCacheParams.length > 1) {
     throw InvalidGenerationSourceError(
@@ -63,14 +64,20 @@ void assertOneConstFactoryConstructor(ClassElement element) {
   }
 }
 
+void assertOneClearAllCachedAnnotation(Iterable<ClearAllCachedMethod> clearAllMethod) {
+  if (clearAllMethod.length > 1) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] Too many `clearAllCached` annotation, only one can be',
+    );
+  }
+}
+
 void assertValidateClearCachedMethods(
   Iterable<ClearCachedMethod> clearMethods,
   Iterable<CachedMethod> methods,
 ) {
   for (final ClearCachedMethod clearMethod in clearMethods) {
-    final hasPair = methods
-        .where((element) => element.name == clearMethod.methodName)
-        .isNotEmpty;
+    final hasPair = methods.where((element) => element.name == clearMethod.methodName).isNotEmpty;
 
     if (!hasPair) {
       throw InvalidGenerationSourceError(
@@ -78,10 +85,7 @@ void assertValidateClearCachedMethods(
       );
     }
 
-    if (clearMethods
-            .where((element) => element.methodName == clearMethod.methodName)
-            .length >
-        1) {
+    if (clearMethods.where((element) => element.methodName == clearMethod.methodName).length > 1) {
       throw InvalidGenerationSourceError(
         '[ERROR] There are multiple methods which ClearCached annotation with the same argument',
       );

@@ -23,6 +23,9 @@ abstract class Gen implements _$Gen {
     return 3;
   }
 
+  @clearAllCached
+  void clearAll();
+
   //Option one with argument in annotation
   @ClearCached('something')
   void clear();
