@@ -28,9 +28,7 @@ abstract class Gen implements _$Gen {
 
   //Option one with argument in annotation
   @ClearCached('something')
-  void clear() {
-    print("Siema");
-  }
+  void clear();
 
   //Option two with `clear` in name function
   // @clearCached
