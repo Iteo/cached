@@ -44,6 +44,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [withCache](#withcache)
   - [cached](#cached)
   - [clearCached](#clearcached)
+  - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -184,7 +185,25 @@ The `ClearCached` argument or method name has to correspond to cached method nam
     return userDataSource.isLoggedOut();
   };
 ```
-If the user is logged out, the user cache will be cleared
+If the user is logged out, the user cache will be cleared.
+
+### ClearAllCached
+
+This is exactly the same as `ClearCached`, except you don't pass any arguments and you don't add a clear statement before the method name, all you have to do is add `@clearAllCached` above the method, this annotation will clear cached values for all methods in the class with the `@WithCache`.
+
+Here is a simple example:
+```dart
+  @clearAllCached
+  void clearAllData();
+```
+or we can also create a method that returns a bool, and then write our own logic to check if cached values for all methods will be cleared
+```dart
+  @clearAllCached
+  Future<bool> clearAllData() {
+    return userDataSource.isLoggedOut();
+  };
+```
+If the user is logged out, will clear cached values for all methods
 
 ## Contribution
 
