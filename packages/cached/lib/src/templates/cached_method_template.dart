@@ -136,7 +136,7 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
     if (method.limit == null) return '';
 
     return '''
-if ($_cacheMapName.length >= ${method.limit}) {
+if ($_cacheMapName.length > ${method.limit}) {
   $_cacheMapName.remove($_cacheMapName.entries.last.key);
 }
 ''';

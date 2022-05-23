@@ -462,3 +462,297 @@ abstract class MethodWithPositionalAndNamedArgs {
     return 1;
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$CachedWithLimit {}
+
+class _CachedWithLimit with CachedWithLimit implements _$CachedWithLimit {
+  _CachedWithLimit();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method() {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method();
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      if (_methodCached.length > 10) {
+        _methodCached.remove(_methodCached.entries.last.key);
+      }
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class CachedWithLimit {
+  factory CachedWithLimit() = _CachedWithLimit;
+
+  @Cached(limit: 10)
+  int method() {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$CachedWithTtl {}
+
+class _CachedWithTtl with CachedWithTtl implements _$CachedWithTtl {
+  _CachedWithTtl();
+
+  final _methodCached = <String, int>{};
+
+  final _methodTtl = <String, DateTime>{};
+
+  @override
+  int method() {
+    final now = DateTime.now();
+    final currentTtl = _methodTtl[""];
+
+    if (currentTtl != null && currentTtl.isBefore(now)) {
+      _methodTtl.remove("");
+      _methodCached.remove("");
+    }
+
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method();
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      _methodTtl[""] = DateTime.now().add(const Duration(seconds: 30));
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class CachedWithTtl {
+  factory CachedWithTtl() = _CachedWithTtl;
+
+  @Cached(ttl: 30)
+  int method() {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$AsyncSyncWrite {}
+
+class _AsyncSyncWrite with AsyncSyncWrite implements _$AsyncSyncWrite {
+  _AsyncSyncWrite();
+
+  final _methodSync = <String, Future<int>>{};
+
+  final _methodCached = <String, int>{};
+
+  @override
+  Future<int> method() async {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null) {
+      final cachedFuture = _methodSync[""];
+
+      if (cachedFuture != null) {
+        return cachedFuture;
+      }
+
+      final int toReturn;
+      try {
+        final result = super.method();
+        _methodSync[''] = result;
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {
+        _methodSync.remove('');
+      }
+
+      _methodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class AsyncSyncWrite {
+  factory AsyncSyncWrite() = _AsyncSyncWrite;
+
+  @Cached(syncWrite: true)
+  Future<int> method() async {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$SyncSyncWrite {}
+
+class _SyncSyncWrite with SyncSyncWrite implements _$SyncSyncWrite {
+  _SyncSyncWrite();
+
+  final _methodSync = <String, Future<int>>{};
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method() {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method();
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class SyncSyncWrite {
+  factory SyncSyncWrite() = _SyncSyncWrite;
+
+  @Cached(syncWrite: true)
+  int method() {
+    return 1;
+  }
+}
+
+@ShouldThrow('Ignore cache param need to be not nullable bool')
+@withCache
+abstract class StringIgnoreCache {
+  factory StringIgnoreCache() = _StringIgnoreCache;
+
+  @cached
+  int method(@ignoreCache String something) {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$IgnoreCacheParam {}
+
+class _IgnoreCacheParam with IgnoreCacheParam implements _$IgnoreCacheParam {
+  _IgnoreCacheParam();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({bool something = false}) {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null || something) {
+      final int toReturn;
+      try {
+        final result = super.method(something: something);
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class IgnoreCacheParam {
+  factory IgnoreCacheParam() = _IgnoreCacheParam;
+
+  @cached
+  int method({@ignoreCache bool something = false}) {
+    return 1;
+  }
+}
+
+@ShouldGenerate(r'''
+abstract class _$IgnoreCacheParamCacheOnError {}
+
+class _IgnoreCacheParamCacheOnError
+    with IgnoreCacheParamCacheOnError
+    implements _$IgnoreCacheParamCacheOnError {
+  _IgnoreCacheParamCacheOnError();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({bool something = false}) {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null || something) {
+      final int toReturn;
+      try {
+        final result = super.method(something: something);
+
+        toReturn = result;
+      } catch (_) {
+        if (cachedValue != null) {
+          return cachedValue;
+        }
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',)
+@withCache
+abstract class IgnoreCacheParamCacheOnError {
+  factory IgnoreCacheParamCacheOnError() = _IgnoreCacheParamCacheOnError;
+
+  @cached
+  int method({@IgnoreCache(useCacheOnError: true) bool something = false}) {
+    return 1;
+  }
+}
