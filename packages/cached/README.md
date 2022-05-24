@@ -43,6 +43,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 - [Basics](#basics)
   - [withCache](#withcache)
   - [cached](#cached)
+  - [ignoreCache](#ignorecache)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
@@ -153,6 +154,34 @@ There are 3 possible additional parameters:
 - `ttl` - time to live. In seconds. Set how long cache will be alive. Default value is set to  null, means infinitive ttl.
 - `syncWrite` - Affects only async methods ( those one that returns Future ) If set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call. Default value is set to `false`;
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null, means no limit.
+
+### IgnoreCache
+
+That annotation must be above a field in a method and must be bool,
+if `true` the cache will be ignored
+
+Example use:
+
+```dart
+  @cached
+  Future<int> getInt(String param, {@ignoreCache bool ignoreCache = false}) {
+    return Future.value(1);
+  }
+```
+
+or you can use with `useCacheOnError` in the annotation and if set `true`
+then return the last cached value when an error occurs.
+
+```dart
+  @cached
+  Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignoreCache = false}) {
+    return Future.value(1);
+  }
+```
+
+Possible reason why the generator gives an error
+
+  * if method has multiple `@ignoreCache` annotation
 
 ### ClearCached
 
