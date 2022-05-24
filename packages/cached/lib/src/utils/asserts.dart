@@ -2,7 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
-import 'package:cached_annotation/cached_annotation.dart';
+import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 void assertMethodNotVoid(MethodElement element) {
@@ -35,7 +35,8 @@ void assertAbstract(ClassElement element) {
 }
 
 void assertOneIgnoreCacheParam(CachedMethod method) {
-  final ignoraCacheParams = method.params.where((element) => element.ignoreCacheAnnotation != null);
+  final ignoraCacheParams =
+      method.params.where((element) => element.ignoreCacheAnnotation != null);
 
   if (ignoraCacheParams.length > 1) {
     throw InvalidGenerationSourceError(
@@ -64,7 +65,9 @@ void assertOneConstFactoryConstructor(ClassElement element) {
   }
 }
 
-void assertOneClearAllCachedAnnotation(Iterable<ClearAllCachedMethod> clearAllMethod) {
+void assertOneClearAllCachedAnnotation(
+  Iterable<ClearAllCachedMethod> clearAllMethod,
+) {
   if (clearAllMethod.length > 1) {
     throw InvalidGenerationSourceError(
       '[ERROR] Too many `clearAllCached` annotation, only one can be',
@@ -77,7 +80,9 @@ void assertValidateClearCachedMethods(
   Iterable<CachedMethod> methods,
 ) {
   for (final ClearCachedMethod clearMethod in clearMethods) {
-    final hasPair = methods.where((element) => element.name == clearMethod.methodName).isNotEmpty;
+    final hasPair = methods
+        .where((element) => element.name == clearMethod.methodName)
+        .isNotEmpty;
 
     if (!hasPair) {
       throw InvalidGenerationSourceError(
@@ -85,9 +90,49 @@ void assertValidateClearCachedMethods(
       );
     }
 
-    if (clearMethods.where((element) => element.methodName == clearMethod.methodName).length > 1) {
+    if (clearMethods
+            .where((element) => element.methodName == clearMethod.methodName)
+            .length >
+        1) {
       throw InvalidGenerationSourceError(
         '[ERROR] There are multiple methods which ClearCached annotation with the same argument',
+      );
+    }
+  }
+}
+
+void assertCorrectClearMethodType(MethodElement element) {
+  if (element.isAbstract) {
+    if (element.isAsynchronous) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` must be not async method',
+        element: element,
+      );
+    }
+
+    if (!element.returnType.isVoid) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` must be a void method',
+        element: element,
+      );
+    }
+
+    if (element.parameters.isNotEmpty) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` method cant have arguments',
+        element: element,
+      );
+    }
+  } else {
+    final returnType =
+        element.returnType.getDisplayString(withNullability: true);
+    if (!isVoid(returnType) &&
+        !isBool(returnType) &&
+        !isAsyncVoid(returnType) &&
+        !isFutureBool(returnType)) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `${element.name}` return type must be a void, Future<void>, bool, Future<bool>',
+        element: element,
       );
     }
   }

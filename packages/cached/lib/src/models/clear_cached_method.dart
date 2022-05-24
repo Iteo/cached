@@ -18,6 +18,7 @@ class ClearCachedMethod {
     required this.params,
     required this.isGenerator,
     required this.isAbstract,
+    required this.shouldClearTtl,
   });
 
   final String name;
@@ -27,8 +28,9 @@ class ClearCachedMethod {
   final bool isAbstract;
   final bool isAsync;
   final Iterable<Param> params;
+  final bool shouldClearTtl;
 
-  factory ClearCachedMethod.fromElement(MethodElement element, Config config) {
+  factory ClearCachedMethod.fromElement(MethodElement element, Config config, Set<String> ttlsToClear) {
     final annotation = getAnnotation(element);
 
     String? methodName;
@@ -45,11 +47,17 @@ class ClearCachedMethod {
     if (methodName == null || methodName.isEmpty) {
       if (!element.name.contains(_clearPrefix)) {
         throw InvalidGenerationSourceError(
-          'Set in method ${element.name} argument or add `$_clearPrefix` to cached name function i.e. ${_clearPrefix}Strings',
+          '''
+Name of method for which cache should be cleared is not provider. 
+Provide it trougth annotation parameter (`@ClearCached('methodName')`) 
+or trougth clear function name e.g. `void ${_clearPrefix}MethodName();`
+''',
+          element: element,
         );
       }
 
-      methodName = element.name.replaceAll(_clearPrefix, '').startsWithLowerCase();
+      methodName =
+          element.name.replaceAll(_clearPrefix, '').startsWithLowerCase();
     }
 
     return ClearCachedMethod(
@@ -60,6 +68,7 @@ class ClearCachedMethod {
       isGenerator: element.isGenerator,
       isAbstract: element.isAbstract,
       params: element.parameters.map((e) => Param.fromElement(e, config)),
+      shouldClearTtl: ttlsToClear.contains(methodName),
     );
   }
 
