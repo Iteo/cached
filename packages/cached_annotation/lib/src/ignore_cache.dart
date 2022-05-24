@@ -8,7 +8,8 @@ const ignoreCache = IgnoreCache();
 ///
 /// Annotation for `Cached` package.
 ///
-/// Annotation that must be above a field in a method and must be bool, if true the cache will be ignored
+/// Annotation that must be above a field in a method and must be bool,
+/// if true the cache will be ignored
 ///
 /// ### Example
 ///
@@ -21,7 +22,8 @@ const ignoreCache = IgnoreCache();
 /// }
 /// ```
 ///
-/// or with `useCacheOnError` in the annotation and if set `true` then return the last cached value when an error occurs.
+/// or with `useCacheOnError` in the annotation and if set `true`
+/// then return the last cached value when an error occurs.
 ///
 /// ```dart
 /// Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignoreCache = false}) {

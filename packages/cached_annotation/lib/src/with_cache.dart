@@ -8,9 +8,14 @@ const withCache = WithCache();
 ///
 /// Annotation for `Cached` package.
 ///
-/// Annotating a class with `@WithCache` will flag it as a needing to be processed by `Cached` code generator.
+/// Annotating a class with `@WithCache` will flag
+/// it as a needing to be processed by `Cached` code generator.
 ///
-/// It can take one additional boolean parameter `useStaticCache`. If this parameter is set to true, generator will generate cached class with static cache. It means each instance of this class will have access to the same cache. Default value is set to `false`
+/// It can take one additional boolean parameter `useStaticCache`.
+/// If this parameter is set to true, generator will generate
+/// cached class with static cache.
+/// It means each instance of this class will have access
+/// to the same cache. Default value is set to `false`
 ///
 /// Throws an [InvalidGenerationSourceError]
 /// * if class has to many constructors. Class can have only one constructor
@@ -49,6 +54,9 @@ class WithCache {
     this.useStaticCache,
   });
 
-  /// If this parameter is set to true, generator will generate cached class with static cache. It means each instance of this class will have access to the same cache. Default value is set to `false`.
+  /// If this parameter is set to true,
+  /// generator will generate cached class with static cache.
+  /// It means each instance of this class will have access
+  /// to the same cache. Default value is set to `false`.
   final bool? useStaticCache;
 }
