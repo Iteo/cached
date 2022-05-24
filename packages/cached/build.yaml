@@ -1,3 +1,12 @@
+targets:
+  $default:
+    builders:
+      cached:
+        generate_for:
+          - test/integration/**
+          - example/**
+
+
 builders:
   cached:
     import: "package:cached/cached.dart"
