@@ -11,8 +11,8 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 <div align="center">
-
-<img width="200" src="https://github.com/Iteo/cached/raw/main/cached_logo.png">
+<br /><br />
+<img width="400" src="https://github.com/Iteo/cached/raw/master/packages/cached/cached_sygnet.png">
 <br /><br />
 
 
@@ -24,6 +24,7 @@ and the Flutter guide for
 &nbsp;
 
 </div>
+
 ---
 
 # Cached
