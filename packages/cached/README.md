@@ -10,13 +10,20 @@ For general information about developing packages, see the Dart guide for
 and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
+<div align="center">
+
+<img width="200" src="https://github.com/Iteo/cached/raw/main/cached_logo.png">
+<br /><br />
 
 
-[![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml) &nbsp;
+[![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml)
+&nbsp;
 [![stars](https://img.shields.io/github/stars/Iteo/cached.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/Iteo/cached)
 &nbsp;
-[![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE) &nbsp;
+[![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE)
+&nbsp;
 
+</div>
 ---
 
 # Cached
@@ -39,13 +46,13 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 - [Motivation](#motivation)
 - [Setup](#setup)
-  - [Run the generator](#run-the-generator)
+    - [Run the generator](#run-the-generator)
 - [Basics](#basics)
-  - [withCache](#withcache)
-  - [cached](#cached)
-  - [ignoreCache](#ignorecache)
-  - [clearCached](#clearcached)
-  - [clearAllCached](#clearallcached)
+    - [withCache](#withcache)
+    - [cached](#cached)
+    - [ignoreCache](#ignorecache)
+    - [clearCached](#clearcached)
+    - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -84,7 +91,7 @@ abstract class RemoteRepository implements Repository, _$RemoteRepository {
 
   @Cached()
   Future<SomeResponseType> getSthData() {
-    return  dataSource.getData();
+    return dataSource.getData();
   }
 }
 ```
@@ -136,6 +143,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 
 part 'some_file.cached.dart';
 ```
+
 ## Basics
 
 ### WithCache
@@ -144,16 +152,23 @@ Annotation for `Cached` package.
 
 Annotating a class with `@WithCache` will flag it as a needing to be processed by `Cached` code generator.
 \
-It can take one additional boolean parameter `useStaticCache`. If this parameter is set to true, generator will generate cached class with static cache. It means each instance of this class will have access to the same cache. Default value is set to `false`
+It can take one additional boolean parameter `useStaticCache`. If this parameter is set to true, generator will generate
+cached class with static cache. It means each instance of this class will have access to the same cache. Default value
+is set to `false`
 
 ### Cached
 
 Method decorator that flag it as needing to be processed by `Cached` code generator.
 
 There are 3 possible additional parameters:
-- `ttl` - time to live. In seconds. Set how long cache will be alive. Default value is set to  null, means infinitive ttl.
-- `syncWrite` - Affects only async methods ( those one that returns Future ) If set to `true` first method call will be cached, and if following ( the same ) call will occur, all of them will get result from the first call. Default value is set to `false`;
-- `limit` - limit how many results for different method call arguments combination will be cached. Default value null, means no limit.
+
+- `ttl` - time to live. In seconds. Set how long cache will be alive. Default value is set to null, means infinitive
+  ttl.
+- `syncWrite` - Affects only async methods ( those one that returns Future ) If set to `true` first method call will be
+  cached, and if following ( the same ) call will occur, all of them will get result from the first call. Default value
+  is set to `false`;
+- `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
+  means no limit.
 
 ### IgnoreCache
 
@@ -164,9 +179,9 @@ Example use:
 
 ```dart
   @cached
-  Future<int> getInt(String param, {@ignoreCache bool ignoreCache = false}) {
-    return Future.value(1);
-  }
+Future<int> getInt(String param, {@ignoreCache bool ignoreCache = false}) {
+  return Future.value(1);
+}
 ```
 
 or you can use with `useCacheOnError` in the annotation and if set `true`
@@ -174,14 +189,14 @@ then return the last cached value when an error occurs.
 
 ```dart
   @cached
-  Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignoreCache = false}) {
-    return Future.value(1);
-  }
+Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignoreCache = false}) {
+  return Future.value(1);
+}
 ```
 
 Possible reason why the generator gives an error
 
-  * if method has multiple `@ignoreCache` annotation
+* if method has multiple `@ignoreCache` annotation
 
 ### ClearCached
 
@@ -191,59 +206,75 @@ Method annotated with this annotation can be used to clear result of method anno
 Constructor of this annotation can take one possible argument. It is method name, that we want to clear the cache.
 
 Let say there is existing cached method:
+
 ```dart
   @Cached()
-  Future<SomeResponseType> getUserData() {
-    return userDataSource.getData();
-  }
+Future<SomeResponseType> getUserData() {
+  return userDataSource.getData();
+}
 ```
+
 to generate clearing cache method we can write:
+
 ```dart
   @clearCached
-  void clearGetUserData();
+void clearGetUserData();
 ```
+
 or
+
 ```dart
   @ClearCached('getUserData')
-  void clearUserData();
+void clearUserData();
 ```
-The `ClearCached` argument or method name has to correspond to cached method name. We can also create a method that returns a bool, and then write our own logic to check if the cache should be cleared or not.
+
+The `ClearCached` argument or method name has to correspond to cached method name. We can also create a method that
+returns a bool, and then write our own logic to check if the cache should be cleared or not.
+
 ```dart
   @ClearCached('getUserData')
-  Future<bool> clearUserData() {
-    return userDataSource.isLoggedOut();
-  };
+Future<bool> clearUserData() {
+  return userDataSource.isLoggedOut();
+};
 ```
+
 If the user is logged out, the user cache will be cleared.
 
 Possible reasons why the generator gives an error
 
-  * if method with `@cached` annotation doesn’t exist
-  * if method to pair doesn’t exist
-  * if method don't return `bool`, `Future<bool>` or not a `void`
+* if method with `@cached` annotation doesn’t exist
+* if method to pair doesn’t exist
+* if method don't return `bool`, `Future<bool>` or not a `void`
 
 ### ClearAllCached
 
-This is exactly the same as `ClearCached`, except you don't pass any arguments and you don't add a clear statement before the method name, all you have to do is add `@clearAllCached` above the method, this annotation will clear cached values for all methods in the class with the `@WithCache`.
+This is exactly the same as `ClearCached`, except you don't pass any arguments and you don't add a clear statement
+before the method name, all you have to do is add `@clearAllCached` above the method, this annotation will clear cached
+values for all methods in the class with the `@WithCache`.
 
 Here is a simple example:
+
 ```dart
   @clearAllCached
-  void clearAllData();
+void clearAllData();
 ```
-or we can also create a method that returns a bool, and then write our own logic to check if cached values for all methods will be cleared
+
+or we can also create a method that returns a bool, and then write our own logic to check if cached values for all
+methods will be cleared
+
 ```dart
   @clearAllCached
-  Future<bool> clearAllData() {
-    return userDataSource.isLoggedOut();
-  };
+Future<bool> clearAllData() {
+  return userDataSource.isLoggedOut();
+};
 ```
+
 If the user is logged out, will clear cached values for all methods
 
 Possible reasons why the generator gives an error
 
-  * if we have too many `clearAllCached` annotation, only one can be
-  * if method don't return `bool`, `Future<bool>` or not a `void`
+* if we have too many `clearAllCached` annotation, only one can be
+* if method don't return `bool`, `Future<bool>` or not a `void`
 
 ## Contribution
 
