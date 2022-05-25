@@ -6,5 +6,4 @@ class TestDataProvider {
   int getCurrentTimestamp() => DateTime.now().millisecondsSinceEpoch;
 
   int getRandomValue() => _random.nextInt(99999);
-
 }

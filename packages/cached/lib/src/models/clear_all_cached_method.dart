@@ -13,6 +13,7 @@ class ClearAllCachedMethod {
     required this.isAsync,
     required this.params,
     required this.isAbstract,
+    required this.ttlsToClear,
   });
 
   final String name;
@@ -20,14 +21,16 @@ class ClearAllCachedMethod {
   final bool isAbstract;
   final bool isAsync;
   final Iterable<Param> params;
+  final Set<String> ttlsToClear;
 
-  factory ClearAllCachedMethod.fromElement(MethodElement element, Config config) {
+  factory ClearAllCachedMethod.fromElement(MethodElement element, Config config, Set<String> ttlsToClear) {
     return ClearAllCachedMethod(
       name: element.name,
       returnType: element.returnType.getDisplayString(withNullability: true),
       isAsync: element.isAsynchronous,
       isAbstract: element.isAbstract,
       params: element.parameters.map((e) => Param.fromElement(e, config)),
+      ttlsToClear: ttlsToClear,
     );
   }
 

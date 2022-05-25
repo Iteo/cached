@@ -1,5 +1,4 @@
 import 'package:cached_annotation/cached_annotation.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 /// Do not forget add part keyword for file,
@@ -50,13 +49,13 @@ abstract class Gen implements _$Gen {
   Future<Response> getDataWithCached({
     @IgnoreCache(useCacheOnError: true) bool ignoreCache = false,
   }) {
-    return http.get(Uri.parse(_url));
+    return get(Uri.parse(_url));
   }
 
   /// Method for measure example, you can go to example.dart file
   /// and run main method, so you can check how great [Checked] package is it.
   Future<Response> getDataWithoutCached() {
-    return http.get(Uri.parse(_url));
+    return get(Uri.parse(_url));
   }
 
   /// Method annotated with this annotation can be used to clear result

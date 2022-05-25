@@ -2,7 +2,6 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
-import 'package:source_gen/source_gen.dart';
 
 class ClearAllCachedMethodTemplate {
   ClearAllCachedMethodTemplate({this.method, required this.cachedMethods})
@@ -12,22 +11,19 @@ class ClearAllCachedMethodTemplate {
   final Iterable<CachedMethod> cachedMethods;
   final AllParamsTemplate paramsTemplate;
 
-  String _generateCacheClearMethods() => cachedMethods.map((e) => "${getCacheMapName(e.name)}.clear();").join("\n");
+  String _generateCacheClearMethods() => cachedMethods
+      .map((e) => e.name)
+      .map(_generateClearMaps)
+      .join("\n");
 
   String generateMethod() {
     if (method == null) return '';
 
-    if (checkIsVoidOrReturnsBoolOrFutureBool(method!.returnType)) {
-      throw InvalidGenerationSourceError(
-        '[ERROR] `${method!.name}` must be a void method or return bool, Future<bool>',
-      );
-    }
-
     if (method!.isAbstract) return _generateAbstractMethod();
-    if (isVoidMethod(method!.returnType)) return _generateVoidMethod();
+    if (isVoid(method!.returnType)) return _generateVoidMethod();
 
-    final asyncModifier = isReturnsFuture(method!.returnType) ? 'async' : '';
-    final awaitIfNeeded = isReturnsFuture(method!.returnType) ? 'await' : '';
+    final asyncModifier = isFuture(method!.returnType) ? 'async' : '';
+    final awaitIfNeeded = isFuture(method!.returnType) ? 'await' : '';
 
     return '''
     @override
@@ -64,5 +60,12 @@ class ClearAllCachedMethodTemplate {
       ${_generateCacheClearMethods()}
     }
     ''';
+  }
+  
+  String _generateClearMaps(String baseName) {
+    return '''
+${getCacheMapName(baseName)}.clear();
+${method?.ttlsToClear.contains(baseName) ?? false ? "${getTtlMapName(baseName)}.clear();" : ""}
+''';
   }
 }

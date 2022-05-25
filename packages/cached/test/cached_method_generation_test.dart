@@ -18,6 +18,13 @@ Future<void> main() async {
     'MethodWithNamedArgs',
     'MethodWithPositionalAndOptionalArgs',
     'MethodWithPositionalAndNamedArgs',
+    'CachedWithLimit',
+    'CachedWithTtl',
+    'AsyncSyncWrite',
+    'SyncSyncWrite',
+    'StringIgnoreCache',
+    'IgnoreCacheParam',
+    'IgnoreCacheParamCacheOnError',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

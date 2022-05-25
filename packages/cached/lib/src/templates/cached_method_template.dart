@@ -45,7 +45,8 @@ class CachedMethodTemplate {
     final useCacheOnError =
         ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
 
-    final ignoreCacheCondition = ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
+    final ignoreCacheCondition =
+        ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
     return '''
 @override
 ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncModifier$asyncModifier$generatorModifier {
@@ -124,11 +125,11 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
 
   String get _cacheMapName => getCacheMapName(method.name);
 
-  String get _ttlMapName => '_${method.name}Ttl';
+  String get _ttlMapName => getTtlMapName(method.name);
 
   String get _syncMapName => '_${method.name}Sync';
 
-  bool get _returnsFuture => isReturnsFuture(method.returnType);
+  bool get _returnsFuture => isFuture(method.returnType);
 
   String get _syncReturnType => syncReturnType(method.returnType);
 
@@ -136,7 +137,7 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
     if (method.limit == null) return '';
 
     return '''
-if ($_cacheMapName.length >= ${method.limit}) {
+if ($_cacheMapName.length > ${method.limit}) {
   $_cacheMapName.remove($_cacheMapName.entries.last.key);
 }
 ''';
