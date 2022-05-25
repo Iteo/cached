@@ -1,8 +1,8 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:cached/src/asserts.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/param.dart';
+import 'package:cached/src/utils/asserts.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -30,6 +30,8 @@ class CachedMethod {
   final int? ttl;
 
   factory CachedMethod.fromElement(MethodElement element, Config config) {
+    assertMethodNotVoid(element);
+    assertMethodIsNotAbstract(element);
     final annotation = getAnnotation(element);
 
     bool? syncWrite;

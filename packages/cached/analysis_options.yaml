@@ -1,1 +1,6 @@
 include: package:lint/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - ./**/*.cached.dart
+    - test/inputs/*
