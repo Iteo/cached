@@ -40,8 +40,6 @@ class CachedMethod {
     int? ttl;
     String? returnType;
 
-    returnType = element.returnType.getDisplayString(withNullability: true);
-
     if (annotation != null) {
       final reader = ConstantReader(annotation);
       final syncWriteField = reader.read('syncWrite');
@@ -64,7 +62,7 @@ class CachedMethod {
       syncWrite: syncWrite ?? config.syncWrite ?? _defaultSyncWriteValue,
       limit: limit ?? config.limit,
       ttl: ttl ?? config.ttl,
-      returnType: returnType,
+      returnType: element.returnType.getDisplayString(withNullability: true),
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       params: element.parameters.map((e) => Param.fromElement(e, config)),

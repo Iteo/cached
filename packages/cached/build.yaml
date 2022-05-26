@@ -4,8 +4,6 @@ targets:
       cached:
         generate_for:
           - test/integration/**
-          - example/**
-
 
 builders:
   cached:
