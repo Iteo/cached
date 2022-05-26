@@ -32,11 +32,15 @@ class CachedMethod {
   factory CachedMethod.fromElement(MethodElement element, Config config) {
     assertMethodNotVoid(element);
     assertMethodIsNotAbstract(element);
+
     final annotation = getAnnotation(element);
 
     bool? syncWrite;
     int? limit;
     int? ttl;
+    String? returnType;
+
+    returnType = element.returnType.getDisplayString(withNullability: true);
 
     if (annotation != null) {
       final reader = ConstantReader(annotation);
@@ -60,7 +64,7 @@ class CachedMethod {
       syncWrite: syncWrite ?? config.syncWrite ?? _defaultSyncWriteValue,
       limit: limit ?? config.limit,
       ttl: ttl ?? config.ttl,
-      returnType: element.returnType.getDisplayString(withNullability: true),
+      returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       params: element.parameters.map((e) => Param.fromElement(e, config)),
