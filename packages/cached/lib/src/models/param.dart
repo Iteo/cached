@@ -38,7 +38,7 @@ class Param {
     if (annotation != null) {
       if (element.type.getDisplayString(withNullability: true) != 'bool') {
         throw InvalidGenerationSourceError(
-          'Ignore cache param need to be not nullable bool',
+          '[ERROR] Ignore cache param need to be not nullable bool',
           element: element,
         );
       }

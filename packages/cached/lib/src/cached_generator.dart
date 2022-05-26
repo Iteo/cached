@@ -21,7 +21,7 @@ class CachedGenerator extends GeneratorForAnnotation<WithCache> {
   ) {
     if (element is! ClassElement) {
       throw InvalidGenerationSourceError(
-        'Annotation WithCache cannot target ${element.runtimeType}',
+        '[ERROR] Annotation WithCache cannot target ${element.runtimeType}',
         element: element,
       );
     }

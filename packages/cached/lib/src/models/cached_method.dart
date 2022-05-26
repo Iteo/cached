@@ -32,11 +32,13 @@ class CachedMethod {
   factory CachedMethod.fromElement(MethodElement element, Config config) {
     assertMethodNotVoid(element);
     assertMethodIsNotAbstract(element);
+
     final annotation = getAnnotation(element);
 
     bool? syncWrite;
     int? limit;
     int? ttl;
+    String? returnType;
 
     if (annotation != null) {
       final reader = ConstantReader(annotation);

@@ -6,21 +6,18 @@ import 'package:source_gen_test/source_gen_test.dart';
 Future<void> main() async {
   initializeBuildLogTracking();
   const _expectedAnnotatedTests = {
-    'NoTargetMethod',
-    'MultipleClearMethods',
-    'InvalidName',
+    'MultipleClearAllMethods',
     'InvalidReturnType',
     'InvalidReturnTypeNonAbstract',
     'AbstractWithParams',
     'ValidAbstractWithTtl',
     'ValidAbstract',
-    'ValidAbstractWithTwoCachedMethod',
     'ValidReturnFutureBool',
   };
 
   final reader = await initializeLibraryReaderForDirectory(
     p.join('test', 'inputs'),
-    'clear_cached_method_generation_test_input.dart',
+    'clear_all_cached_method_generation_test_input.dart',
   );
 
   testAnnotatedElements(

@@ -30,7 +30,11 @@ class ClearCachedMethod {
   final Iterable<Param> params;
   final bool shouldClearTtl;
 
-  factory ClearCachedMethod.fromElement(MethodElement element, Config config, Set<String> ttlsToClear) {
+  factory ClearCachedMethod.fromElement(
+    MethodElement element,
+    Config config,
+    Set<String> ttlsToClear,
+  ) {
     final annotation = getAnnotation(element);
 
     String? methodName;
@@ -48,8 +52,8 @@ class ClearCachedMethod {
       if (!element.name.contains(_clearPrefix)) {
         throw InvalidGenerationSourceError(
           '''
-Name of method for which cache should be cleared is not provider. 
-Provide it trougth annotation parameter (`@ClearCached('methodName')`) 
+[ERROR] Name of method for which cache should be cleared is not provider.
+Provide it trougth annotation parameter (`@ClearCached('methodName')`)
 or trougth clear function name e.g. `void ${_clearPrefix}MethodName();`
 ''',
           element: element,
