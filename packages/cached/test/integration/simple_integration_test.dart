@@ -1,3 +1,4 @@
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:test/test.dart';
 import '../utils/test_utils.dart';
 import 'simple/cached_test_simple.dart';
@@ -27,9 +28,7 @@ void main() {
       expect(cachedValue != secondCachedValue, true);
     });
 
-    test(
-        'setting ignoreCache to true should ignore cached value and return new one',
-        () async {
+    test('setting ignoreCache to true should ignore cached value and return new one', () async {
       final cachedClass = SimpleCached(_dataProvider);
       final cachedValue = cachedClass.cachedTimestamp();
       await Future.delayed(const Duration(milliseconds: 10));

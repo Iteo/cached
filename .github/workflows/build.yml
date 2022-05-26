@@ -19,6 +19,9 @@ jobs:
       - name: Install melos
         run: dart pub global activate melos
 
+      - name: Install coverage
+        run: dart pub global activate coverage
+
       - name: Install dependencies
         run: melos run get
 
@@ -29,5 +32,5 @@ jobs:
         run: melos run analyze
 
       - name: Run tests
-        run: melos run test
+        run: melos run test:coverage
         
