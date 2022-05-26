@@ -31,7 +31,10 @@ class ClearCachedMethod {
   final bool shouldClearTtl;
 
   factory ClearCachedMethod.fromElement(
-      MethodElement element, Config config, Set<String> ttlsToClear) {
+    MethodElement element,
+    Config config,
+    Set<String> ttlsToClear,
+  ) {
     final annotation = getAnnotation(element);
 
     String? methodName;
