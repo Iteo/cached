@@ -33,7 +33,7 @@ abstract class MultipleClearMethods {
   void something();
 
   @clearCached
-  void clearcachedMethod();
+  void clearCachedMethod();
 }
 
 @ShouldThrow('[ERROR] No cache method for `something` method', element: false)
