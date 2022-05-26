@@ -10,7 +10,7 @@ void assertMethodNotVoid(MethodElement element) {
       element.returnType.getDisplayString(withNullability: false) ==
           'Future<void>') {
     throw InvalidGenerationSourceError(
-      'Method ${element.name} returns void or Future<void> which is not allowed',
+      '[ERROR] Method ${element.name} returns void or Future<void> which is not allowed',
       element: element,
     );
   }
@@ -19,7 +19,7 @@ void assertMethodNotVoid(MethodElement element) {
 void assertMethodIsNotAbstract(MethodElement element) {
   if (element.isAbstract) {
     throw InvalidGenerationSourceError(
-      'Cached method ${element.name} is abstract which is not allowed',
+      '[ERROR] Cached method ${element.name} is abstract which is not allowed',
       element: element,
     );
   }
@@ -28,7 +28,7 @@ void assertMethodIsNotAbstract(MethodElement element) {
 void assertAbstract(ClassElement element) {
   if (!element.isAbstract) {
     throw InvalidGenerationSourceError(
-      'Class ${element.name} need to be abstract',
+      '[ERROR] Class ${element.name} need to be abstract',
       element: element,
     );
   }
@@ -40,7 +40,7 @@ void assertOneIgnoreCacheParam(CachedMethod method) {
 
   if (ignoraCacheParams.length > 1) {
     throw InvalidGenerationSourceError(
-      'Multiple IgnoreCache annotations in ${method.name} method',
+      '[ERROR] Multiple IgnoreCache annotations in ${method.name} method',
     );
   }
 }
@@ -50,7 +50,7 @@ void assertOneConstFactoryConstructor(ClassElement element) {
 
   if (constructorElements.length != 1) {
     throw InvalidGenerationSourceError(
-      'To many constructors in ${element.name} class. Class can have only one constructor',
+      '[ERROR] To many constructors in ${element.name} class. Class can have only one constructor',
       element: element,
     );
   }
@@ -59,7 +59,7 @@ void assertOneConstFactoryConstructor(ClassElement element) {
 
   if (!constructor.isFactory) {
     throw InvalidGenerationSourceError(
-      'Class ${element.name} need to have one factory constructor',
+      '[ERROR] Class ${element.name} need to have one factory constructor',
       element: element,
     );
   }

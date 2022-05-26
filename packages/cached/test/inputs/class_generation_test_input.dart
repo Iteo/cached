@@ -1,18 +1,19 @@
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/source_gen_test.dart';
 
-@ShouldThrow('Class NonAbastractClass need to be abstract')
+@ShouldThrow('[ERROR] Class NonAbastractClass need to be abstract')
 @withCache
 class NonAbastractClass {}
 
-@ShouldThrow('Class NotFactoryConstructor need to have one factory constructor')
+@ShouldThrow(
+    '[ERROR] Class NotFactoryConstructor need to have one factory constructor')
 @withCache
 abstract class NotFactoryConstructor {
   NotFactoryConstructor();
 }
 
 @ShouldThrow(
-  'To many constructors in MultipleConstructors class. Class can have only one constructor',
+  '[ERROR] To many constructors in MultipleConstructors class. Class can have only one constructor',
 )
 @withCache
 abstract class MultipleConstructors {
