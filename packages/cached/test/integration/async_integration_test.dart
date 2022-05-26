@@ -95,15 +95,15 @@ void main() {
     test('cached method with set TTL, should return new value when TTL timeout', () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
-      final cachedValueFuture = cachedClass.syncCachedValueWithTTl();
+      final cachedValueFuture = cachedClass.asyncCachedValueWithTTl();
       await Future.delayed(const Duration(milliseconds: 10));
-      final secondCachedValueFuture = cachedClass.syncCachedValueWithTTl();
+      final secondCachedValueFuture = cachedClass.asyncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
       await Future.delayed(const Duration(seconds: ttlDurationSeconds));
-      await cachedClass.syncCachedValueWithTTl();
+      await cachedClass.asyncCachedValueWithTTl();
 
-      expect(cachedClass.counter(), 2);
+      expect(cachedClass.counter(), 3);
     });
   });
 }
