@@ -13,6 +13,12 @@ scripts:
   test:
     run: melos exec --dir-exists="test" dart test
 
+  test:coverage:
+    run: melos exec  -c 1 --fail-fast -- "\$MELOS_ROOT_PATH/scripts/coverage.sh"
+    description: Run Dart tests for a specific package in this project.
+    select-package:
+      dir-exists: test
+
   analyze:
     run: melos exec dart analyze
 

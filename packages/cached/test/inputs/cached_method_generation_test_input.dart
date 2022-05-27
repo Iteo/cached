@@ -1,7 +1,8 @@
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
-@ShouldThrow('Method method returns void or Future<void> which is not allowed')
+@ShouldThrow(
+    '[ERROR] Method method returns void or Future<void> which is not allowed')
 @withCache
 abstract class VoidMethod {
   factory VoidMethod() = _VoidMethod;
@@ -10,7 +11,8 @@ abstract class VoidMethod {
   void method() {}
 }
 
-@ShouldThrow('Method method returns void or Future<void> which is not allowed')
+@ShouldThrow(
+    '[ERROR] Method method returns void or Future<void> which is not allowed')
 @withCache
 abstract class FutureVoidMethod {
   factory FutureVoidMethod() = _FutureVoidMethod;
@@ -19,7 +21,7 @@ abstract class FutureVoidMethod {
   Future<void> method() async {}
 }
 
-@ShouldThrow('Cached method method is abstract which is not allowed')
+@ShouldThrow('[ERROR] Cached method method is abstract which is not allowed')
 @withCache
 abstract class AbstractMethod {
   factory AbstractMethod() = _AbstractMethod;
@@ -659,7 +661,7 @@ abstract class SyncSyncWrite {
   }
 }
 
-@ShouldThrow('Ignore cache param need to be not nullable bool')
+@ShouldThrow('[ERROR] Ignore cache param need to be not nullable bool')
 @withCache
 abstract class StringIgnoreCache {
   factory StringIgnoreCache() = _StringIgnoreCache;
@@ -712,7 +714,8 @@ abstract class IgnoreCacheParam {
   }
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 abstract class _$IgnoreCacheParamCacheOnError {}
 
 class _IgnoreCacheParamCacheOnError
@@ -746,7 +749,8 @@ class _IgnoreCacheParamCacheOnError
     }
   }
 }
-''',)
+''',
+)
 @withCache
 abstract class IgnoreCacheParamCacheOnError {
   factory IgnoreCacheParamCacheOnError() = _IgnoreCacheParamCacheOnError;

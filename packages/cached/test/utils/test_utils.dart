@@ -6,4 +6,9 @@ class TestDataProvider {
   int getCurrentTimestamp() => DateTime.now().millisecondsSinceEpoch;
 
   int getRandomValue() => _random.nextInt(99999);
+
+  Future<int> fetchRandomValue() => Future.value(getRandomValue());
+
+  Future<int> fetchCurrentTimestamp() => Future.value(getCurrentTimestamp());
+
 }

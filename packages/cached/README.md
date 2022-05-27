@@ -179,7 +179,7 @@ if `true` the cache will be ignored
 Example use:
 
 ```dart
-  @cached
+@cached
 Future<int> getInt(String param, {@ignoreCache bool ignoreCache = false}) {
   return Future.value(1);
 }
@@ -189,7 +189,7 @@ or you can use with `useCacheOnError` in the annotation and if set `true`
 then return the last cached value when an error occurs.
 
 ```dart
-  @cached
+@cached
 Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignoreCache = false}) {
   return Future.value(1);
 }
@@ -209,7 +209,7 @@ Constructor of this annotation can take one possible argument. It is method name
 Let say there is existing cached method:
 
 ```dart
-  @Cached()
+@Cached()
 Future<SomeResponseType> getUserData() {
   return userDataSource.getData();
 }
@@ -218,14 +218,14 @@ Future<SomeResponseType> getUserData() {
 to generate clearing cache method we can write:
 
 ```dart
-  @clearCached
+@clearCached
 void clearGetUserData();
 ```
 
 or
 
 ```dart
-  @ClearCached('getUserData')
+@ClearCached('getUserData')
 void clearUserData();
 ```
 
@@ -233,7 +233,7 @@ The `ClearCached` argument or method name has to correspond to cached method nam
 returns a bool, and then write our own logic to check if the cache should be cleared or not.
 
 ```dart
-  @ClearCached('getUserData')
+@ClearCached('getUserData')
 Future<bool> clearUserData() {
   return userDataSource.isLoggedOut();
 };
@@ -256,7 +256,7 @@ values for all methods in the class with the `@WithCache`.
 Here is a simple example:
 
 ```dart
-  @clearAllCached
+@clearAllCached
 void clearAllData();
 ```
 
@@ -264,7 +264,7 @@ or we can also create a method that returns a bool, and then write our own logic
 methods will be cleared
 
 ```dart
-  @clearAllCached
+@clearAllCached
 Future<bool> clearAllData() {
   return userDataSource.isLoggedOut();
 };

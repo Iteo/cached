@@ -2,47 +2,23 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
 @ShouldThrow(
-  '''
-[ERROR] Name of method for which cache should be cleared is not provider.
-Provide it trougth annotation parameter (`@ClearCached('methodName')`)
-or trougth clear function name e.g. `void clearMethodName();`
-''',
-)
-@withCache
-abstract class NoTargetMethod {
-  factory NoTargetMethod() = _NoTargetMethod;
-
-  @clearCached
-  void something();
-}
-
-@ShouldThrow(
-  '[ERROR] There are multiple methods which ClearCached annotation with the same argument',
+  '[ERROR] Too many `clearAllCached` annotation, only one can be',
   element: false,
 )
 @withCache
-abstract class MultipleClearMethods {
-  factory MultipleClearMethods() = _MultipleClearMethods;
+abstract class MultipleClearAllMethods {
+  factory MultipleClearAllMethods() = _MultipleClearAllMethods;
 
   @cached
   int cachedMethod() {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   void something();
 
-  @clearCached
-  void clearCachedMethod();
-}
-
-@ShouldThrow('[ERROR] No cache method for `something` method', element: false)
-@withCache
-abstract class InvalidName {
-  factory InvalidName() = _InvalidName;
-
-  @ClearCached('invalidName')
-  void something();
+  @clearAllCached
+  void somethingTwo();
 }
 
 @ShouldThrow('[ERROR] `something` must be a void method', element: false)
@@ -55,7 +31,7 @@ abstract class InvalidReturnType {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   String something();
 }
 
@@ -72,7 +48,7 @@ abstract class InvalidReturnTypeNonAbstract {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   String something() {
     return '';
   }
@@ -88,7 +64,7 @@ abstract class AbstractWithParams {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   void something(String a);
 }
 
@@ -153,7 +129,7 @@ abstract class ValidAbstractWithTtl {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   void something();
 }
 
@@ -203,96 +179,8 @@ abstract class ValidAbstract {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   void something();
-}
-
-@ShouldGenerate(
-  r'''
-abstract class _$ValidAbstractWithTwoCachedMethod {}
-
-class _ValidAbstractWithTwoCachedMethod
-    with ValidAbstractWithTwoCachedMethod
-    implements _$ValidAbstractWithTwoCachedMethod {
-  _ValidAbstractWithTwoCachedMethod();
-
-  final _cachedMethodOneCached = <String, int>{};
-  final _cachedMethodTwoCached = <String, int>{};
-
-  @override
-  int cachedMethodOne() {
-    final cachedValue = _cachedMethodOneCached[""];
-    if (cachedValue == null) {
-      final int toReturn;
-      try {
-        final result = super.cachedMethodOne();
-
-        toReturn = result;
-      } catch (_) {
-        rethrow;
-      } finally {}
-
-      _cachedMethodOneCached[""] = toReturn;
-
-      return toReturn;
-    } else {
-      return cachedValue;
-    }
-  }
-
-  @override
-  int cachedMethodTwo() {
-    final cachedValue = _cachedMethodTwoCached[""];
-    if (cachedValue == null) {
-      final int toReturn;
-      try {
-        final result = super.cachedMethodTwo();
-
-        toReturn = result;
-      } catch (_) {
-        rethrow;
-      } finally {}
-
-      _cachedMethodTwoCached[""] = toReturn;
-
-      return toReturn;
-    } else {
-      return cachedValue;
-    }
-  }
-
-  @override
-  void somethingOne() {
-    _cachedMethodOneCached.clear();
-  }
-
-  @override
-  void somethingTwo() {
-    _cachedMethodTwoCached.clear();
-  }
-}
-''',
-)
-@withCache
-abstract class ValidAbstractWithTwoCachedMethod {
-  factory ValidAbstractWithTwoCachedMethod() =
-      _ValidAbstractWithTwoCachedMethod;
-
-  @cached
-  int cachedMethodOne() {
-    return 1;
-  }
-
-  @cached
-  int cachedMethodTwo() {
-    return 2;
-  }
-
-  @ClearCached('cachedMethodOne')
-  void somethingOne();
-
-  @ClearCached('cachedMethodTwo')
-  void somethingTwo();
 }
 
 @ShouldGenerate(
@@ -352,7 +240,7 @@ abstract class ValidReturnFutureBool {
     return 1;
   }
 
-  @ClearCached('cachedMethod')
+  @clearAllCached
   Future<bool> something() {
     return true;
   }

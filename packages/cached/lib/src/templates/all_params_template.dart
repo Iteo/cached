@@ -47,7 +47,7 @@ class AllParamsTemplate {
 
     if (optional.isNotEmpty && named.isNotEmpty) {
       throw InvalidGenerationSourceError(
-        'Method or constructor has oprional positional params an named params which shouldnt be possible.',
+        '[ERROR] Method or constructor has oprional positional params an named params which shouldnt be possible.',
       );
     }
 
