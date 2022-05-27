@@ -25,7 +25,8 @@ class ParamTemplate {
     }
   }
 
-  String get _requiredKeyword => param.isRequiredNamed ?  'required': '';
+  String get _requiredKeyword => param.isRequiredNamed ? 'required' : '';
 
-  String get _defaultValue => param.defaultValue != null ? '= ${param.defaultValue}': '';
+  String get _defaultValue =>
+      param.defaultValue != null ? '= ${param.defaultValue}' : '';
 }

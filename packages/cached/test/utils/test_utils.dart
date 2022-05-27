@@ -10,5 +10,4 @@ class TestDataProvider {
   Future<int> fetchRandomValue() => Future.value(getRandomValue());
 
   Future<int> fetchCurrentTimestamp() => Future.value(getCurrentTimestamp());
-
 }
