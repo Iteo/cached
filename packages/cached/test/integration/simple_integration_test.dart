@@ -1,4 +1,3 @@
-import 'package:cached_annotation/cached_annotation.dart';
 import 'package:test/test.dart';
 import '../utils/test_utils.dart';
 import 'simple/cached_test_simple.dart';
