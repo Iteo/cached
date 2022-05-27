@@ -55,24 +55,24 @@ class ClassWithCache {
           (element) => CachedMethod.getAnnotation(element) != null,
         )
         .map((e) => CachedMethod.fromElement(e, config));
-    
+
     final methodsWithTtls = {
       for (final method in methods)
-        if (method.ttl != null)
-          method.name
+        if (method.ttl != null) method.name
     };
 
     final clearMethods = element.methods
         .where((element) => ClearCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
-        .map((e) => ClearCachedMethod.fromElement(e, config,methodsWithTtls));
+        .map((e) => ClearCachedMethod.fromElement(e, config, methodsWithTtls));
 
     assertValidateClearCachedMethods(clearMethods, methods);
 
     final clearAllMethod = element.methods
         .where((element) => ClearAllCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
-        .map((e) => ClearAllCachedMethod.fromElement(e, config, methodsWithTtls));
+        .map((e) =>
+            ClearAllCachedMethod.fromElement(e, config, methodsWithTtls));
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
 

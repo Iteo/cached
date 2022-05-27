@@ -20,6 +20,7 @@ and the Flutter guide for
 &nbsp;
 [![stars](https://img.shields.io/github/stars/Iteo/cached.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/Iteo/cached)
 &nbsp;
+[![pub package](https://img.shields.io/pub/v/cached.svg)](https://pub.dartlang.org/packages/cached) &nbsp;
 [![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE)
 &nbsp;
 
@@ -29,13 +30,13 @@ and the Flutter guide for
 
 # Cached
 
-Simple Flutter package with build-in code generation. It simplifies and speedup creation of cache mechanism for dart
+Simple Dart package with build-in code generation. It simplifies and speedup creation of cache mechanism for dart
 classes.
 
 ## Least Recently Used (LRU) cache algorithm
 
 It is a finite key-value map using
-the [Least Recently Used (LRU)](http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used) algorithm, where the
+the [Least Recently Used (LRU)](https://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used) algorithm, where the
 most recently-used items are "kept alive" while older, less-recently used items are evicted to make room for newer
 items.
 

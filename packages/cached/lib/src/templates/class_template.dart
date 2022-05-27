@@ -26,7 +26,8 @@ class ClassTemplate {
       cachedMethods: classWithCache.methods,
     );
 
-    final constructorParamTemplates = AllParamsTemplate(classWithCache.constructor.params);
+    final constructorParamTemplates =
+        AllParamsTemplate(classWithCache.constructor.params);
 
     return '''
 class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {

@@ -15,7 +15,8 @@ void main() {
     test('cached value should be the same on the second method call', () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
-      final results  = await Future.wait([cachedClass.syncCachedValue(), cachedClass.syncCachedValue()]);
+      final results = await Future.wait(
+          [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()]);
 
       expect(results[0], equals(results[1]));
     });
@@ -29,15 +30,20 @@ void main() {
       expect(cachedValue != secondCachedValue, true);
     });
 
-    test('setting ignoreCache to true should ignore cached value and return new one', () async {
+    test(
+        'setting ignoreCache to true should ignore cached value and return new one',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
       final cachedValue = await cachedClass.syncCachedValue();
-      final secondCachedValue = await cachedClass.syncCachedValue(refresh: true);
+      final secondCachedValue =
+          await cachedClass.syncCachedValue(refresh: true);
 
       expect(cachedValue != secondCachedValue, true);
     });
 
-    test('cached method with set TTL, should return old value when there is no timeout', () async {
+    test(
+        'cached method with set TTL, should return old value when there is no timeout',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueWithTTl();
@@ -51,7 +57,8 @@ void main() {
       expect(cachedClass.counter(), 1);
     });
 
-    test('cached method with set TTL, should return new value when TTL timeout', () async {
+    test('cached method with set TTL, should return new value when TTL timeout',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueWithTTl();
@@ -72,14 +79,19 @@ void main() {
       _dataProvider = TestDataProvider();
     });
 
-    test('two calls of the same async functions, should return different values', () async {
+    test(
+        'two calls of the same async functions, should return different values',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
-      final results  = await Future.wait([cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()]);
+      final results = await Future.wait(
+          [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()]);
 
       expect(results[0], isNot(equals(results[1])));
     });
 
-    test('cached method with set TTL, should return old value when there is no timeout', () async {
+    test(
+        'cached method with set TTL, should return old value when there is no timeout',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueWithTTl();
@@ -92,7 +104,8 @@ void main() {
       expect(cachedClass.counter(), 2);
     });
 
-    test('cached method with set TTL, should return new value when TTL timeout', () async {
+    test('cached method with set TTL, should return new value when TTL timeout',
+        () async {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueWithTTl();
