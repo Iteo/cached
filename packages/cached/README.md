@@ -49,7 +49,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [Run the generator](#run-the-generator)
 - [Basics](#basics)
   - [withCache](#withcache)
-  - [cached](#cached)
+  - [cached](#cached-1)
   - [ignoreCache](#ignorecache)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
