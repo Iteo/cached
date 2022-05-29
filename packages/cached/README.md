@@ -156,6 +156,14 @@ It can take one additional boolean parameter `useStaticCache`. If this parameter
 cached class with static cache. It means each instance of this class will have access to the same cache. Default value
 is set to `false`
 
+````dart
+@WithCache(useStaticCache: true)
+abstract class Gen implements _$Gen {
+  factory Gen() = _Gen;
+
+  ...
+}
+
 ### Cached
 
 Method decorator that flag it as needing to be processed by `Cached` code generator.
@@ -255,7 +263,7 @@ Possible reasons why the generator gives an error
 
 - if method with `@cached` annotation doesn’t exist
 - if method to pair doesn’t exist
-- if method don't return `bool`, `Future<bool>` or not a `void`
+- if method don’t return `bool`, `Future<bool>` or not a `void`
 
 ### ClearAllCached
 
@@ -285,7 +293,7 @@ If the user is logged out, will clear cached values for all methods
 Possible reasons why the generator gives an error
 
 - if we have too many `clearAllCached` annotation, only one can be
-- if method don't return `bool`, `Future<bool>` or not a `void`
+- if method don’t return `bool`, `Future<bool>` or not a `void`
 
 ## Contribution
 
@@ -318,7 +326,7 @@ Suggestions of a new feature or fix should be created via pull-request or issue.
 - Describe what is broken
 
   The minimum requirement to report a bug fix is a reproduction path. Write steps that should be followed to find a
-  problem in code. Perfect situation is when you give full description why some code doesn't work and a solution code.
+  problem in code. Perfect situation is when you give full description why some code doesn’t work and a solution code.
 
 ## Contributors
 
