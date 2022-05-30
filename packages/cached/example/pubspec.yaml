@@ -12,6 +12,5 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.1.10
-  cached:
-    path: ../.
+  cached: ^1.0.1
   lints: ^1.0.0
