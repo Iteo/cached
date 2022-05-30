@@ -156,13 +156,14 @@ It can take one additional boolean parameter `useStaticCache`. If this parameter
 cached class with static cache. It means each instance of this class will have access to the same cache. Default value
 is set to `false`
 
-````dart
+```dart
 @WithCache(useStaticCache: true)
 abstract class Gen implements _$Gen {
   factory Gen() = _Gen;
 
   ...
 }
+```
 
 ### Cached
 
