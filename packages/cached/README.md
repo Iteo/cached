@@ -15,11 +15,11 @@ and the Flutter guide for
 <img width="400" src="https://github.com/Iteo/cached/raw/master/packages/cached/cached_sygnet.png">
 <br /><br />
 
-
 [![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml)
 &nbsp;
 [![stars](https://img.shields.io/github/stars/Iteo/cached.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/Iteo/cached)
 &nbsp;
+[![pub package](https://img.shields.io/pub/v/cached.svg)](https://pub.dartlang.org/packages/cached) &nbsp;
 [![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE)
 &nbsp;
 
@@ -29,13 +29,13 @@ and the Flutter guide for
 
 # Cached
 
-Simple Flutter package with build-in code generation. It simplifies and speedup creation of cache mechanism for dart
+Simple Dart package with build-in code generation. It simplifies and speedup creation of cache mechanism for dart
 classes.
 
 ## Least Recently Used (LRU) cache algorithm
 
 It is a finite key-value map using
-the [Least Recently Used (LRU)](http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used) algorithm, where the
+the [Least Recently Used (LRU)](https://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used) algorithm, where the
 most recently-used items are "kept alive" while older, less-recently used items are evicted to make room for newer
 items.
 
@@ -47,20 +47,20 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 - [Motivation](#motivation)
 - [Setup](#setup)
-    - [Run the generator](#run-the-generator)
+  - [Run the generator](#run-the-generator)
 - [Basics](#basics)
-    - [withCache](#withcache)
-    - [cached](#cached)
-    - [ignoreCache](#ignorecache)
-    - [clearCached](#clearcached)
-    - [clearAllCached](#clearallcached)
+  - [withCache](#withcache)
+  - [cached](#cached-1)
+  - [ignoreCache](#ignorecache)
+  - [clearCached](#clearcached)
+  - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
 
 ## Motivation
 
 There is quite often situation, that you have to cache something in memory for later usage. Common case is cache some
 API calls and theirs responses.
-Usually, it is done in some data layer, probably in - let say -  `RemoteRepository`
+Usually, it is done in some data layer, probably in - let say - `RemoteRepository`
 
 Oftentimes, the repository code might look like this:
 
@@ -157,6 +157,14 @@ It can take one additional boolean parameter `useStaticCache`. If this parameter
 cached class with static cache. It means each instance of this class will have access to the same cache. Default value
 is set to `false`
 
+````dart
+@WithCache(useStaticCache: true)
+abstract class Gen implements _$Gen {
+  factory Gen() = _Gen;
+
+  ...
+}
+
 ### Cached
 
 Method decorator that flag it as needing to be processed by `Cached` code generator.
@@ -170,6 +178,17 @@ There are 3 possible additional parameters:
   is set to `false`;
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
   means no limit.
+
+```dart
+@Cached(
+  ttl: 60,
+  syncWrite: true,
+  limit: 100,
+)
+Future<int> getInt(String param) {
+  return Future.value(1);
+}
+```
 
 ### IgnoreCache
 
@@ -197,7 +216,7 @@ Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignor
 
 Possible reason why the generator gives an error
 
-* if method has multiple `@ignoreCache` annotation
+- if method has multiple `@ignoreCache` annotation
 
 ### ClearCached
 
@@ -243,9 +262,9 @@ If the user is logged out, the user cache will be cleared.
 
 Possible reasons why the generator gives an error
 
-* if method with `@cached` annotation doesn’t exist
-* if method to pair doesn’t exist
-* if method don't return `bool`, `Future<bool>` or not a `void`
+- if method with `@cached` annotation doesn’t exist
+- if method to pair doesn’t exist
+- if method don’t return `bool`, `Future<bool>` or not a `void`
 
 ### ClearAllCached
 
@@ -274,8 +293,8 @@ If the user is logged out, will clear cached values for all methods
 
 Possible reasons why the generator gives an error
 
-* if we have too many `clearAllCached` annotation, only one can be
-* if method don't return `bool`, `Future<bool>` or not a `void`
+- if we have too many `clearAllCached` annotation, only one can be
+- if method don’t return `bool`, `Future<bool>` or not a `void`
 
 ## Contribution
 
@@ -308,7 +327,7 @@ Suggestions of a new feature or fix should be created via pull-request or issue.
 - Describe what is broken
 
   The minimum requirement to report a bug fix is a reproduction path. Write steps that should be followed to find a
-  problem in code. Perfect situation is when you give full description why some code doesn't work and a solution code.
+  problem in code. Perfect situation is when you give full description why some code doesn’t work and a solution code.
 
 ## Contributors
 

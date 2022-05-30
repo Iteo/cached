@@ -11,10 +11,8 @@ class ClearAllCachedMethodTemplate {
   final Iterable<CachedMethod> cachedMethods;
   final AllParamsTemplate paramsTemplate;
 
-  String _generateCacheClearMethods() => cachedMethods
-      .map((e) => e.name)
-      .map(_generateClearMaps)
-      .join("\n");
+  String _generateCacheClearMethods() =>
+      cachedMethods.map((e) => e.name).map(_generateClearMaps).join("\n");
 
   String generateMethod() {
     if (method == null) return '';
@@ -61,7 +59,7 @@ class ClearAllCachedMethodTemplate {
     }
     ''';
   }
-  
+
   String _generateClearMaps(String baseName) {
     return '''
 ${getCacheMapName(baseName)}.clear();
