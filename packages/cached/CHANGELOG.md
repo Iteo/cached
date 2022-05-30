@@ -1,4 +1,4 @@
-## 1.0.0+1
+## 1.0.1
 * Fix analyzer warnings 
 
 ## 1.0.0
