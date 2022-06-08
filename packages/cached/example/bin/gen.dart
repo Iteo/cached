@@ -48,6 +48,8 @@ abstract class Gen implements _$Gen {
   @Cached(syncWrite: true, ttl: 30, limit: 10)
   Future<Response> getDataWithCached({
     @IgnoreCache(useCacheOnError: true) bool ignoreCache = false,
+    @ignore String? smth,
+    String? smthTwo,
   }) {
     return get(Uri.parse(_url));
   }
