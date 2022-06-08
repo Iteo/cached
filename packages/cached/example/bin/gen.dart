@@ -45,11 +45,13 @@ abstract class Gen implements _$Gen {
   /// if true the cache will be ignored. Also you can use parameter `useCacheOnError`
   /// in the annotation and if set true then return the last cached value
   /// when an error occurs.
+  ///
+  /// Additional annotation @ignore
+  ///
+  /// Arguments with @ignore annotations will be ignored while generating cache key.
   @Cached(syncWrite: true, ttl: 30, limit: 10)
   Future<Response> getDataWithCached({
     @IgnoreCache(useCacheOnError: true) bool ignoreCache = false,
-    @ignore String? smth,
-    String? smthTwo,
   }) {
     return get(Uri.parse(_url));
   }
