@@ -52,6 +52,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [withCache](#withcache)
   - [cached](#cached-1)
   - [ignoreCache](#ignorecache)
+  - [ignore](#ignore)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
@@ -218,6 +219,20 @@ Future<int> getInt(String param, {@IgnoreCache(useCacheOnError: true) bool ignor
 Possible reason why the generator gives an error
 
 - if method has multiple `@ignoreCache` annotation
+
+### Ignore
+
+That annotation must be above a field in a method,
+arguments with `@ignore` annotations will be ignored while generating cache key.
+
+Example use:
+
+```dart
+@cached
+Future<int> getInt(@ignore String param) {
+  return Future.value(1);
+}
+```
 
 ### ClearCached
 

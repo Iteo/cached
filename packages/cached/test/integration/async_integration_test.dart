@@ -16,7 +16,8 @@ void main() {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final results = await Future.wait(
-          [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()]);
+        [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()],
+      );
 
       expect(results[0], equals(results[1]));
     });
@@ -84,7 +85,8 @@ void main() {
         () async {
       final cachedClass = AsynchronousCached(_dataProvider);
       final results = await Future.wait(
-          [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()]);
+        [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()],
+      );
 
       expect(results[0], isNot(equals(results[1])));
     });

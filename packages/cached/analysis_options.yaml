@@ -1,6 +1,8 @@
 include: package:lint/analysis_options.yaml
 
 analyzer:
+  errors:
+     invalid_dependency: ignore
   exclude:
     - ./**/*.cached.dart
     - test/inputs/*

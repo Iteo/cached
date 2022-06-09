@@ -119,7 +119,10 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
   }
 
   String get _paramsKey => method.params
-      .where((element) => element.ignoreCacheAnnotation == null)
+      .where(
+        (element) =>
+            element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
+      )
       .map((e) => '\${${e.name}.hashCode}')
       .join();
 

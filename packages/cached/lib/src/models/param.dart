@@ -21,6 +21,7 @@ class Param {
     required this.isOptional,
     this.ignoreCacheAnnotation,
     this.defaultValue,
+    required this.ignoreCacheKey,
   });
 
   final String name;
@@ -29,8 +30,10 @@ class Param {
   final bool isOptional;
   final String? defaultValue;
   final IgnoreCacheAnnotation? ignoreCacheAnnotation;
+  final bool ignoreCacheKey;
 
   factory Param.fromElement(ParameterElement element, Config config) {
+    // Ignore cache annotation data
     const paramAnnotationChecker = TypeChecker.fromRuntime(IgnoreCache);
     final annotation = paramAnnotationChecker.firstAnnotationOf(element);
 
@@ -55,6 +58,11 @@ class Param {
       }
     }
 
+    // Ignore parameters annotation data
+    const ignoreParamAnnotationChecker = TypeChecker.fromRuntime(Ignore);
+    final ignoreAnnotation =
+        ignoreParamAnnotationChecker.firstAnnotationOf(element);
+
     return Param(
       name: element.name,
       type: element.type.getDisplayString(withNullability: true),
@@ -62,6 +70,7 @@ class Param {
       defaultValue: element.defaultValueCode,
       isNamed: element.isNamed,
       isOptional: element.isOptional,
+      ignoreCacheKey: ignoreAnnotation != null,
     );
   }
 
