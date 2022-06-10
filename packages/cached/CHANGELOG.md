@@ -1,3 +1,6 @@
+## 1.0.4
+* Change analyzer version to ">=3.0.0 <5.0.0"
+
 ## 1.0.3
 * Downgrade meta package to 1.7.0
 
