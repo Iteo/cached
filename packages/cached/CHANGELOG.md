@@ -1,3 +1,6 @@
+## 1.0.3
+* Downgrade meta package to 1.7.0
+
 ## 1.0.2
 * Fix README.md
 
