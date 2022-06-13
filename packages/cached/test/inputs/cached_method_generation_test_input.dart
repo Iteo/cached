@@ -760,3 +760,45 @@ abstract class IgnoreCacheParamCacheOnError {
     return 1;
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$IgnoreParam {}
+
+class _IgnoreParam with IgnoreParam implements _$IgnoreParam {
+  _IgnoreParam();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({bool something = false}) {
+    final cachedValue = _methodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method(something: something);
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class IgnoreParam {
+  factory IgnoreParam() = _IgnoreParam;
+
+  @cached
+  int method({@ignore bool something = false}) {
+    return 1;
+  }
+}

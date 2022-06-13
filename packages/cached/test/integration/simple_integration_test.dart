@@ -40,11 +40,11 @@ void main() {
 
     test('should ignore the argument as a cache key', () async {
       final cachedClass = SimpleCached(_dataProvider);
-      final cachedValue = cachedClass.cachedTimestampWithIgnore();
+      final cachedValue = cachedClass.cachedTimestampWithIgnore(smth: true);
       await Future.delayed(const Duration(milliseconds: 10));
-      final secondCachedValue = cachedClass.cachedTimestampWithoutIgnore();
+      final secondCachedValue = cachedClass.cachedTimestampWithIgnore();
 
-      expect(cachedValue != secondCachedValue, true);
+      expect(cachedValue == secondCachedValue, true);
     });
 
     test('calling other clear cache method, should not clear cache', () {

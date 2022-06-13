@@ -33,11 +33,11 @@ void main() {
 
     test('should ignore the argument as a cache key', () async {
       final cachedClass = AsynchronousCached(_dataProvider);
-      final cachedValue = await cachedClass.syncCachedValueWithIgnore();
-      final secondCachedValue =
-          await cachedClass.syncCachedValueWithoutIgnore();
+      final cachedValue =
+          await cachedClass.syncCachedValueWithIgnore(smth: true);
+      final secondCachedValue = await cachedClass.syncCachedValueWithIgnore();
 
-      expect(cachedValue != secondCachedValue, true);
+      expect(cachedValue == secondCachedValue, true);
     });
 
     test(
