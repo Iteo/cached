@@ -38,6 +38,15 @@ void main() {
       expect(cachedValue != secondCachedValue, true);
     });
 
+    test('should ignore the argument as a cache key', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedTimestampWithIgnore(smth: true);
+      await Future.delayed(const Duration(milliseconds: 10));
+      final secondCachedValue = cachedClass.cachedTimestampWithIgnore();
+
+      expect(cachedValue == secondCachedValue, true);
+    });
+
     test('calling other clear cache method, should not clear cache', () {
       final cachedClass = SimpleCached(_dataProvider);
       final cachedValue = cachedClass.cachedTimestamp();

@@ -22,6 +22,16 @@ abstract class SimpleCached implements _$SimpleCached {
     return dataProvider.getCurrentTimestamp();
   }
 
+  @cached
+  int cachedTimestampWithoutIgnore({bool smth = false}) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
+  @cached
+  int cachedTimestampWithIgnore({@ignore bool smth = false}) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
   @clearCached
   void clearCachedValue();
 

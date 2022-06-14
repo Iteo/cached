@@ -31,6 +31,15 @@ void main() {
       expect(cachedValue != secondCachedValue, true);
     });
 
+    test('should ignore the argument as a cache key', () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue =
+          await cachedClass.syncCachedValueWithIgnore(smth: true);
+      final secondCachedValue = await cachedClass.syncCachedValueWithIgnore();
+
+      expect(cachedValue == secondCachedValue, true);
+    });
+
     test(
         'setting ignoreCache to true should ignore cached value and return new one',
         () async {
