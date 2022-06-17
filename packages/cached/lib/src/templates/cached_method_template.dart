@@ -1,4 +1,5 @@
 import 'package:cached/src/models/cached_method.dart';
+import 'package:cached/src/models/param.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:collection/collection.dart';
@@ -118,10 +119,25 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
 ''';
   }
 
-  String get _paramsKey => method.params
-      .where((element) => element.ignoreCacheAnnotation == null)
-      .map((e) => '\${${e.name}.hashCode}')
-      .join();
+  String get _paramsKey {
+    return method.params
+        .where((element) => element.ignoreCacheAnnotation == null)
+        .map(
+          (e) => _generateParamKeyPartCall(
+            name: e.name,
+            cacheKeyAnnotation: e.cacheKeyAnnotation,
+          ),
+        )
+        .join();
+  }
+
+  String _generateParamKeyPartCall({
+    required String name,
+    required CacheKeyAnnotation? cacheKeyAnnotation,
+  }) =>
+      cacheKeyAnnotation != null
+          ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
+          : '\${$name.hashCode}';
 
   String get _cacheMapName => getCacheMapName(method.name);
 

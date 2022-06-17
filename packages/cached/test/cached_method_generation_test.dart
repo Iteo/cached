@@ -25,6 +25,9 @@ Future<void> main() async {
     'StringIgnoreCache',
     'IgnoreCacheParam',
     'IgnoreCacheParamCacheOnError',
+    'CacheKeyParam',
+    'IgnoreCacheWithCacheKeyParam',
+    'IterableCacheKeyOnNonIterable',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

@@ -13,6 +13,14 @@ class IgnoreCacheAnnotation {
   final bool useCacheOnError;
 }
 
+class CacheKeyAnnotation {
+  const CacheKeyAnnotation({
+    required this.cacheFunctionCall,
+  });
+
+  final String cacheFunctionCall;
+}
+
 class Param {
   const Param({
     required this.name,
@@ -20,6 +28,7 @@ class Param {
     required this.isNamed,
     required this.isOptional,
     this.ignoreCacheAnnotation,
+    this.cacheKeyAnnotation,
     this.defaultValue,
   });
 
@@ -29,12 +38,26 @@ class Param {
   final bool isOptional;
   final String? defaultValue;
   final IgnoreCacheAnnotation? ignoreCacheAnnotation;
+  final CacheKeyAnnotation? cacheKeyAnnotation;
 
   factory Param.fromElement(ParameterElement element, Config config) {
     const paramAnnotationChecker = TypeChecker.fromRuntime(IgnoreCache);
+    const cacheKeyAnnotationChecker = TypeChecker.fromRuntime(CacheKey);
+
     final annotation = paramAnnotationChecker.firstAnnotationOf(element);
+    final cacheKeyAnnotation =
+        cacheKeyAnnotationChecker.firstAnnotationOf(element);
 
     IgnoreCacheAnnotation? annotationData;
+    CacheKeyAnnotation? cacheKeyAnnotationData;
+
+    if (annotation != null && cacheKeyAnnotation != null) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] Ignore cache cannot be used with cache key annotation',
+        element: element,
+      );
+    }
+
     if (annotation != null) {
       if (element.type.getDisplayString(withNullability: true) != 'bool') {
         throw InvalidGenerationSourceError(
@@ -55,6 +78,27 @@ class Param {
       }
     }
 
+    if (cacheKeyAnnotation != null) {
+      final reader = ConstantReader(cacheKeyAnnotation);
+      final cacheKeyFuncReader = reader.read('cacheKeyGenerator');
+      final cacheKeyFunc = cacheKeyFuncReader.objectValue.toFunctionValue();
+      if (cacheKeyFunc != null) {
+        if (cacheKeyFunc.librarySource.fullName
+                .startsWith('/cached_annotation/') &&
+            cacheKeyFunc.name == 'iterableCacheKeyGenerator' &&
+            !element.type.isDartCoreList) {
+          throw InvalidGenerationSourceError(
+            '[ERROR] Iterable cache key generator requires iterable parameter',
+            element: element,
+          );
+        }
+
+        cacheKeyAnnotationData = CacheKeyAnnotation(
+          cacheFunctionCall: cacheKeyFunc.name,
+        );
+      }
+    }
+
     return Param(
       name: element.name,
       type: element.type.getDisplayString(withNullability: true),
@@ -62,6 +106,7 @@ class Param {
       defaultValue: element.defaultValueCode,
       isNamed: element.isNamed,
       isOptional: element.isOptional,
+      cacheKeyAnnotation: cacheKeyAnnotationData,
     );
   }
 
