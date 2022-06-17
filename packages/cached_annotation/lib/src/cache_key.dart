@@ -39,14 +39,9 @@ const iterableCacheKey = CacheKey(cacheKeyGenerator: iterableCacheKeyGenerator);
 
 /// Calculates good hashcode for list of values
 String iterableCacheKeyGenerator(dynamic l) {
-  if(l == null) {
+  if(l == null || l is! Iterable) {
     return l.hashCode.toString();
   }
 
-  const prime = 31;
-  var result = 1;
-  for (final i in l as Iterable) {
-    result = result * prime + i.hashCode;
-  }
-  return result.toString();
+  return Object.hashAll(l).toString();
 }
