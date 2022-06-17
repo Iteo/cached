@@ -52,23 +52,23 @@ class CachedMethodTemplate {
 @override
 ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncModifier$asyncModifier$generatorModifier {
   ${_generateRemoveTtlLogic()}
-  final cachedValue = $_cacheMapName[$_paramsKey];
+  final cachedValue = $_cacheMapName["$_paramsKey"];
   if (cachedValue == null $ignoreCacheCondition) {
     ${_generateGetSyncedLogic()}
 
     final $_syncReturnType toReturn;
     try {
       final result = super.${method.name}(${paramsTemplate.generateParamsUsage()});
-      ${method.syncWrite && _returnsFuture ? "$_syncMapName[$_paramsKey] = result;" : ""}
+      ${method.syncWrite && _returnsFuture ? "$_syncMapName['$_paramsKey'] = result;" : ""}
       toReturn = $awaitIfNeeded result;
     } catch(_) {
       ${useCacheOnError ? "if (cachedValue != null) { return cachedValue; }" : ""}
       rethrow;
     } finally {
-      ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove($_paramsKey);" : ""}
+      ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""}
     }
 
-    $_cacheMapName[$_paramsKey] = toReturn;
+    $_cacheMapName["$_paramsKey"] = toReturn;
 
     ${_generateLimitLogic()}
     ${_generateAddTtlLogic()}
@@ -89,7 +89,7 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
     if (!method.syncWrite || !_returnsFuture) return '';
 
     return '''
-final cachedFuture = $_syncMapName[$_paramsKey];
+final cachedFuture = $_syncMapName["$_paramsKey"];
 
 if (cachedFuture != null) {
   return cachedFuture;
@@ -102,11 +102,11 @@ if (cachedFuture != null) {
 
     return '''
 final now = DateTime.now();
-final currentTtl = $_ttlMapName[$_paramsKey];
+final currentTtl = $_ttlMapName["$_paramsKey"];
 
 if (currentTtl != null && currentTtl.isBefore(now)) {
-  $_ttlMapName.remove($_paramsKey);
-  $_cacheMapName.remove($_paramsKey);
+  $_ttlMapName.remove("$_paramsKey");
+  $_cacheMapName.remove("$_paramsKey");
 }
 ''';
   }
@@ -115,47 +115,29 @@ if (currentTtl != null && currentTtl.isBefore(now)) {
     if (method.ttl == null) return '';
 
     return '''
-$_ttlMapName[$_paramsKey] = DateTime.now().add(const Duration(seconds: ${method.ttl}));
+$_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${method.ttl}));
 ''';
   }
 
   String get _paramsKey {
-    final methodParams =
-        method.params.where((element) => element.ignoreCacheAnnotation == null);
-    final oneParamKey = methodParams.length == 1;
-
-    return _generateParamsKeyQuotes(
-      value: methodParams
-          .map(
-            (e) => _generateParamKeyPartCall(
-              name: e.name,
-              cacheKeyAnnotation: e.cacheKeyAnnotation,
-              oneParamKey: oneParamKey,
-            ),
-          )
-          .join(),
-      oneParamKey: oneParamKey,
-    );
+    return method.params
+        .where((element) => element.ignoreCacheAnnotation == null)
+        .map(
+          (e) => _generateParamKeyPartCall(
+            name: e.name,
+            cacheKeyAnnotation: e.cacheKeyAnnotation,
+          ),
+        )
+        .join();
   }
 
   String _generateParamKeyPartCall({
     required String name,
     required CacheKeyAnnotation? cacheKeyAnnotation,
-    required bool oneParamKey,
   }) =>
       cacheKeyAnnotation != null
-          ? oneParamKey
-              ? '${cacheKeyAnnotation.cacheFunctionCall}($name)'
-              : '\${${cacheKeyAnnotation.cacheFunctionCall}($name)}'
-          : oneParamKey
-              ? '$name.hashCode.toString()'
-              : '\${$name.hashCode}';
-
-  String _generateParamsKeyQuotes({
-    required String value,
-    required bool oneParamKey,
-  }) =>
-      oneParamKey ? value : '"$value"';
+          ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
+          : '\${$name.hashCode}';
 
   String get _cacheMapName => getCacheMapName(method.name);
 
