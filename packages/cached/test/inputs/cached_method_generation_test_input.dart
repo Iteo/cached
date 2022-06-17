@@ -589,12 +589,12 @@ class _AsyncSyncWrite with AsyncSyncWrite implements _$AsyncSyncWrite {
       final int toReturn;
       try {
         final result = super.method();
-        _methodSync[''] = result;
+        _methodSync[""] = result;
         toReturn = await result;
       } catch (_) {
         rethrow;
       } finally {
-        _methodSync.remove('');
+        _methodSync.remove("");
       }
 
       _methodCached[""] = toReturn;
@@ -772,7 +772,7 @@ class _CacheKeyParam with CacheKeyParam implements _$CacheKeyParam {
 
   @override
   int method({bool something = false}) {
-    final cachedValue = _methodCached["${_cacheKeyGenerator(something)}"];
+    final cachedValue = _methodCached[_cacheKeyGenerator(something)];
     if (cachedValue == null) {
       final int toReturn;
       try {
@@ -783,7 +783,7 @@ class _CacheKeyParam with CacheKeyParam implements _$CacheKeyParam {
         rethrow;
       } finally {}
 
-      _methodCached["${_cacheKeyGenerator(something)}"] = toReturn;
+      _methodCached[_cacheKeyGenerator(something)] = toReturn;
 
       return toReturn;
     } else {
