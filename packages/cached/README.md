@@ -53,7 +53,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [cached](#cached-1)
   - [ignoreCache](#ignorecache)
   - [ignore](#ignore)
-  - [cacheKey] (#cachekey)
+  - [cacheKey](#cachekey)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)

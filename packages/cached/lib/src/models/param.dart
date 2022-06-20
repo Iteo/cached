@@ -85,11 +85,15 @@ class Param {
       final reader = ConstantReader(cacheKeyAnnotation);
       final cacheKeyFuncReader = reader.read('cacheKeyGenerator');
       final cacheKeyFunc = cacheKeyFuncReader.objectValue.toFunctionValue();
+      final elementType = element.type;
+
       if (cacheKeyFunc != null) {
         if (cacheKeyFunc.librarySource.fullName
                 .startsWith('/cached_annotation/') &&
             cacheKeyFunc.name == 'iterableCacheKeyGenerator' &&
-            !element.type.isDartCoreList) {
+            !(elementType.isDartCoreList ||
+                elementType.isDartCoreIterable ||
+                elementType.isDartCoreSet)) {
           throw InvalidGenerationSourceError(
             '[ERROR] Iterable cache key generator requires iterable parameter',
             element: element,

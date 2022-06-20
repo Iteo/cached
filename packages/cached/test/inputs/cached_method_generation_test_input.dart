@@ -872,4 +872,53 @@ abstract class IterableCacheKeyOnNonIterable {
   }
 }
 
+@ShouldGenerate(r'''
+abstract class _$IterableCacheKeyOnIterable {}
+
+class _IterableCacheKeyOnIterable
+    with IterableCacheKeyOnIterable
+    implements _$IterableCacheKeyOnIterable {
+  _IterableCacheKeyOnIterable();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({Iterable<int> iterable, List<int> list, Set<int> set}) {
+    final cachedValue = _methodCached[
+        "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method(iterable: iterable, list: list, set: set);
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[
+              "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"] =
+          toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''')
+@withCache
+abstract class IterableCacheKeyOnIterable {
+  factory IterableCacheKeyOnIterable() = _IterableCacheKeyOnIterable;
+
+  @cached
+  int method({
+    @iterableCacheKey Iterable<int> iterable,
+    @iterableCacheKey List<int> list,
+    @iterableCacheKey Set<int> set,
+  }) {
+    return 1;
+  }
+}
+
 String _cacheKeyGenerator(dynamic value) => "testCacheKey";
