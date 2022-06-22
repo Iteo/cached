@@ -1,3 +1,7 @@
+## 1.1.0
+* Add `@IgnoreCache()` annotation
+* Add `@CacheKey()` annotation
+
 ## 1.0.4
 * Change analyzer version to ">=3.0.0 <5.0.0"
 
