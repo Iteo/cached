@@ -16,9 +16,36 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @cached
+  int cachedValueWithCustomKey(
+    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+  ) {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
+  int cachedWithIterableCacheKey(@iterableCacheKey List<String> values) {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
+  int cachedWithNullableList(@iterableCacheKey List<String>? values) {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
   int cachedTimestamp({
     @ignoreCache bool refresh = false,
   }) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
+  @cached
+  int cachedTimestampWithoutIgnore({bool smth = false}) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
+  @cached
+  int cachedTimestampWithIgnore({@ignore bool smth = false}) {
     return dataProvider.getCurrentTimestamp();
   }
 
@@ -31,3 +58,5 @@ abstract class SimpleCached implements _$SimpleCached {
   @clearAllCached
   void clearAll();
 }
+
+String _cachedKeyGenerator(dynamic value) => value.toString();

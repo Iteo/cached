@@ -52,6 +52,8 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [withCache](#withcache)
   - [cached](#cached-1)
   - [ignoreCache](#ignorecache)
+  - [ignore](#ignore)
+  - [cacheKey](#cachekey)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
 - [Contribution](#contribution)
@@ -219,6 +221,51 @@ Possible reason why the generator gives an error
 
 - if method has multiple `@ignoreCache` annotation
 
+### Ignore
+
+That annotation must be above a field in a method,
+arguments with `@ignore` annotations will be ignored while generating cache key.
+
+Example use:
+
+```dart
+@cached
+Future<int> getInt(@ignore String param) {
+  return Future.value(1);
+}
+```
+
+### CacheKey
+
+That annotation must be above a field in a method and must contain constant function that will
+return cache key for provided field value
+
+Example use:
+
+```dart
+@cached
+Future<int> getInt(@CacheKey(cacheKeyGenerator: exampleCacheFunction) int test) async {
+  await Future.delayed(Duration(milliseconds: 20));
+  return test;
+}
+
+String exampleCacheFunction(dynamic value) {
+  return value.toString();
+}
+```
+
+You can also use `@iterableCacheKey`, which will generate cache key from `Iterable<T>` values
+
+Example use:
+
+```dart
+@cached
+Future<List<int>> getInt(@iterableCacheKey List<int> test) async {
+  await Future.delayed(Duration(milliseconds: 20));
+  return test;
+}
+```
+
 ### ClearCached
 
 Method decorator that flag it as needing to be processed by `Cached` code generator.
@@ -287,7 +334,7 @@ methods will be cleared
 @clearAllCached
 Future<bool> clearAllData() {
   return userDataSource.isLoggedOut();
-};
+}
 ```
 
 If the user is logged out, will clear cached values for all methods

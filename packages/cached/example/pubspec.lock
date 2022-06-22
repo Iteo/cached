@@ -91,13 +91,13 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.4"
   cached_annotation:
     dependency: "direct main"
     description:
-      name: cached_annotation
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../../cached_annotation"
+      relative: true
+    source: path
     version: "1.0.0"
   charcode:
     dependency: transitive

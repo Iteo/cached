@@ -71,8 +71,9 @@ class ClassWithCache {
     final clearAllMethod = element.methods
         .where((element) => ClearAllCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
-        .map((e) =>
-            ClearAllCachedMethod.fromElement(e, config, methodsWithTtls));
+        .map(
+          (e) => ClearAllCachedMethod.fromElement(e, config, methodsWithTtls),
+        );
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
 

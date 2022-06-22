@@ -24,7 +24,10 @@ class ClearAllCachedMethod {
   final Set<String> ttlsToClear;
 
   factory ClearAllCachedMethod.fromElement(
-      MethodElement element, Config config, Set<String> ttlsToClear) {
+    MethodElement element,
+    Config config,
+    Set<String> ttlsToClear,
+  ) {
     return ClearAllCachedMethod(
       name: element.name,
       returnType: element.returnType.getDisplayString(withNullability: true),

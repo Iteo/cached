@@ -19,6 +19,16 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
     return dataProvider.fetchRandomValue();
   }
 
+  @Cached(syncWrite: true)
+  Future<int> syncCachedValueWithoutIgnore({bool smth = false}) {
+    return dataProvider.fetchRandomValue();
+  }
+
+  @Cached(syncWrite: true)
+  Future<int> syncCachedValueWithIgnore({@ignore bool smth = false}) {
+    return dataProvider.fetchRandomValue();
+  }
+
   @Cached(ttl: ttlDurationSeconds, syncWrite: true)
   Future<int> syncCachedValueWithTTl() async {
     _counter++;

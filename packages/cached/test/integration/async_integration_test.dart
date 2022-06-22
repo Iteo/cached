@@ -16,7 +16,8 @@ void main() {
       final cachedClass = AsynchronousCached(_dataProvider);
 
       final results = await Future.wait(
-          [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()]);
+        [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()],
+      );
 
       expect(results[0], equals(results[1]));
     });
@@ -28,6 +29,15 @@ void main() {
       final secondCachedValue = await cachedClass.syncCachedValue();
 
       expect(cachedValue != secondCachedValue, true);
+    });
+
+    test('should ignore the argument as a cache key', () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue =
+          await cachedClass.syncCachedValueWithIgnore(smth: true);
+      final secondCachedValue = await cachedClass.syncCachedValueWithIgnore();
+
+      expect(cachedValue == secondCachedValue, true);
     });
 
     test(
@@ -84,7 +94,8 @@ void main() {
         () async {
       final cachedClass = AsynchronousCached(_dataProvider);
       final results = await Future.wait(
-          [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()]);
+        [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()],
+      );
 
       expect(results[0], isNot(equals(results[1])));
     });
