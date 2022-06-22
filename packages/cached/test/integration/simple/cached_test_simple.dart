@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_annotation/cached_annotation.dart';
 
 import '../../utils/test_utils.dart';
@@ -31,6 +33,12 @@ abstract class SimpleCached implements _$SimpleCached {
   int cachedTimestampWithIgnore({@ignore bool smth = false}) {
     return dataProvider.getCurrentTimestamp();
   }
+
+  @StreamedCache(methodName: "cachedValue", emitLastValue: false)
+  Stream<int> streamOfCachedValue();
+
+  @StreamedCache(methodName: "cachedTimestamp", emitLastValue: true)
+  Stream<int> streamOfCachedTimestampLastValue();
 
   @clearCached
   void clearCachedValue();

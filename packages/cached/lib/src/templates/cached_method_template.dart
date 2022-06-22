@@ -6,12 +6,16 @@ import 'package:collection/collection.dart';
 class CachedMethodTemplate {
   CachedMethodTemplate(
     this.method, {
+    required this.methods,
     required this.useStaticCache,
+    required this.isCacheStreamed,
   }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final CachedMethod method;
+  final Iterable<CachedMethod> methods;
   final AllParamsTemplate paramsTemplate;
   final bool useStaticCache;
+  final bool isCacheStreamed;
 
   String generateSyncMap() {
     if (!method.syncWrite) {
@@ -66,8 +70,10 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
     } finally {
       ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""}
     }
-
+    
     $_cacheMapName["$_paramsKey"] = toReturn;
+    
+    ${_generateStreamCall()}
 
     ${_generateLimitLogic()}
     ${_generateAddTtlLogic()}
@@ -118,13 +124,7 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
 ''';
   }
 
-  String get _paramsKey => method.params
-      .where(
-        (element) =>
-            element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
-      )
-      .map((e) => '\${${e.name}.hashCode}')
-      .join();
+  String get _paramsKey => getParamKey(method.params);
 
   String get _cacheMapName => getCacheMapName(method.name);
 
@@ -144,5 +144,16 @@ if ($_cacheMapName.length > ${method.limit}) {
   $_cacheMapName.remove($_cacheMapName.entries.last.key);
 }
 ''';
+  }
+
+  String _generateStreamCall() {
+    return isCacheStreamed
+        ? '''
+    final streamController = ${getCacheStreamMapName(method.name)}["$_paramsKey"];
+    if(streamController!=null) {
+       streamController.sink.add(toReturn);
+    }
+    '''
+        : '';
   }
 }

@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:async/async.dart';
 import 'package:test/test.dart';
+
 import '../utils/test_utils.dart';
 import 'simple/cached_test_simple.dart';
 
@@ -68,6 +72,41 @@ void main() {
 
       expect(cachedValue != secondCachedValue, true);
       expect(cachedTimestamp != secondCachedTimestamp, true);
+    });
+
+    test('cached value cache should be streamed', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final streamValue = StreamQueue(cachedClass.streamOfCachedValue());
+      final cachedValue = cachedClass.cachedValue();
+      expect(cachedValue, await streamValue.next);
+    });
+
+    test('last value of stream should be emitted', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedTimestamp(refresh: true);
+      final streamValue =
+          StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
+
+      expect(cachedValue, await streamValue.next);
+    });
+
+    test(
+        'requesting another stream with last value, should not cause emit on others',
+        () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedTimestamp(refresh: true);
+
+      final streamValue =
+          StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
+      expect(cachedValue, await streamValue.next);
+      final firstStreamSub =
+          streamValue.rest.listen((event) => throw "Unexpected event");
+
+      final anotherStreamValue =
+          StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
+      expect(cachedValue, await anotherStreamValue.next);
+
+      await firstStreamSub.cancel();
     });
   });
 }

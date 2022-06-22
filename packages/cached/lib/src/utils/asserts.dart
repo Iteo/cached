@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -135,5 +136,35 @@ void assertCorrectClearMethodType(MethodElement element) {
         element: element,
       );
     }
+  }
+}
+
+void assertOneCacheStreamPerCachedMethod(
+  Iterable<MethodElement> methods,
+  Iterable<StreamedCacheMethod> streamedCacheMethods,
+) {
+  for (final method in methods) {
+    final methodName = method.name;
+    final referencingStreamedCacheMethods =
+        streamedCacheMethods.where((s) => s.targetMethodName == methodName);
+
+    if (referencingStreamedCacheMethods
+            .where((s) => s.targetMethodName == methodName)
+            .length >
+        1) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `$methodName` cannot be targeted by multiple @StreamedCache methods',
+        element: method,
+      );
+    }
+  }
+}
+
+void assertCorrectStreamMethodType(MethodElement element) {
+  if (!element.isAbstract) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] `${element.name}` must be a abstract method',
+      element: element,
+    );
   }
 }

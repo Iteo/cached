@@ -4,6 +4,7 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/asserts.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:cached_annotation/cached_annotation.dart';
@@ -19,6 +20,7 @@ class ClassWithCache {
     required this.methods,
     required this.constructor,
     required this.clearMethods,
+    required this.streamedCacheMethods,
     this.clearAllMethod,
   });
 
@@ -27,6 +29,7 @@ class ClassWithCache {
   final Constructor constructor;
   final Iterable<CachedMethod> methods;
   final Iterable<ClearCachedMethod> clearMethods;
+  final Iterable<StreamedCacheMethod> streamedCacheMethods;
   final ClearAllCachedMethod? clearAllMethod;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
@@ -77,12 +80,27 @@ class ClassWithCache {
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
 
+    final streamedCacheMethods = element.methods
+        .where((element) => StreamedCacheMethod.getAnnotation(element) != null)
+        .inspect(assertCorrectStreamMethodType)
+        .map(
+          (e) => StreamedCacheMethod.fromElement(
+            e,
+            element.methods,
+            config,
+          ),
+        )
+        .toList();
+
+    assertOneCacheStreamPerCachedMethod(element.methods, streamedCacheMethods);
+
     return ClassWithCache(
       name: element.name,
       useStaticCache:
           useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
       methods: methods,
       clearMethods: clearMethods,
+      streamedCacheMethods: streamedCacheMethods,
       constructor: constructor,
       clearAllMethod: clearAllMethod.firstOrNull,
     );

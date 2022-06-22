@@ -1,8 +1,21 @@
+import 'package:cached/src/models/param.dart';
+
 final futureRegexp = RegExp(r'^Future<(.+)>$');
 final futureBoolRegexp = RegExp(r'^Future<bool>$');
 final futureVoidRegexp = RegExp(r'^Future<void>$');
 final voidRegexp = RegExp(r'^void$');
 final boolRegexp = RegExp(r'^bool$');
+
+String getCacheStreamMapName(String targetMethodName) =>
+    '_${targetMethodName}CacheStream';
+
+String getParamKey(Iterable<Param> params) => params
+    .where(
+      (element) =>
+          element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
+    )
+    .map((e) => '\${${e.name}.hashCode}')
+    .join();
 
 String getCacheMapName(String methodName) => '_${methodName}Cached';
 

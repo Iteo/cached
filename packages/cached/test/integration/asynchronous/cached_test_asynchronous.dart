@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_annotation/cached_annotation.dart';
 
 import '../../utils/test_utils.dart';
@@ -18,6 +20,9 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   Future<int> syncCachedValue({@ignoreCache bool refresh = false}) {
     return dataProvider.fetchRandomValue();
   }
+
+  @StreamedCache(methodName: "syncCachedValue", emitLastValue: false)
+  Stream<int> syncCachedValueStream();
 
   @Cached(syncWrite: true)
   Future<int> syncCachedValueWithoutIgnore({bool smth = false}) {
@@ -47,6 +52,9 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
     await Future.delayed(const Duration(milliseconds: 100));
     return dataProvider.fetchRandomValue();
   }
+
+  @StreamedCache(methodName: "asyncCachedValue", emitLastValue: false)
+  Stream<int> asyncCacheStream();
 
   @ClearCached("asyncCachedValue")
   void clearAsyncCachedValue();
