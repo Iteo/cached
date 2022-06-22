@@ -22,6 +22,46 @@ void main() {
       expect(cachedValue, equals(secondCachedValue));
     });
 
+    test('cached values should be stored by generated custom cache key', () {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      for (final exampleValue in ["a", "b", "c"]) {
+        final cachedValue = cachedClass.cachedValueWithCustomKey(exampleValue);
+        final secondCachedValue =
+            cachedClass.cachedValueWithCustomKey(exampleValue);
+        expect(cachedValue, equals(secondCachedValue));
+      }
+    });
+
+    test('iterableCacheKeyGenerator should generate reproducible hashes', () {
+      final exampleValue = ["a", "b"];
+
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final cachedValue = cachedClass.cachedWithIterableCacheKey(exampleValue);
+      final secondCachedValue =
+          cachedClass.cachedWithIterableCacheKey(exampleValue);
+      final reverseListOrderingValue = cachedClass
+          .cachedWithIterableCacheKey(exampleValue.reversed.toList());
+      final listCopyValue =
+          cachedClass.cachedWithIterableCacheKey(exampleValue.toList());
+
+      expect(cachedValue, equals(secondCachedValue));
+      expect(cachedValue, isNot(reverseListOrderingValue));
+      expect(cachedValue, equals(listCopyValue));
+    });
+
+    test('iterableCacheKeyGenerator should handle null', () {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final cachedValue = cachedClass.cachedWithNullableList(null);
+      final secondCachedValue = cachedClass.cachedWithNullableList(null);
+      final notCachedValue = cachedClass.cachedWithNullableList([]);
+
+      expect(cachedValue, equals(secondCachedValue));
+      expect(cachedValue, isNot(notCachedValue));
+    });
+
     test('clear cache method should clear cache', () {
       final cachedClass = SimpleCached(_dataProvider);
       final cachedValue = cachedClass.cachedValue();

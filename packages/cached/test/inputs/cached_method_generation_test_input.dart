@@ -802,3 +802,123 @@ abstract class IgnoreParam {
     return 1;
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$CacheKeyParam {}
+
+class _CacheKeyParam with CacheKeyParam implements _$CacheKeyParam {
+  _CacheKeyParam();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({bool something = false}) {
+    final cachedValue = _methodCached["${_cacheKeyGenerator(something)}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method(something: something);
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached["${_cacheKeyGenerator(something)}"] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class CacheKeyParam {
+  factory CacheKeyParam() = _UseCacheKeyParam;
+
+  @cached
+  int method(
+      {@CacheKey(cacheKeyGenerator: _cacheKeyGenerator)
+          bool something = false}) {
+    return 1;
+  }
+}
+
+@ShouldThrow('[ERROR] Ignore cache cannot be used with cache key annotation')
+@withCache
+abstract class IgnoreCacheWithCacheKeyParam {
+  factory CacheKeyParam() = _UseCacheKeyParam;
+
+  @cached
+  int method(
+      {@IgnoreCache()
+      @CacheKey(cacheKeyGenerator: _cacheKeyGenerator)
+          bool something = false}) {
+    return 1;
+  }
+}
+
+@ShouldThrow('[ERROR] Iterable cache key generator requires iterable parameter')
+@withCache
+abstract class IterableCacheKeyOnNonIterable {
+  factory CacheKeyParam() = _UseCacheKeyParam;
+
+  @cached
+  int method({@iterableCacheKey bool something = false}) {
+    return 1;
+  }
+}
+
+@ShouldGenerate(r'''
+abstract class _$IterableCacheKeyOnIterable {}
+
+class _IterableCacheKeyOnIterable
+    with IterableCacheKeyOnIterable
+    implements _$IterableCacheKeyOnIterable {
+  _IterableCacheKeyOnIterable();
+
+  final _methodCached = <String, int>{};
+
+  @override
+  int method({Iterable<int> iterable, List<int> list, Set<int> set}) {
+    final cachedValue = _methodCached[
+        "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.method(iterable: iterable, list: list, set: set);
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _methodCached[
+              "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"] =
+          toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''')
+@withCache
+abstract class IterableCacheKeyOnIterable {
+  factory IterableCacheKeyOnIterable() = _IterableCacheKeyOnIterable;
+
+  @cached
+  int method({
+    @iterableCacheKey Iterable<int> iterable,
+    @iterableCacheKey List<int> list,
+    @iterableCacheKey Set<int> set,
+  }) {
+    return 1;
+  }
+}
+
+String _cacheKeyGenerator(dynamic value) => "testCacheKey";
