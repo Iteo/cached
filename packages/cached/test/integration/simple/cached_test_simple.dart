@@ -17,7 +17,8 @@ abstract class SimpleCached implements _$SimpleCached {
 
   @cached
   int cachedValueWithCustomKey(
-      @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value) {
+    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+  ) {
     return dataProvider.getRandomValue();
   }
 

@@ -122,9 +122,9 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
   String get _paramsKey {
     return method.params
         .where(
-        (element) =>
-            element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
-      )
+          (element) =>
+              element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
+        )
         .map(
           (e) => _generateParamKeyPartCall(
             name: e.name,
