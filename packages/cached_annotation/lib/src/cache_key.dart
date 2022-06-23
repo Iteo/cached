@@ -39,7 +39,7 @@ const iterableCacheKey = CacheKey(cacheKeyGenerator: iterableCacheKeyGenerator);
 
 /// Calculates good hashcode for list of values
 String iterableCacheKeyGenerator(dynamic l) {
-  if(l == null || l is! Iterable) {
+  if (l == null || l is! Iterable) {
     return l.hashCode.toString();
   }
 
