@@ -347,8 +347,8 @@ Possible reasons why the generator gives an error
 
 ### Streamed cache
 
-Method annotation that is used to get stream of cache updates from cached method.
-It takes two parameters, name of the cached method and if last value from cached should be emitted when creating new stream.
+Method annotation that is used to get a stream of cache updates from a cached method.
+You have to provide at least the name of the cached class method in the `methodName` parameter.
 
 Simple example of usage:
 ```dart
@@ -361,7 +361,7 @@ int cachedMethod() {
 Stream<int> cachedStream();
 ```
 
-Parameters of cachedMethod should match target method (except @ignore or @ignoreCache), otherwise `InvalidGenerationSourceError` will be thrown.
+Parameters of cachedMethod should match target method (except `@ignore` or `@ignoreCache`), otherwise `InvalidGenerationSourceError` will be thrown.
 Return type of method marked with `@StreamedCache` should be `Stream<sync type of target method>`.
 
 Example:
@@ -375,6 +375,8 @@ Future<String> cachedMethod(int x, @ignore String y) async {
 @StreamedCache(methodName: "cachedMethod", emitLastValue: false)
 Stream<String> cachedStream(int x);
 ```
+
+You can also request usage of `BehaviorSubject` from RxDart instead of `StreamController.broadcast()` in generated code, by setting `useBehaviorSubject` to true.
 
 ## Contribution
 

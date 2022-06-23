@@ -1,7 +1,6 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/param.dart';
 import 'package:cached_annotation/cached_annotation.dart';
@@ -16,6 +15,7 @@ class StreamedCacheMethod {
     required this.coreReturnType,
     required this.params,
     required this.emitLastValue,
+    required this.useBehaviorSubject,
     required this.coreReturnTypeNullable,
   });
 
@@ -24,6 +24,7 @@ class StreamedCacheMethod {
   final Iterable<Param> params;
   final String coreReturnType;
   final bool emitLastValue;
+  final bool useBehaviorSubject;
   final bool coreReturnTypeNullable;
 
   factory StreamedCacheMethod.fromElement(
@@ -35,10 +36,13 @@ class StreamedCacheMethod {
 
     var methodName = "";
     var emitLastValue = false;
+    var useRxDartBehaviorSubject = false;
+
     if (annotation != null) {
       final reader = ConstantReader(annotation);
       emitLastValue = reader.read('emitLastValue').boolValue;
       methodName = reader.read('methodName').stringValue;
+      useRxDartBehaviorSubject = reader.read('useBehaviorSubject').boolValue;
     }
 
     final targetMethod =
@@ -92,11 +96,7 @@ class StreamedCacheMethod {
 
       if (!ListEquality<ParameterElement>(
         EqualityBy(
-          (p) => _StreamedMethodParamEquality(
-            name: p.name,
-            type: p.type,
-            optional: p.isOptional,
-          ),
+          (p) => Param.fromElement(p, config),
         ),
       ).equals(targetMethodParameters, element.parameters)) {
         throw InvalidGenerationSourceError(
@@ -109,8 +109,10 @@ class StreamedCacheMethod {
         name: element.name,
         coreReturnType: coreCacheSteamMethodTypeStr ?? 'dynamic',
         emitLastValue: emitLastValue,
-        params: element.parameters.map((p) => Param.fromElement(p, config)),
+        params:
+            targetMethod.parameters.map((p) => Param.fromElement(p, config)),
         targetMethodName: methodName,
+        useBehaviorSubject: useRxDartBehaviorSubject,
         coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
             NullabilitySuffix.question,
       );
@@ -121,35 +123,4 @@ class StreamedCacheMethod {
     const methodAnnotationChecker = TypeChecker.fromRuntime(StreamedCache);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
-}
-
-class _StreamedMethodParamEquality {
-  const _StreamedMethodParamEquality({
-    required this.name,
-    required this.type,
-    required this.optional,
-  });
-
-  final String name;
-  final DartType type;
-  final bool optional;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is _StreamedMethodParamEquality) {
-      return name == other.name &&
-          type.getDisplayString(withNullability: true) ==
-              other.type.getDisplayString(withNullability: true) &&
-          optional == optional;
-    } else {
-      return false;
-    }
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        name,
-        type.getDisplayString(withNullability: true),
-        optional,
-      );
 }

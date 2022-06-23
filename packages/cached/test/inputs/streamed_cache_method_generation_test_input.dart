@@ -147,7 +147,8 @@ class _SimpleMethod with SimpleMethod implements _$SimpleMethod {
 
   final _cachedMethodCached = <String, int>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int>>.broadcast();
 
   @override
   int cachedMethod() {
@@ -164,10 +165,7 @@ class _SimpleMethod with SimpleMethod implements _$SimpleMethod {
 
       _cachedMethodCached[""] = toReturn;
 
-      final streamController = _cachedMethodCacheStream[""];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink.add(MapEntry("", toReturn));
 
       return toReturn;
     } else {
@@ -178,24 +176,12 @@ class _SimpleMethod with SimpleMethod implements _$SimpleMethod {
   @override
   Stream<int> cachedStream() {
     final paramsKey = "";
-    final streamController = _cachedMethodCacheStream[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
-
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
-    }
+    return stream;
   }
 }
 ''')
@@ -220,7 +206,8 @@ class _FutureMethod with FutureMethod implements _$FutureMethod {
 
   final _cachedMethodCached = <String, int>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int>>.broadcast();
 
   @override
   Future<int> cachedMethod() async {
@@ -237,10 +224,7 @@ class _FutureMethod with FutureMethod implements _$FutureMethod {
 
       _cachedMethodCached[""] = toReturn;
 
-      final streamController = _cachedMethodCacheStream[""];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink.add(MapEntry("", toReturn));
 
       return toReturn;
     } else {
@@ -251,24 +235,12 @@ class _FutureMethod with FutureMethod implements _$FutureMethod {
   @override
   Stream<int> cachedStream() {
     final paramsKey = "";
-    final streamController = _cachedMethodCacheStream[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
-
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
-    }
+    return stream;
   }
 }
 ''')
@@ -293,7 +265,8 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
 
   final _cachedMethodCached = <String, int>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int>>.broadcast();
 
   @override
   int cachedMethod() {
@@ -310,10 +283,7 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
 
       _cachedMethodCached[""] = toReturn;
 
-      final streamController = _cachedMethodCacheStream[""];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink.add(MapEntry("", toReturn));
 
       return toReturn;
     } else {
@@ -324,31 +294,19 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
   @override
   Stream<int> cachedStream() {
     final paramsKey = "";
-    final streamController = _cachedMethodCacheStream[paramsKey];
-    final lastValue = _cachedMethodCached[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
-
-      final returnStream = StreamController<int>();
-      if (lastValue != null) {
-        returnStream.sink.add(lastValue);
-      }
-
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int>();
-      if (lastValue != null) {
-        returnStream.sink.add(lastValue);
-      }
-
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
+    final returnStreamController = StreamController<int>();
+    final lastValue = _cachedTimestampCached[paramsKey];
+    if (lastValue != null) {
+      returnStreamController.sink.add(lastValue);
     }
+    returnStreamController.addStream(stream);
+
+    return returnStreamController.stream;
   }
 }
 ''')
@@ -373,7 +331,8 @@ class _Parameters with Parameters implements _$Parameters {
 
   final _cachedMethodCached = <String, int>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int>>.broadcast();
 
   @override
   int cachedMethod(int x, String y) {
@@ -390,10 +349,8 @@ class _Parameters with Parameters implements _$Parameters {
 
       _cachedMethodCached["${y.hashCode}"] = toReturn;
 
-      final streamController = _cachedMethodCacheStream["${y.hashCode}"];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink
+          .add(MapEntry("${y.hashCode}", toReturn));
 
       return toReturn;
     } else {
@@ -402,26 +359,14 @@ class _Parameters with Parameters implements _$Parameters {
   }
 
   @override
-  Stream<int> cachedStream(String y) {
+  Stream<int> cachedStream(int x, String y) {
     final paramsKey = "${y.hashCode}";
-    final streamController = _cachedMethodCacheStream[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
-
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int>();
-
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
-    }
+    return stream;
   }
 }
 ''')
@@ -480,7 +425,8 @@ class _NullableReturnType
 
   final _cachedMethodCached = <String, int?>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int?>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int?>>.broadcast();
 
   @override
   Future<int?> cachedMethod(int x) async {
@@ -497,10 +443,8 @@ class _NullableReturnType
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      final streamController = _cachedMethodCacheStream["${x.hashCode}"];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink
+          .add(MapEntry("${x.hashCode}", toReturn));
 
       return toReturn;
     } else {
@@ -511,24 +455,12 @@ class _NullableReturnType
   @override
   Stream<int?> cachedStream(int x) {
     final paramsKey = "${x.hashCode}";
-    final streamController = _cachedMethodCacheStream[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int?>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
-
-      final returnStream = StreamController<int?>();
-
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int?>();
-
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
-    }
+    return stream;
   }
 }
 ''')
@@ -555,7 +487,8 @@ class _NullableReturnTypeWithLastValue
 
   final _cachedMethodCached = <String, int?>{};
 
-  final _cachedMethodCacheStream = <String, StreamController<int?>>{};
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int?>>.broadcast();
 
   @override
   Future<int?> cachedMethod(int x) async {
@@ -572,10 +505,8 @@ class _NullableReturnTypeWithLastValue
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      final streamController = _cachedMethodCacheStream["${x.hashCode}"];
-      if (streamController != null) {
-        streamController.sink.add(toReturn);
-      }
+      _cachedMethodCacheStreamController.sink
+          .add(MapEntry("${x.hashCode}", toReturn));
 
       return toReturn;
     } else {
@@ -586,25 +517,17 @@ class _NullableReturnTypeWithLastValue
   @override
   Stream<int?> cachedStream(int x) {
     final paramsKey = "${x.hashCode}";
-    final streamController = _cachedMethodCacheStream[paramsKey];
-    final lastValue = _cachedMethodCached[paramsKey];
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
 
-    if (streamController == null) {
-      final newStreamController = StreamController<int?>.broadcast();
-      _cachedMethodCacheStream[paramsKey] = newStreamController;
+    final returnStreamController = StreamController<int>();
+    final lastValue = _cachedTimestampCached[paramsKey];
+    returnStreamController.sink.add(lastValue);
+    returnStreamController.addStream(stream);
 
-      final returnStream = StreamController<int?>();
-      returnStream.sink.add(lastValue);
-      returnStream.sink.addStream(newStreamController.stream);
-
-      return returnStream.stream;
-    } else {
-      final returnStream = StreamController<int?>();
-      returnStream.sink.add(lastValue);
-      returnStream.sink.addStream(streamController.stream);
-
-      return returnStream.stream;
-    }
+    return returnStreamController.stream;
   }
 }
 ''')
@@ -619,4 +542,135 @@ abstract class NullableReturnTypeWithLastValue {
 
   @StreamedCache(methodName: "cachedMethod", emitLastValue: true)
   Stream<int?> cachedStream(int x);
+}
+
+@ShouldGenerate(r'''
+abstract class _$StreamCacheWithCacheKey {}
+
+class _StreamCacheWithCacheKey
+    with StreamCacheWithCacheKey
+    implements _$StreamCacheWithCacheKey {
+  _StreamCacheWithCacheKey();
+
+  final _cachedMethodCached = <String, int>{};
+
+  final _cachedMethodCacheStreamController =
+      StreamController<MapEntry<String, int>>.broadcast();
+
+  @override
+  Future<int> cachedMethod(List<int> x) async {
+    final cachedValue = _cachedMethodCached["${iterableCacheKeyGenerator(x)}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod(x);
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedMethodCached["${iterableCacheKeyGenerator(x)}"] = toReturn;
+
+      _cachedMethodCacheStreamController.sink
+          .add(MapEntry("${iterableCacheKeyGenerator(x)}", toReturn));
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Stream<int> cachedStream(List<int> x) {
+    final paramsKey = "${iterableCacheKeyGenerator(x)}";
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController.stream
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
+
+    final returnStreamController = StreamController<int>();
+    final lastValue = _cachedTimestampCached[paramsKey];
+    if (lastValue != null) {
+      returnStreamController.sink.add(lastValue);
+    }
+    returnStreamController.addStream(stream);
+
+    return returnStreamController.stream;
+  }
+}
+''')
+@withCache
+abstract class StreamCacheWithCacheKey {
+  factory StreamCacheWithCacheKey() = _StreamCacheWithCacheKey;
+
+  @cached
+  Future<int> cachedMethod(@iterableCacheKey List<int> x) {
+    return x[0];
+  }
+
+  @StreamedCache(methodName: "cachedMethod", emitLastValue: true)
+  Stream<int> cachedStream(@iterableCacheKey List<int> x);
+}
+
+@ShouldGenerate(r'''
+abstract class _$BehaviorSubjectStream {}
+
+class _BehaviorSubjectStream
+    with BehaviorSubjectStream
+    implements _$BehaviorSubjectStream {
+  _BehaviorSubjectStream();
+
+  final _cachedMethodCached = <String, int>{};
+
+  final _cachedMethodCacheStreamController =
+      BehaviorSubject<MapEntry<String, int>>();
+
+  @override
+  Future<int> cachedMethod(List<int> x) async {
+    final cachedValue = _cachedMethodCached["${iterableCacheKeyGenerator(x)}"];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod(x);
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedMethodCached["${iterableCacheKeyGenerator(x)}"] = toReturn;
+
+      _cachedMethodCacheStreamController.sink
+          .add(MapEntry("${iterableCacheKeyGenerator(x)}", toReturn));
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Stream<int> cachedStream(List<int> x) {
+    final paramsKey = "${iterableCacheKeyGenerator(x)}";
+    final streamController = _cachedMethodCacheStreamController;
+    final stream = streamController
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
+
+    return stream;
+  }
+}
+''')
+@withCache
+abstract class BehaviorSubjectStream {
+  factory BehaviorSubject() = _BehaviorSubject;
+
+  @cached
+  Future<int> cachedMethod(@iterableCacheKey List<int> x) {
+    return x[0];
+  }
+
+  @StreamedCache(methodName: "cachedMethod", useBehaviorSubject: true)
+  Stream<int> cachedStream(@iterableCacheKey List<int> x);
 }

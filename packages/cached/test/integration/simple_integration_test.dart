@@ -148,5 +148,42 @@ void main() {
 
       await firstStreamSub.cancel();
     });
+
+    test('last value of behavior subject stream should be emitted', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.anotherCachedValue();
+      final streamValue = StreamQueue(
+        cachedClass.streamOfAnotherCachedValueUsingBehaviourSubject(),
+      );
+
+      expect(cachedValue, await streamValue.next);
+    });
+
+    test('behaviour subject stream should work correctly', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final streamValue = StreamQueue(
+        cachedClass.streamOfAnotherCachedValueUsingBehaviourSubject(),
+      );
+
+      final cachedValue = cachedClass.anotherCachedValue();
+
+      expect(cachedValue, await streamValue.next);
+    });
+
+    test('behaviour subject works with ignore cache', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final streamValue =
+          StreamQueue(cachedClass.streamOfAnotherCachedTimestampBS());
+
+      final cachedValue = cachedClass.anotherCachedTimestamp();
+      cachedClass.anotherCachedTimestamp();
+      final secondCachedValue =
+          cachedClass.anotherCachedTimestamp(refresh: true);
+
+      expect(cachedValue, await streamValue.next);
+      expect(secondCachedValue, await streamValue.next);
+    });
   });
 }

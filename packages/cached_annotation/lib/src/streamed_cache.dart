@@ -14,7 +14,7 @@ import 'package:meta/meta_meta.dart';
 ///
 /// ### Example
 ///
-/// Use @StreamedCache annotation:
+/// Use `@StreamedCache` annotation:
 ///
 /// In this example, cachedStream will return stream of cache updates from cachedMethod
 ///
@@ -36,13 +36,20 @@ import 'package:meta/meta_meta.dart';
 /// {@endtemplate}
 @Target({TargetKind.method})
 class StreamedCache {
+  /// {@macro cached.cached}
   const StreamedCache({
-    /// Name of class method
     required this.methodName,
-    /// If true, last value from cache (if exists) will be emitted
-    required this.emitLastValue,
+    this.emitLastValue = false,
+    this.useBehaviorSubject = false,
   });
 
+  /// Name of class method.
   final String methodName;
+
+  /// If true, last value from cache (if exists) will be emitted.
   final bool emitLastValue;
+
+  /// If true, `BehaviorSubject` from RxDart will be used in generated code instead of standard `StreamController.broadcast()`.\
+  /// BehaviorSubject emits last value by default, so emitLastValue property will be ignored if this is true.
+  final bool useBehaviorSubject;
 }

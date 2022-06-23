@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_annotation/cached_annotation.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../utils/test_utils.dart';
 
@@ -18,8 +19,14 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @cached
+  int anotherCachedValue() {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
   int cachedValueWithCustomKey(
-      @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value) {
+    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+  ) {
     return dataProvider.getRandomValue();
   }
 
@@ -41,6 +48,13 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @cached
+  int anotherCachedTimestamp({
+    @ignoreCache bool refresh = false,
+  }) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
+  @cached
   int cachedTimestampWithoutIgnore({bool smth = false}) {
     return dataProvider.getCurrentTimestamp();
   }
@@ -50,11 +64,17 @@ abstract class SimpleCached implements _$SimpleCached {
     return dataProvider.getCurrentTimestamp();
   }
 
-  @StreamedCache(methodName: "cachedValue", emitLastValue: false)
+  @StreamedCache(methodName: "cachedValue")
   Stream<int> streamOfCachedValue();
 
   @StreamedCache(methodName: "cachedTimestamp", emitLastValue: true)
   Stream<int> streamOfCachedTimestampLastValue();
+
+  @StreamedCache(methodName: "anotherCachedValue", useBehaviorSubject: true)
+  Stream<int> streamOfAnotherCachedValueUsingBehaviourSubject();
+
+  @StreamedCache(methodName: "anotherCachedTimestamp", useBehaviorSubject: true)
+  Stream<int> streamOfAnotherCachedTimestampBS();
 
   @clearCached
   void clearCachedValue();

@@ -19,6 +19,16 @@ class CacheKeyAnnotation {
   });
 
   final String cacheFunctionCall;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CacheKeyAnnotation &&
+          runtimeType == other.runtimeType &&
+          cacheFunctionCall == other.cacheFunctionCall;
+
+  @override
+  int get hashCode => cacheFunctionCall.hashCode;
 }
 
 class Param {
@@ -136,4 +146,29 @@ class Param {
   bool get isOptionalNamed => isOptional && isNamed;
 
   String get typeWithName => '$type $name';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Param &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          type == other.type &&
+          isNamed == other.isNamed &&
+          isOptional == other.isOptional &&
+          defaultValue == other.defaultValue &&
+          ignoreCacheAnnotation == other.ignoreCacheAnnotation &&
+          ignoreCacheKey == other.ignoreCacheKey &&
+          cacheKeyAnnotation == other.cacheKeyAnnotation;
+
+  @override
+  int get hashCode =>
+      name.hashCode ^
+      type.hashCode ^
+      isNamed.hashCode ^
+      isOptional.hashCode ^
+      defaultValue.hashCode ^
+      ignoreCacheAnnotation.hashCode ^
+      ignoreCacheKey.hashCode ^
+      cacheKeyAnnotation.hashCode;
 }

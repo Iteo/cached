@@ -6,15 +6,20 @@ final futureVoidRegexp = RegExp(r'^Future<void>$');
 final voidRegexp = RegExp(r'^void$');
 final boolRegexp = RegExp(r'^bool$');
 
-String getCacheStreamMapName(String targetMethodName) =>
-    '_${targetMethodName}CacheStream';
+String getCacheStreamControllerName(String targetMethodName) =>
+    '_${targetMethodName}CacheStreamController';
 
 String getParamKey(Iterable<Param> params) => params
     .where(
       (element) =>
           element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
     )
-    .map((e) => '\${${e.name}.hashCode}')
+    .map(
+      (e) => _generateParamKeyPartCall(
+        name: e.name,
+        cacheKeyAnnotation: e.cacheKeyAnnotation,
+      ),
+    )
     .join();
 
 String getCacheMapName(String methodName) => '_${methodName}Cached';
@@ -38,6 +43,14 @@ String syncReturnType(String returnType) {
 
   return returnType;
 }
+
+String _generateParamKeyPartCall({
+  required String name,
+  required CacheKeyAnnotation? cacheKeyAnnotation,
+}) =>
+    cacheKeyAnnotation != null
+        ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
+        : '\${$name.hashCode}';
 
 extension Inspect<T> on Iterable<T> {
   Iterable<T> inspect(void Function(T) fn) sync* {

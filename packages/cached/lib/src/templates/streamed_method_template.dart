@@ -13,7 +13,7 @@ class StreamedCacheMethodTemplate {
   final AllParamsTemplate paramsTemplate;
 
   String generateStreamMap() {
-    return '${_getStaticModifier()} final ${getCacheStreamMapName(method.targetMethodName)} = <String, StreamController<${method.coreReturnType}>>{};';
+    return '${_getStaticModifier()} final ${getCacheStreamControllerName(method.targetMethodName)} = ${_streamMapInitializer()};';
   }
 
   String generateMethod() {
@@ -21,25 +21,12 @@ class StreamedCacheMethodTemplate {
 @override
 Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams()}) {
   final paramsKey = "${getParamKey(method.params)}";
-  final streamController = ${getCacheStreamMapName(method.targetMethodName)}[paramsKey];
-  ${_lastValueRead()}
-
-  if(streamController == null) {
-    final newStreamController = StreamController<${method.coreReturnType}>.broadcast();
-    ${getCacheStreamMapName(method.targetMethodName)}[paramsKey] = newStreamController;
-    
-    final returnStream = StreamController<${method.coreReturnType}>();
-    ${_lastValueEmitter("returnStream")}
-    returnStream.sink.addStream(newStreamController.stream);
-    
-    return returnStream.stream;
-  } else {
-    final returnStream = StreamController<${method.coreReturnType}>();
-    ${_lastValueEmitter("returnStream")}
-    returnStream.sink.addStream(streamController.stream);
-     
-    return returnStream.stream;
-  }
+  final streamController = ${getCacheStreamControllerName(method.targetMethodName)};
+  final stream = streamController${_controllerBeforeFilterCall()}
+        .where((event) => event.key == paramsKey)
+        .map((event) => event.value);
+        
+  ${_streamReturn()}
 }
     ''';
   }
@@ -48,11 +35,16 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
     return useStaticCache ? 'static' : '';
   }
 
-  String _lastValueRead() {
-    return method.emitLastValue
-        ? '''final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];'''
-        : '';
-  }
+  String _streamReturn() => method.emitLastValue
+      ? '''
+  final returnStreamController = StreamController<int>();
+  final lastValue = _cachedTimestampCached[paramsKey];
+  ${_lastValueEmitter('returnStreamController')}
+  returnStreamController.addStream(stream);
+ 
+  return returnStreamController.stream;
+      '''
+      : '''return stream;''';
 
   String _lastValueEmitter(String streamControllerName) {
     return method.emitLastValue
@@ -68,8 +60,14 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
         ? '''
     if(lastValue != null) {
       $body
-    }       
-        '''
+    }'''
         : body;
   }
+
+  String _streamMapInitializer() => method.useBehaviorSubject
+      ? '''BehaviorSubject<MapEntry<String,${method.coreReturnType}>>()'''
+      : '''StreamController<MapEntry<String,${method.coreReturnType}>>.broadcast()''';
+
+  String _controllerBeforeFilterCall() =>
+      method.useBehaviorSubject ? '' : '.stream';
 }

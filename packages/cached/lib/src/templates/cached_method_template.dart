@@ -1,5 +1,4 @@
 import 'package:cached/src/models/cached_method.dart';
-import 'package:cached/src/models/param.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:collection/collection.dart';
@@ -150,10 +149,7 @@ if ($_cacheMapName.length > ${method.limit}) {
   String _generateStreamCall() {
     return isCacheStreamed
         ? '''
-    final streamController = ${getCacheStreamMapName(method.name)}["$_paramsKey"];
-    if(streamController!=null) {
-       streamController.sink.add(toReturn);
-    }
+    ${getCacheStreamControllerName(method.name)}.sink.add(MapEntry("$_paramsKey",toReturn));
     '''
         : '';
   }
