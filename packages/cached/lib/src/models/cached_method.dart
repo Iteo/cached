@@ -29,9 +29,15 @@ class CachedMethod {
   final int? limit;
   final int? ttl;
 
-  factory CachedMethod.fromElement(MethodElement element, Config config) {
+  factory CachedMethod.fromElement({
+    required MethodElement element,
+    required Config config,
+    required bool isRetrofitClass,
+  }) {
     assertMethodNotVoid(element);
-    assertMethodIsNotAbstract(element);
+    if (!isRetrofitClass) {
+      assertMethodIsNotAbstract(element);
+    }
 
     final annotation = getAnnotation(element);
 

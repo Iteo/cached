@@ -56,6 +56,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [cacheKey](#cachekey)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
+  - [retrofitSupport](#retrofitsupport)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -343,6 +344,31 @@ Possible reasons why the generator gives an error
 
 - if we have too many `clearAllCached` annotation, only one can be
 - if method don’t return `bool`, `Future<bool>` or not a `void`
+
+### Retrofit support
+
+Cached has direct support for Retrofit classes, just annotate your Retrofit class with `@withCache`,
+and change constructor redirect from `_ClassName` to `_CachedClassName`./
+
+Simple example:
+```dart
+@withCache
+@RestApi(baseUrl: "https://jsonplaceholder.typicode.com/")
+abstract class SimpleApi {
+  factory SimpleApi(Dio dio) = _CachedSimpleApi;
+
+  @cached
+  @GET("/todos/{id}")
+  Future<Todo> getTodo(@Path() int id);
+}
+```
+
+[//]: # (TODO: Clarify this, and include example of generated code when @clearCached issue fix will be determined)
+
+About usage of `@clearCached` and `@clearAllCached` annotations - Because Retrofit implement your 
+API class instead of extending it, it is not possible to have non-api methods in the class. Instead
+Cached generator will generate helper extension with automatically generated `clearCache()` method 
+for each field, and `clearAllCache()` for whole class. 
 
 ## Contribution
 

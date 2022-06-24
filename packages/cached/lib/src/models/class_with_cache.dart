@@ -8,6 +8,7 @@ import 'package:cached/src/utils/asserts.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:collection/collection.dart';
+import 'package:retrofit/retrofit.dart';
 import 'package:source_gen/source_gen.dart';
 
 const _defaultUseStaticCache = false;
@@ -19,6 +20,7 @@ class ClassWithCache {
     required this.methods,
     required this.constructor,
     required this.clearMethods,
+    required this.isRetrofitClass,
     this.clearAllMethod,
   });
 
@@ -27,6 +29,7 @@ class ClassWithCache {
   final Constructor constructor;
   final Iterable<CachedMethod> methods;
   final Iterable<ClearCachedMethod> clearMethods;
+  final bool isRetrofitClass;
   final ClearAllCachedMethod? clearAllMethod;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
@@ -46,6 +49,11 @@ class ClassWithCache {
       }
     }
 
+    const retrofitAnnotationChecker = TypeChecker.fromRuntime(RestApi);
+    final retrofitAnnotation =
+        retrofitAnnotationChecker.firstAnnotationOf(element);
+    final retrofitClass = retrofitAnnotation != null;
+
     final constructor = element.constructors
         .map((element) => Constructor.fromElement(element, config))
         .first;
@@ -54,7 +62,13 @@ class ClassWithCache {
         .where(
           (element) => CachedMethod.getAnnotation(element) != null,
         )
-        .map((e) => CachedMethod.fromElement(e, config));
+        .map(
+          (e) => CachedMethod.fromElement(
+            element: e,
+            config: config,
+            isRetrofitClass: retrofitClass,
+          ),
+        );
 
     final methodsWithTtls = {
       for (final method in methods)
@@ -85,6 +99,7 @@ class ClassWithCache {
       clearMethods: clearMethods,
       constructor: constructor,
       clearAllMethod: clearAllMethod.firstOrNull,
+      isRetrofitClass: retrofitClass,
     );
   }
 }

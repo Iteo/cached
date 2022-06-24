@@ -30,8 +30,8 @@ class ClassTemplate {
         AllParamsTemplate(classWithCache.constructor.params);
 
     return '''
-class _${classWithCache.name} with ${classWithCache.name} implements _\$${classWithCache.name} {
-  _${classWithCache.name}(${constructorParamTemplates.generateThisParams()});
+class ${_generatedClassName()} ${_inheritanceKeyword()} ${_extendedClass()} implements _\$${classWithCache.name} {
+  ${_generatedClassName()}(${constructorParamTemplates.generateThisParams()})${_superConstructorCall(constructorParamTemplates)};
 
   ${constructorParamTemplates.generateFields(addOverrideAnnotation: true)}
 
@@ -49,4 +49,20 @@ class _${classWithCache.name} with ${classWithCache.name} implements _\$${classW
 }
 ''';
   }
+
+  String _generatedClassName() => '${_classPrefix()}${classWithCache.name}';
+
+  String _classPrefix() => classWithCache.isRetrofitClass ? '_Cached' : '_';
+
+  String _inheritanceKeyword() =>
+      classWithCache.isRetrofitClass ? 'extends' : 'with';
+
+  String _extendedClass() => classWithCache.isRetrofitClass
+      ? '_${classWithCache.name}'
+      : classWithCache.name;
+
+  String _superConstructorCall(AllParamsTemplate allParamsTemplate) =>
+      classWithCache.isRetrofitClass
+          ? ': super(${allParamsTemplate.generateParamsUsage()})'
+          : '';
 }
