@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:http/http.dart';
 
@@ -61,6 +63,10 @@ abstract class Gen implements _$Gen {
   Future<Response> getDataWithoutCached() {
     return get(Uri.parse(_url));
   }
+
+  /// Method for getting stream of cache updates
+  @StreamedCache(methodName: "getDataWithCached")
+  Stream<Response> getDataCacheStream();
 
   /// Method annotated with this annotation can be used to clear result
   /// of method annotated with Cached annotation.

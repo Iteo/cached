@@ -87,9 +87,12 @@ void main() {
     test('cached stream works', () async {
       final cachedClass = AsynchronousCached(_dataProvider);
       final streamValue = StreamQueue(cachedClass.asyncCacheStream());
-      final cachedValue = cachedClass.asyncCachedValue();
+      final next = Future.microtask(() => streamValue.next);
+      await Future.delayed(Duration.zero);
 
-      expect(await cachedValue, await streamValue.next);
+      final cachedValue = await cachedClass.asyncCachedValue();
+
+      expect(cachedValue, await next);
     });
   });
   group('AsynchronousCache with syncWrite: FALSE', () {

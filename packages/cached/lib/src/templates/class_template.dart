@@ -37,6 +37,7 @@ class ClassTemplate {
       (e) => StreamedCacheMethodTemplate(
         e,
         useStaticCache: classWithCache.useStaticCache,
+        className: classWithCache.name,
       ),
     );
 

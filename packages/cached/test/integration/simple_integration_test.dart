@@ -116,9 +116,14 @@ void main() {
 
     test('cached value cache should be streamed', () async {
       final cachedClass = SimpleCached(_dataProvider);
-      final streamValue = StreamQueue(cachedClass.streamOfCachedValue());
+
+      final queue = StreamQueue(cachedClass.streamOfCachedValue());
+      final next = Future.microtask(() => queue.next);
+      await Future.delayed(Duration.zero);
+
       final cachedValue = cachedClass.cachedValue();
-      expect(cachedValue, await streamValue.next);
+
+      expect(cachedValue, await next);
     });
 
     test('last value of stream should be emitted', () async {
@@ -149,41 +154,24 @@ void main() {
       await firstStreamSub.cancel();
     });
 
-    test('last value of behavior subject stream should be emitted', () async {
+    test('stream should initial emit initialValue even if it is null',
+        () async {
       final cachedClass = SimpleCached(_dataProvider);
-      final cachedValue = cachedClass.anotherCachedValue();
-      final streamValue = StreamQueue(
-        cachedClass.streamOfAnotherCachedValueUsingBehaviourSubject(),
-      );
+      cachedClass.nullableCachedValue();
 
-      expect(cachedValue, await streamValue.next);
+      final streamValue = StreamQueue(cachedClass.nullableCacheValueStream());
+      expect(await streamValue.next, equals(null));
     });
 
-    test('behaviour subject stream should work correctly', () async {
+    test('stream should not emit null if there is not initial value available',
+        () async {
       final cachedClass = SimpleCached(_dataProvider);
 
-      final streamValue = StreamQueue(
-        cachedClass.streamOfAnotherCachedValueUsingBehaviourSubject(),
-      );
+      final streamSub = cachedClass
+          .nullableCacheValueStream()
+          .listen((event) => throw "Unexpected event");
 
-      final cachedValue = cachedClass.anotherCachedValue();
-
-      expect(cachedValue, await streamValue.next);
-    });
-
-    test('behaviour subject works with ignore cache', () async {
-      final cachedClass = SimpleCached(_dataProvider);
-
-      final streamValue =
-          StreamQueue(cachedClass.streamOfAnotherCachedTimestampBS());
-
-      final cachedValue = cachedClass.anotherCachedTimestamp();
-      cachedClass.anotherCachedTimestamp();
-      final secondCachedValue =
-          cachedClass.anotherCachedTimestamp(refresh: true);
-
-      expect(cachedValue, await streamValue.next);
-      expect(secondCachedValue, await streamValue.next);
+      await streamSub.cancel();
     });
   });
 }

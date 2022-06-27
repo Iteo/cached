@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cached_annotation/cached_annotation.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../../utils/test_utils.dart';
 
@@ -64,17 +63,19 @@ abstract class SimpleCached implements _$SimpleCached {
     return dataProvider.getCurrentTimestamp();
   }
 
+  @cached
+  int? nullableCachedValue() {
+    return null;
+  }
+
   @StreamedCache(methodName: "cachedValue")
   Stream<int> streamOfCachedValue();
 
   @StreamedCache(methodName: "cachedTimestamp", emitLastValue: true)
   Stream<int> streamOfCachedTimestampLastValue();
 
-  @StreamedCache(methodName: "anotherCachedValue", useBehaviorSubject: true)
-  Stream<int> streamOfAnotherCachedValueUsingBehaviourSubject();
-
-  @StreamedCache(methodName: "anotherCachedTimestamp", useBehaviorSubject: true)
-  Stream<int> streamOfAnotherCachedTimestampBS();
+  @StreamedCache(methodName: "nullableCachedValue", emitLastValue: true)
+  Stream<int?> nullableCacheValueStream();
 
   @clearCached
   void clearCachedValue();

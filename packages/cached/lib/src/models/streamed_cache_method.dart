@@ -15,7 +15,6 @@ class StreamedCacheMethod {
     required this.coreReturnType,
     required this.params,
     required this.emitLastValue,
-    required this.useBehaviorSubject,
     required this.coreReturnTypeNullable,
   });
 
@@ -24,7 +23,6 @@ class StreamedCacheMethod {
   final Iterable<Param> params;
   final String coreReturnType;
   final bool emitLastValue;
-  final bool useBehaviorSubject;
   final bool coreReturnTypeNullable;
 
   factory StreamedCacheMethod.fromElement(
@@ -36,13 +34,11 @@ class StreamedCacheMethod {
 
     var methodName = "";
     var emitLastValue = false;
-    var useRxDartBehaviorSubject = false;
 
     if (annotation != null) {
       final reader = ConstantReader(annotation);
       emitLastValue = reader.read('emitLastValue').boolValue;
       methodName = reader.read('methodName').stringValue;
-      useRxDartBehaviorSubject = reader.read('useBehaviorSubject').boolValue;
     }
 
     final targetMethod =
@@ -112,7 +108,6 @@ class StreamedCacheMethod {
         params:
             targetMethod.parameters.map((p) => Param.fromElement(p, config)),
         targetMethodName: methodName,
-        useBehaviorSubject: useRxDartBehaviorSubject,
         coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
             NullabilitySuffix.question,
       );

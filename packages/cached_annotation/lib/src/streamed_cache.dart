@@ -40,7 +40,6 @@ class StreamedCache {
   const StreamedCache({
     required this.methodName,
     this.emitLastValue = false,
-    this.useBehaviorSubject = false,
   });
 
   /// Name of class method.
@@ -48,8 +47,15 @@ class StreamedCache {
 
   /// If true, last value from cache (if exists) will be emitted.
   final bool emitLastValue;
+}
 
-  /// If true, `BehaviorSubject` from RxDart will be used in generated code instead of standard `StreamController.broadcast()`.\
-  /// BehaviorSubject emits last value by default, so emitLastValue property will be ignored if this is true.
-  final bool useBehaviorSubject;
+/// Class that is used by generated code to emit events on correct streams
+class StreamEventIdentifier<T> {
+  const StreamEventIdentifier({
+    required this.instance,
+    required this.paramsKey,
+  });
+
+  final T instance;
+  final String paramsKey;
 }

@@ -376,8 +376,6 @@ Future<String> cachedMethod(int x, @ignore String y) async {
 Stream<String> cachedStream(int x);
 ```
 
-You can also request usage of `BehaviorSubject` from RxDart instead of `StreamController.broadcast()` in generated code, by setting `useBehaviorSubject` to true.
-
 ## Contribution
 
 We accept any contribution to the project!

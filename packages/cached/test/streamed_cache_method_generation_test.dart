@@ -24,7 +24,7 @@ Future<void> main() async {
     'NullableReturnType',
     'NullableReturnTypeWithLastValue',
     'StreamCacheWithCacheKey',
-    'BehaviorSubjectStream',
+    'StaticCache',
   };
 
   final reader = await initializeLibraryReaderForDirectory(
