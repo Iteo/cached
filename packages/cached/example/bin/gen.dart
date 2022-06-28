@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:http/http.dart';
 
