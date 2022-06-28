@@ -70,9 +70,9 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
     } finally {
       ${method.syncWrite && _returnsFuture ? "$_syncMapName.remove('$_paramsKey');" : ""}
     }
-    
+
     $_cacheMapName["$_paramsKey"] = toReturn;
-    
+
     ${_generateStreamCall()}
 
     ${_generateLimitLogic()}
