@@ -320,9 +320,11 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
         .where((event) => event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
-    final lastValue = _cachedMethodCached[paramsKey];
-    if (lastValue != null) {
-      yield lastValue;
+    if (_cachedMethodCached.containsKey(paramsKey)) {
+      final lastValue = _cachedMethodCached[paramsKey];
+      if (lastValue != null) {
+        yield lastValue;
+      }
     }
 
     yield* stream;
@@ -634,9 +636,11 @@ class _StreamCacheWithCacheKey
         .where((event) => event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
-    final lastValue = _cachedMethodCached[paramsKey];
-    if (lastValue != null) {
-      yield lastValue;
+    if (_cachedMethodCached.containsKey(paramsKey)) {
+      final lastValue = _cachedMethodCached[paramsKey];
+      if (lastValue != null) {
+        yield lastValue;
+      }
     }
 
     yield* stream;

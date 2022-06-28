@@ -35,31 +35,29 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
     ''';
   }
 
-  String _lastValueEmit() => method.emitLastValue
-      ? _cacheContainsKeyCheck(
-          '''
-  final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];
-  ${_lastValueEmitter('returnStreamController')}
-      ''',
-        )
-      : '';
-
-  String _lastValueEmitter(String streamControllerName) {
-    return method.emitLastValue
-        ? _lastValueNullCheck(
-            !method.coreReturnTypeNullable,
-            '''yield lastValue;''',
-          )
-        : '';
+  String _lastValueEmit() {
+    if (method.emitLastValue) {
+      return '''
+        if(${getCacheMapName(method.targetMethodName)}.containsKey(paramsKey)) {
+          final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];
+          ${_yieldLastValue()}
+        }
+      ''';
+    } else {
+      return '';
+    }
   }
 
-  String _lastValueNullCheck(bool checkIfNull, String body) {
-    return checkIfNull
-        ? '''
-    if(lastValue != null) {
-      $body
-    }'''
-        : body;
+  String _yieldLastValue() {
+    if (method.coreReturnTypeNullable) {
+      return 'yield lastValue;';
+    } else {
+      return '''
+        if(lastValue != null) {
+          yield lastValue;
+        }
+        ''';
+    }
   }
 
   String _streamMapInitializer() => useStaticCache
@@ -72,13 +70,4 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
       .where((event) => event.key.instance == this)
       .where((event) => event.key.paramsKey == paramsKey)
         ''';
-
-  String _cacheContainsKeyCheck(String emitCode) =>
-      method.coreReturnTypeNullable
-          ? '''
-      if(${getCacheMapName(method.targetMethodName)}.containsKey(paramsKey)) {
-        $emitCode
-      }
-      '''
-          : emitCode;
 }
