@@ -36,28 +36,28 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
   }
 
   String _lastValueEmit() {
-    if (method.emitLastValue) {
-      return '''
-        if(${getCacheMapName(method.targetMethodName)}.containsKey(paramsKey)) {
-          final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];
-          ${_yieldLastValue()}
-        }
-      ''';
-    } else {
+    if (!method.emitLastValue) {
       return '';
     }
+
+    return '''
+      if(${getCacheMapName(method.targetMethodName)}.containsKey(paramsKey)) {
+        final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];
+        ${_yieldLastValue()}
+      }
+    ''';
   }
 
   String _yieldLastValue() {
     if (method.coreReturnTypeNullable) {
       return 'yield lastValue;';
-    } else {
-      return '''
-        if(lastValue != null) {
-          yield lastValue;
-        }
-        ''';
     }
+
+    return '''
+      if(lastValue != null) {
+        yield lastValue;
+      }
+    ''';
   }
 
   String _streamMapInitializer() => useStaticCache

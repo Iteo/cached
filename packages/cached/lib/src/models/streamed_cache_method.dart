@@ -49,69 +49,66 @@ class StreamedCacheMethod {
         '[ERROR] Method "$methodName" do not exists',
         element: element,
       );
-    } else {
-      const streamTypeChecker = TypeChecker.fromRuntime(Stream);
-      final coreCacheStreamMethodType =
-          element.returnType.typeArgumentsOf(streamTypeChecker)?.single;
-      final coreCacheSteamMethodTypeStr =
-          coreCacheStreamMethodType?.getDisplayString(withNullability: true);
+    }
+    const streamTypeChecker = TypeChecker.fromRuntime(Stream);
+    final coreCacheStreamMethodType =
+        element.returnType.typeArgumentsOf(streamTypeChecker)?.single;
+    final coreCacheSteamMethodTypeStr =
+        coreCacheStreamMethodType?.getDisplayString(withNullability: true);
 
-      const futureTypeChecker = TypeChecker.fromRuntime(Future);
-      final targetMethodSyncReturnType = targetMethod
-              .returnType.isDartAsyncFuture
-          ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
-          : targetMethod.returnType;
+    const futureTypeChecker = TypeChecker.fromRuntime(Future);
+    final targetMethodSyncReturnType = targetMethod.returnType.isDartAsyncFuture
+        ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
+        : targetMethod.returnType;
 
-      final targetMethodSyncTypeStr =
-          targetMethodSyncReturnType?.getDisplayString(withNullability: true);
+    final targetMethodSyncTypeStr =
+        targetMethodSyncReturnType?.getDisplayString(withNullability: true);
 
-      if (coreCacheSteamMethodTypeStr != targetMethodSyncTypeStr) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] Streamed cache method return type needs to be a Stream<$targetMethodSyncTypeStr>',
-          element: element,
-        );
-      }
-
-      const cachedAnnotationTypeChecker = TypeChecker.fromRuntime(Cached);
-
-      if (!cachedAnnotationTypeChecker.hasAnnotationOf(targetMethod)) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] Method "$methodName" do not have @cached annotation',
-          element: element,
-        );
-      }
-
-      const ignoreTypeChecker = TypeChecker.any([
-        TypeChecker.fromRuntime(Ignore),
-        TypeChecker.fromRuntime(IgnoreCache),
-      ]);
-
-      final targetMethodParameters = targetMethod.parameters
-          .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
-          .toList();
-
-      if (!ListEquality<ParameterElement>(
-        EqualityBy(
-          (p) => Param.fromElement(p, config),
-        ),
-      ).equals(targetMethodParameters, element.parameters)) {
-        throw InvalidGenerationSourceError(
-          '[ERROR] Method "${targetMethod.name}" should have same parameters as "${element.name}", excluding ones marked with @ignore and @ignoreCache',
-          element: element,
-        );
-      }
-
-      return StreamedCacheMethod(
-        name: element.name,
-        coreReturnType: coreCacheSteamMethodTypeStr ?? 'dynamic',
-        emitLastValue: emitLastValue,
-        params:
-            targetMethod.parameters.map((p) => Param.fromElement(p, config)),
-        targetMethodName: methodName,
-        coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
-            NullabilitySuffix.question,
+    if (coreCacheSteamMethodTypeStr != targetMethodSyncTypeStr) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] Streamed cache method return type needs to be a Stream<$targetMethodSyncTypeStr>',
+        element: element,
       );
     }
+
+    const cachedAnnotationTypeChecker = TypeChecker.fromRuntime(Cached);
+
+    if (!cachedAnnotationTypeChecker.hasAnnotationOf(targetMethod)) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] Method "$methodName" do not have @cached annotation',
+        element: element,
+      );
+    }
+
+    const ignoreTypeChecker = TypeChecker.any([
+      TypeChecker.fromRuntime(Ignore),
+      TypeChecker.fromRuntime(IgnoreCache),
+    ]);
+
+    final targetMethodParameters = targetMethod.parameters
+        .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
+        .toList();
+
+    if (!ListEquality<ParameterElement>(
+      EqualityBy(
+        (p) => Param.fromElement(p, config),
+      ),
+    ).equals(targetMethodParameters, element.parameters)) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] Method "${targetMethod.name}" should have same parameters as "${element.name}", excluding ones marked with @ignore and @ignoreCache',
+        element: element,
+      );
+    }
+
+    return StreamedCacheMethod(
+      name: element.name,
+      coreReturnType: coreCacheSteamMethodTypeStr ?? 'dynamic',
+      emitLastValue: emitLastValue,
+      params: targetMethod.parameters.map((p) => Param.fromElement(p, config)),
+      targetMethodName: methodName,
+      coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
+          NullabilitySuffix.question,
+    );
   }
 
   static DartObject? getAnnotation(MethodElement element) {

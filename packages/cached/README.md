@@ -347,8 +347,8 @@ Possible reasons why the generator gives an error
 
 ### Streamed cache
 
-Method annotation that is used to get a stream of cache updates from a cached method.
-You have to provide at least the name of the cached class method in the `methodName` parameter.
+Use `@StreamedCache` annotation to get a stream of cache updates from a cached method.
+Remember to provide at least the name of the cached class method in the `methodName` parameter.
 
 Simple example of usage:
 ```dart
@@ -361,8 +361,10 @@ int cachedMethod() {
 Stream<int> cachedStream();
 ```
 
-Parameters of cachedMethod should match target method (except `@ignore` or `@ignoreCache`), otherwise `InvalidGenerationSourceError` will be thrown.
-Return type of method marked with `@StreamedCache` should be `Stream<sync type of target method>`.
+Method annotated with `@StreamedCache` should have same parameters (except `@ignore` or `@ignoreCache`)
+as method provided in `methodName` parameter, otherwise `InvalidGenerationSourceError` will be thrown.
+Return type of this method should be a `Stream<sync type of target method>` - for example for `Future<String>`
+the return type will be `Stream<String>`
 
 Example:
 ```dart

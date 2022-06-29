@@ -162,13 +162,14 @@ class Param {
           cacheKeyAnnotation == other.cacheKeyAnnotation;
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      type.hashCode ^
-      isNamed.hashCode ^
-      isOptional.hashCode ^
-      defaultValue.hashCode ^
-      ignoreCacheAnnotation.hashCode ^
-      ignoreCacheKey.hashCode ^
-      cacheKeyAnnotation.hashCode;
+  int get hashCode => Object.hash(
+        name,
+        type,
+        isNamed,
+        isOptional,
+        defaultValue,
+        ignoreCacheAnnotation,
+        ignoreCacheKey,
+        cacheKeyAnnotation,
+      );
 }
