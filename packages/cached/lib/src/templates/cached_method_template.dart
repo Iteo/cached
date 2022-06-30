@@ -1,5 +1,4 @@
 import 'package:cached/src/models/cached_method.dart';
-import 'package:cached/src/models/param.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:collection/collection.dart';
@@ -7,12 +6,16 @@ import 'package:collection/collection.dart';
 class CachedMethodTemplate {
   CachedMethodTemplate(
     this.method, {
+    required this.methods,
     required this.useStaticCache,
+    required this.isCacheStreamed,
   }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final CachedMethod method;
+  final Iterable<CachedMethod> methods;
   final AllParamsTemplate paramsTemplate;
   final bool useStaticCache;
+  final bool isCacheStreamed;
 
   String generateSyncMap() {
     if (!method.syncWrite) {
@@ -70,6 +73,8 @@ ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $syncMod
 
     $_cacheMapName["$_paramsKey"] = toReturn;
 
+    ${_generateStreamCall()}
+
     ${_generateLimitLogic()}
     ${_generateAddTtlLogic()}
     $returnKeyword toReturn;
@@ -119,28 +124,7 @@ $_ttlMapName["$_paramsKey"] = DateTime.now().add(const Duration(seconds: ${metho
 ''';
   }
 
-  String get _paramsKey {
-    return method.params
-        .where(
-          (element) =>
-              element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
-        )
-        .map(
-          (e) => _generateParamKeyPartCall(
-            name: e.name,
-            cacheKeyAnnotation: e.cacheKeyAnnotation,
-          ),
-        )
-        .join();
-  }
-
-  String _generateParamKeyPartCall({
-    required String name,
-    required CacheKeyAnnotation? cacheKeyAnnotation,
-  }) =>
-      cacheKeyAnnotation != null
-          ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
-          : '\${$name.hashCode}';
+  String get _paramsKey => getParamKey(method.params);
 
   String get _cacheMapName => getCacheMapName(method.name);
 
@@ -160,5 +144,22 @@ if ($_cacheMapName.length > ${method.limit}) {
   $_cacheMapName.remove($_cacheMapName.entries.last.key);
 }
 ''';
+  }
+
+  String _generateStreamCall() {
+    if (!isCacheStreamed) return '';
+
+    if (useStaticCache) {
+      return '${getCacheStreamControllerName(method.name)}.sink.add(MapEntry("$_paramsKey",toReturn));';
+    } else {
+      return '''
+          ${getCacheStreamControllerName(method.name)}.sink.add(MapEntry(StreamEventIdentifier(
+              instance: this,
+              paramsKey: "$_paramsKey",
+            ),
+            toReturn,
+          ));
+          ''';
+    }
   }
 }

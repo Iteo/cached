@@ -62,6 +62,10 @@ abstract class Gen implements _$Gen {
     return get(Uri.parse(_url));
   }
 
+  /// Method for getting stream of cache updates
+  @StreamedCache(methodName: "getDataWithCached")
+  Stream<Response> getDataCacheStream();
+
   /// Method annotated with this annotation can be used to clear result
   /// of method annotated with Cached annotation.
   ///

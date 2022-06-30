@@ -1,4 +1,6 @@
+import 'package:async/async.dart';
 import 'package:test/test.dart';
+
 import '../utils/test_utils.dart';
 import 'asynchronous/cached_test_asynchronous.dart';
 
@@ -80,6 +82,17 @@ void main() {
       await cachedClass.syncCachedValueWithTTl();
 
       expect(cachedClass.counter(), 2);
+    });
+
+    test('cached stream works', () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final streamValue = StreamQueue(cachedClass.asyncCacheStream());
+      final next = Future.microtask(() => streamValue.next);
+      await Future.delayed(Duration.zero);
+
+      final cachedValue = await cachedClass.asyncCachedValue();
+
+      expect(cachedValue, await next);
     });
   });
   group('AsynchronousCache with syncWrite: FALSE', () {
