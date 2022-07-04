@@ -49,13 +49,20 @@ class StreamedCache {
   final bool emitLastValue;
 }
 
-/// Class that is used by generated code to emit events on correct streams
+/// {@template cached.stream_event_id}
+/// Class that is used by generated code to identify events in stream.
+/// 
+/// This class should not be used outside of generated code
+/// {@endtemplate}
 class StreamEventIdentifier<T> {
+  /// {@macro cached.stream_event_id}
   const StreamEventIdentifier({
-    required this.instance,
-    required this.paramsKey,
+    this.instance,
+    this.paramsKey,
   });
 
-  final T instance;
-  final String paramsKey;
+  /// Instance
+  final T? instance;
+  /// Key
+  final String? paramsKey;
 }

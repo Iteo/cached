@@ -1,4 +1,5 @@
 import 'package:cached/src/models/param.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
 
 final futureRegexp = RegExp(r'^Future<(.+)>$');
 final futureBoolRegexp = RegExp(r'^Future<bool>$');
@@ -42,6 +43,23 @@ String syncReturnType(String returnType) {
   }
 
   return returnType;
+}
+
+String clearStreamedCache(StreamedCacheMethod? method) {
+    if (method != null &&
+        method.coreReturnTypeNullable) {
+      final controllerName =
+          getCacheStreamControllerName(method.targetMethodName);
+
+      return '''
+        $controllerName.sink.add(MapEntry(StreamEventIdentifier(
+          instance: this,
+        ), 
+        null,
+        ));
+      ''';
+    }
+  return '';
 }
 
 String _generateParamKeyPartCall({
