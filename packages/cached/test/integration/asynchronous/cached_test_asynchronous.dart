@@ -19,6 +19,9 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
     return dataProvider.fetchRandomValue();
   }
 
+  @StreamedCache(methodName: "syncCachedValue", emitLastValue: false)
+  Stream<int> syncCachedValueStream();
+
   @Cached(syncWrite: true)
   Future<int> syncCachedValueWithoutIgnore({bool smth = false}) {
     return dataProvider.fetchRandomValue();
@@ -47,6 +50,9 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
     await Future.delayed(const Duration(milliseconds: 100));
     return dataProvider.fetchRandomValue();
   }
+
+  @StreamedCache(methodName: "asyncCachedValue", emitLastValue: false)
+  Stream<int> asyncCacheStream();
 
   @ClearCached("asyncCachedValue")
   void clearAsyncCachedValue();

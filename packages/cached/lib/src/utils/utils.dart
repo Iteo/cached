@@ -1,8 +1,27 @@
+import 'package:cached/src/models/param.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
+
 final futureRegexp = RegExp(r'^Future<(.+)>$');
 final futureBoolRegexp = RegExp(r'^Future<bool>$');
 final futureVoidRegexp = RegExp(r'^Future<void>$');
 final voidRegexp = RegExp(r'^void$');
 final boolRegexp = RegExp(r'^bool$');
+
+String getCacheStreamControllerName(String targetMethodName) =>
+    '_${targetMethodName}CacheStreamController';
+
+String getParamKey(Iterable<Param> params) => params
+    .where(
+      (element) =>
+          element.ignoreCacheAnnotation == null && !element.ignoreCacheKey,
+    )
+    .map(
+      (e) => _generateParamKeyPartCall(
+        name: e.name,
+        cacheKeyAnnotation: e.cacheKeyAnnotation,
+      ),
+    )
+    .join();
 
 String getCacheMapName(String methodName) => '_${methodName}Cached';
 
@@ -25,6 +44,30 @@ String syncReturnType(String returnType) {
 
   return returnType;
 }
+
+String clearStreamedCache(StreamedCacheMethod? method) {
+  if (method != null && method.coreReturnTypeNullable) {
+    final controllerName =
+        getCacheStreamControllerName(method.targetMethodName);
+
+    return '''
+        $controllerName.sink.add(MapEntry(StreamEventIdentifier(
+          instance: this,
+        ), 
+        null,
+        ));
+      ''';
+  }
+  return '';
+}
+
+String _generateParamKeyPartCall({
+  required String name,
+  required CacheKeyAnnotation? cacheKeyAnnotation,
+}) =>
+    cacheKeyAnnotation != null
+        ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
+        : '\${$name.hashCode}';
 
 extension Inspect<T> on Iterable<T> {
   Iterable<T> inspect(void Function(T) fn) sync* {

@@ -56,6 +56,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [cacheKey](#cachekey)
   - [clearCached](#clearcached)
   - [clearAllCached](#clearallcached)
+  - [StreamedCache](#streamedcache)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -343,6 +344,39 @@ Possible reasons why the generator gives an error
 
 - if we have too many `clearAllCached` annotation, only one can be
 - if method don’t return `bool`, `Future<bool>` or not a `void`
+
+### Streamed cache
+
+Use `@StreamedCache` annotation to get a stream of cache updates from a cached method.
+Remember to provide at least the name of the cached class method in the `methodName` parameter.
+
+Simple example of usage:
+```dart
+@cached
+int cachedMethod() {
+  return 1;  
+}
+
+@StreamedCache(methodName: "cachedMethod", emitLastValue: true)
+Stream<int> cachedStream();
+```
+
+Method annotated with `@StreamedCache` should have same parameters (except `@ignore` or `@ignoreCache`)
+as method provided in `methodName` parameter, otherwise `InvalidGenerationSourceError` will be thrown.
+Return type of this method should be a `Stream<sync type of target method>` - for example for `Future<String>`
+the return type will be `Stream<String>`
+
+Example:
+```dart
+@cached
+Future<String> cachedMethod(int x, @ignore String y) async {
+  await Future.delayed(Duration(miliseconds: 100));
+  return x.toString();  
+}
+
+@StreamedCache(methodName: "cachedMethod", emitLastValue: false)
+Stream<String> cachedStream(int x);
+```
 
 ## Contribution
 

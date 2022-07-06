@@ -3,6 +3,8 @@ import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/templates/cached_method_template.dart';
 import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
+import 'package:cached/src/templates/streamed_method_template.dart';
+import 'package:collection/collection.dart';
 
 class ClassTemplate {
   ClassTemplate(this.classWithCache);
@@ -10,20 +12,41 @@ class ClassTemplate {
   final ClassWithCache classWithCache;
 
   String generate() {
-    final methodTemplates = classWithCache.methods.map(
+    final classMethods = classWithCache.methods;
+
+    final methodTemplates = classMethods.map(
       (e) => CachedMethodTemplate(
         e,
+        methods: classMethods,
         useStaticCache: classWithCache.useStaticCache,
+        isCacheStreamed: classWithCache.streamedCacheMethods
+            .any((s) => s.targetMethodName == e.name),
+      ),
+    );
+
+    final streamedCacheMethodTemplates =
+        classWithCache.streamedCacheMethods.map(
+      (e) => StreamedCacheMethodTemplate(
+        e,
+        useStaticCache: classWithCache.useStaticCache,
+        className: classWithCache.name,
       ),
     );
 
     final clearMethodTemplates = classWithCache.clearMethods.map(
-      (e) => ClearCachedMethodTemplate(e),
+      (e) => ClearCachedMethodTemplate(
+        e,
+        streamedCacheMethod:
+            classWithCache.streamedCacheMethods.firstWhereOrNull(
+          (m) => m.targetMethodName == e.name,
+        ),
+      ),
     );
 
     final clearAllMethodTemplate = ClearAllCachedMethodTemplate(
       method: classWithCache.clearAllMethod,
-      cachedMethods: classWithCache.methods,
+      cachedMethods: classMethods,
+      streamedCacheMethods: classWithCache.streamedCacheMethods,
     );
 
     final constructorParamTemplates =
@@ -40,9 +63,13 @@ class _${classWithCache.name} with ${classWithCache.name} implements _\$${classW
   ${methodTemplates.map((e) => e.generateCacheMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateTtlMap()).join('\n')}
+  
+  ${streamedCacheMethodTemplates.map((e) => e.generateStreamMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 
+  ${streamedCacheMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
+    
   ${clearMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 
   ${clearAllMethodTemplate.generateMethod()}

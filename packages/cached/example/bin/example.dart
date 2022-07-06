@@ -13,10 +13,18 @@ void main(List<String> arguments) async {
   final gen = Gen();
   final sw = Stopwatch();
 
+  JsonEncoder encoder = JsonEncoder.withIndent('  ');
+
+  final streamSubscription = gen.getDataCacheStream().listen((event) {
+    print(
+      "Cache updated with new value:\n${encoder.convert(jsonDecode(event.body))}",
+    );
+  });
+
   final response = await gen.getDataWithCached();
 
   print('Response json:');
-  JsonEncoder encoder = JsonEncoder.withIndent('  ');
+
   String prettyprint = encoder.convert(jsonDecode(response.body));
   print("$prettyprint\n");
 
@@ -33,4 +41,6 @@ void main(List<String> arguments) async {
   print("Without cached: ${sw.elapsedMilliseconds} ms");
 
   print('\n==============================');
+
+  await streamSubscription.cancel();
 }

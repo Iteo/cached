@@ -16,6 +16,11 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @cached
+  int anotherCachedValue() {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
   int cachedValueWithCustomKey(
     @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
   ) {
@@ -40,6 +45,13 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @cached
+  int anotherCachedTimestamp({
+    @ignoreCache bool refresh = false,
+  }) {
+    return dataProvider.getCurrentTimestamp();
+  }
+
+  @cached
   int cachedTimestampWithoutIgnore({bool smth = false}) {
     return dataProvider.getCurrentTimestamp();
   }
@@ -48,6 +60,20 @@ abstract class SimpleCached implements _$SimpleCached {
   int cachedTimestampWithIgnore({@ignore bool smth = false}) {
     return dataProvider.getCurrentTimestamp();
   }
+
+  @cached
+  int? nullableCachedValue() {
+    return null;
+  }
+
+  @StreamedCache(methodName: "cachedValue")
+  Stream<int> streamOfCachedValue();
+
+  @StreamedCache(methodName: "cachedTimestamp", emitLastValue: true)
+  Stream<int> streamOfCachedTimestampLastValue();
+
+  @StreamedCache(methodName: "nullableCachedValue", emitLastValue: true)
+  Stream<int?> nullableCacheValueStream();
 
   @clearCached
   void clearCachedValue();
