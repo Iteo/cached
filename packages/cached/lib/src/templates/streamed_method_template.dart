@@ -60,14 +60,11 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
     ''';
   }
 
-  String _streamMapInitializer() => useStaticCache
-      ? '''StreamController<MapEntry<String,${method.coreReturnType}>>.broadcast()'''
-      : '''StreamController<MapEntry<StreamEventIdentifier<_$className>,${method.coreReturnType}>>.broadcast()''';
+  String _streamMapInitializer() =>
+      '''StreamController<MapEntry<StreamEventIdentifier<_$className>,${method.coreReturnType}>>.broadcast()''';
 
-  String _streamFilter() => useStaticCache
-      ? '''.where((event) => event.key == paramsKey)'''
-      : '''
-      .where((event) => event.key.instance == this)
-      .where((event) => event.key.paramsKey == paramsKey)
+  String _streamFilter() => '''
+      ${useStaticCache ? "" : ".where((event) => event.key.instance == this)"}
+      .where((event) => event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         ''';
 }

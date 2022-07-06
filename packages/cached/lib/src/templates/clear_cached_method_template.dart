@@ -1,13 +1,15 @@
 import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 
 class ClearCachedMethodTemplate {
-  ClearCachedMethodTemplate(this.method)
+  ClearCachedMethodTemplate(this.method, {this.streamedCacheMethod})
       : paramsTemplate = AllParamsTemplate(method.params);
 
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
+  final StreamedCacheMethod? streamedCacheMethod;
 
   String generateMethod() {
     if (method.isAbstract) return _generateAbstractMethod();
@@ -57,6 +59,7 @@ class ClearCachedMethodTemplate {
     return '''
 ${getCacheMapName(method.methodName)}.clear();
 ${method.shouldClearTtl ? "${getTtlMapName(method.methodName)}.clear();" : ""}
+${clearStreamedCache(streamedCacheMethod)}
 ''';
   }
 }

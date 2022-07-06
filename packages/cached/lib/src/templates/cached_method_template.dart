@@ -147,19 +147,16 @@ if ($_cacheMapName.length > ${method.limit}) {
   }
 
   String _generateStreamCall() {
-    if (!isCacheStreamed) return '';
-
-    if (useStaticCache) {
-      return '${getCacheStreamControllerName(method.name)}.sink.add(MapEntry("$_paramsKey",toReturn));';
-    } else {
-      return '''
+    if (!isCacheStreamed) {
+      return '';
+    }
+    return '''
           ${getCacheStreamControllerName(method.name)}.sink.add(MapEntry(StreamEventIdentifier(
-              instance: this,
+              ${useStaticCache ? '' : 'instance: this,'}
               paramsKey: "$_paramsKey",
             ),
             toReturn,
           ));
           ''';
-    }
   }
 }

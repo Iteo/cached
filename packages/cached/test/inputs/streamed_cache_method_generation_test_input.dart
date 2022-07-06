@@ -185,7 +185,8 @@ class _SimpleMethod with SimpleMethod implements _$SimpleMethod {
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     yield* stream;
@@ -251,7 +252,8 @@ class _FutureMethod with FutureMethod implements _$FutureMethod {
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     yield* stream;
@@ -317,7 +319,8 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     if (_cachedMethodCached.containsKey(paramsKey)) {
@@ -390,7 +393,8 @@ class _Parameters with Parameters implements _$Parameters {
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     yield* stream;
@@ -490,7 +494,8 @@ class _NullableReturnType
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     yield* stream;
@@ -559,7 +564,8 @@ class _NullableReturnTypeWithLastValue
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     if (_cachedMethodCached.containsKey(paramsKey)) {
@@ -633,7 +639,8 @@ class _StreamCacheWithCacheKey
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) => event.key.paramsKey == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     if (_cachedMethodCached.containsKey(paramsKey)) {
@@ -668,8 +675,8 @@ class _StaticCache with StaticCache implements _$StaticCache {
 
   static final _cachedMethodCached = <String, int?>{};
 
-  static final _cachedMethodCacheStreamController =
-      StreamController<MapEntry<String, int?>>.broadcast();
+  static final _cachedMethodCacheStreamController = StreamController<
+      MapEntry<StreamEventIdentifier<_StaticCache>, int?>>.broadcast();
 
   @override
   Future<int?> cachedMethod(int x) async {
@@ -686,8 +693,12 @@ class _StaticCache with StaticCache implements _$StaticCache {
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink
-          .add(MapEntry("${x.hashCode}", toReturn));
+      _cachedMethodCacheStreamController.sink.add(MapEntry(
+        StreamEventIdentifier(
+          paramsKey: "${x.hashCode}",
+        ),
+        toReturn,
+      ));
 
       return toReturn;
     } else {
@@ -700,7 +711,8 @@ class _StaticCache with StaticCache implements _$StaticCache {
     final paramsKey = "${x.hashCode}";
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream
-        .where((event) => event.key == paramsKey)
+        .where((event) =>
+            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
         .map((event) => event.value);
 
     yield* stream;

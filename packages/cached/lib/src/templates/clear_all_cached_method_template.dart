@@ -1,18 +1,26 @@
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
+import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
 
 class ClearAllCachedMethodTemplate {
-  ClearAllCachedMethodTemplate({this.method, required this.cachedMethods})
-      : paramsTemplate = AllParamsTemplate(method?.params ?? {});
+  ClearAllCachedMethodTemplate({
+    this.method,
+    required this.cachedMethods,
+    required Iterable<StreamedCacheMethod> streamedCacheMethods,
+  })  : paramsTemplate = AllParamsTemplate(method?.params ?? {}),
+        streamedCacheMethodPerName = {
+          for (final m in streamedCacheMethods) m.targetMethodName: m
+        };
 
   final ClearAllCachedMethod? method;
   final Iterable<CachedMethod> cachedMethods;
+  final Map<String, StreamedCacheMethod> streamedCacheMethodPerName;
   final AllParamsTemplate paramsTemplate;
 
   String _generateCacheClearMethods() =>
-      cachedMethods.map((e) => e.name).map(_generateClearMaps).join("\n");
+      cachedMethods.map(_generateClearMaps).join("\n");
 
   String generateMethod() {
     if (method == null) return '';
@@ -60,10 +68,14 @@ class ClearAllCachedMethodTemplate {
     ''';
   }
 
-  String _generateClearMaps(String baseName) {
+  String _generateClearMaps(CachedMethod clearedMethod) {
+    final baseName = clearedMethod.name;
+    final streamedCacheMethod = streamedCacheMethodPerName[baseName];
+
     return '''
 ${getCacheMapName(baseName)}.clear();
 ${method?.ttlsToClear.contains(baseName) ?? false ? "${getTtlMapName(baseName)}.clear();" : ""}
+${clearStreamedCache(streamedCacheMethod)}
 ''';
   }
 }

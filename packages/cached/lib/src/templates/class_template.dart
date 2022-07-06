@@ -4,6 +4,7 @@ import 'package:cached/src/templates/cached_method_template.dart';
 import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
 import 'package:cached/src/templates/streamed_method_template.dart';
+import 'package:collection/collection.dart';
 
 class ClassTemplate {
   ClassTemplate(this.classWithCache);
@@ -23,15 +24,6 @@ class ClassTemplate {
       ),
     );
 
-    final clearMethodTemplates = classWithCache.clearMethods.map(
-      (e) => ClearCachedMethodTemplate(e),
-    );
-
-    final clearAllMethodTemplate = ClearAllCachedMethodTemplate(
-      method: classWithCache.clearAllMethod,
-      cachedMethods: classMethods,
-    );
-
     final streamedCacheMethodTemplates =
         classWithCache.streamedCacheMethods.map(
       (e) => StreamedCacheMethodTemplate(
@@ -39,6 +31,22 @@ class ClassTemplate {
         useStaticCache: classWithCache.useStaticCache,
         className: classWithCache.name,
       ),
+    );
+
+    final clearMethodTemplates = classWithCache.clearMethods.map(
+      (e) => ClearCachedMethodTemplate(
+        e,
+        streamedCacheMethod:
+            classWithCache.streamedCacheMethods.firstWhereOrNull(
+          (m) => m.targetMethodName == e.name,
+        ),
+      ),
+    );
+
+    final clearAllMethodTemplate = ClearAllCachedMethodTemplate(
+      method: classWithCache.clearAllMethod,
+      cachedMethods: classMethods,
+      streamedCacheMethods: classWithCache.streamedCacheMethods,
     );
 
     final constructorParamTemplates =
