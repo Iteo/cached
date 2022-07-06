@@ -1,5 +1,0 @@
-dependency_overrides:
-  cached_annotation:
-    path: ../../cached_annotation
-  cached:
-    path: ../../cached

@@ -1,3 +1,6 @@
+## 1.2.2
+* Fix analysis
+
 ## 1.2.1
 * Fix decumentation redirects
 
