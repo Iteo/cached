@@ -1,3 +1,6 @@
+## 1.2.1
+* Fix decumentation redirects
+
 ## 1.2.0
 * Add `@StreamedCache()` annotation
 
