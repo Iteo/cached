@@ -49,13 +49,13 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 - [Setup](#setup)
   - [Run the generator](#run-the-generator)
 - [Basics](#basics)
-  - [withCache](#withcache)
-  - [cached](#cached-1)
-  - [ignoreCache](#ignorecache)
-  - [ignore](#ignore)
-  - [cacheKey](#cachekey)
-  - [clearCached](#clearcached)
-  - [clearAllCached](#clearallcached)
+  - [WithCache](#withcache)
+  - [Cached](#cached-1)
+  - [IgnoreCache](#ignorecache)
+  - [Ignore](#ignore)
+  - [CacheKey](#cachekey)
+  - [ClearCached](#clearcached)
+  - [ClearAllCached](#clearallcached)
   - [StreamedCache](#streamedcache)
 - [Contribution](#contribution)
 
@@ -345,7 +345,7 @@ Possible reasons why the generator gives an error
 - if we have too many `clearAllCached` annotation, only one can be
 - if method don’t return `bool`, `Future<bool>` or not a `void`
 
-### Streamed cache
+### StreamedCache
 
 Use `@StreamedCache` annotation to get a stream of cache updates from a cached method.
 Remember to provide at least the name of the cached class method in the `methodName` parameter.
