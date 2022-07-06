@@ -51,7 +51,7 @@ class StreamedCache {
 
 /// {@template cached.stream_event_id}
 /// Class that is used by generated code to identify events in stream.
-/// 
+///
 /// This class should not be used outside of generated code
 /// {@endtemplate}
 class StreamEventIdentifier<T> {
@@ -63,6 +63,7 @@ class StreamEventIdentifier<T> {
 
   /// Instance
   final T? instance;
+
   /// Key
   final String? paramsKey;
 }

@@ -46,19 +46,18 @@ String syncReturnType(String returnType) {
 }
 
 String clearStreamedCache(StreamedCacheMethod? method) {
-    if (method != null &&
-        method.coreReturnTypeNullable) {
-      final controllerName =
-          getCacheStreamControllerName(method.targetMethodName);
+  if (method != null && method.coreReturnTypeNullable) {
+    final controllerName =
+        getCacheStreamControllerName(method.targetMethodName);
 
-      return '''
+    return '''
         $controllerName.sink.add(MapEntry(StreamEventIdentifier(
           instance: this,
         ), 
         null,
         ));
       ''';
-    }
+  }
   return '';
 }
 
