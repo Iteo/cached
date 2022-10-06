@@ -142,5 +142,14 @@ void main() {
 
       expect(cachedClass.counter(), 3);
     });
+
+    test('peek cache value should be the same on the async cached value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.asyncCachedValue();
+      final secondCachedValue = cachedClass.asyncCachePeek();
+
+      expect(cachedValue, equals(secondCachedValue));
+    });
   });
 }

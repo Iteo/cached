@@ -57,6 +57,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [ClearCached](#clearcached)
   - [ClearAllCached](#clearallcached)
   - [StreamedCache](#streamedcache)
+  - [CachePeek](#cachepeek)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -354,7 +355,7 @@ Simple example of usage:
 ```dart
 @cached
 int cachedMethod() {
-  return 1;  
+  return 1;
 }
 
 @StreamedCache(methodName: "cachedMethod", emitLastValue: true)
@@ -371,12 +372,44 @@ Example:
 @cached
 Future<String> cachedMethod(int x, @ignore String y) async {
   await Future.delayed(Duration(miliseconds: 100));
-  return x.toString();  
+  return x.toString();
 }
 
 @StreamedCache(methodName: "cachedMethod", emitLastValue: false)
 Stream<String> cachedStream(int x);
 ```
+
+### CachePeek
+
+Method decorator that flag it as needing to be processed by `Cached` code generator.
+Method annotated with this annotation can be used to peek result of method annotated with `Cached` annotation.
+
+Constructor of this annotation can take one possible argument. It is method name, that we want to peek the cache.
+
+Let say there is existing cached method:
+
+```dart
+@Cached()
+Future<SomeResponseType> getUserData() {
+  return userDataSource.getData();
+}
+```
+
+to generate peek cache method we can write:
+
+```dart
+@CachePeek(methodName: "getUserData")
+SomeResponseType? peekUserDataCache();
+```
+
+The `CachePeek` methodName argument has to correspond to cached method name
+
+Possible reasons why the generator gives an error
+
+- if more then one method is targeting [Cached] method cache
+- if method return type is incorrect
+- if method has different parameters then target function (excluding [Ignore], [IgnoreCache])
+- if method is not abstract
 
 ## Contribution
 

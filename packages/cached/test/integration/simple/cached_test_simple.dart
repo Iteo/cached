@@ -75,6 +75,17 @@ abstract class SimpleCached implements _$SimpleCached {
   @StreamedCache(methodName: "nullableCachedValue", emitLastValue: true)
   Stream<int?> nullableCacheValueStream();
 
+  @CachePeek(methodName: "cachedValue")
+  int? cachePeekValue();
+
+  @CachePeek(methodName: "cachedTimestamp")
+  int? timestampCachePeekValue();
+
+  @CachePeek(methodName: "cachedValueWithCustomKey")
+  int? peekCachedValueWithCustomKey(
+    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+  );
+
   @clearCached
   void clearCachedValue();
 
