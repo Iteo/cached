@@ -388,7 +388,7 @@ class _Parameters with Parameters implements _$Parameters {
   }
 
   @override
-  Stream<int> cachedStream(int x, String y) async* {
+  Stream<int> cachedStream(String y) async* {
     final paramsKey = "${y.hashCode}";
     final streamController = _cachedMethodCacheStreamController;
     final stream = streamController.stream

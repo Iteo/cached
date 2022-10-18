@@ -1,31 +1,27 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/param.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:collection/collection.dart';
+
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
-class StreamedCacheMethod {
-  const StreamedCacheMethod({
+class CachePeekMethod {
+  const CachePeekMethod({
     required this.name,
     required this.targetMethodName,
-    required this.coreReturnType,
+    required this.returnType,
     required this.params,
-    required this.emitLastValue,
-    required this.coreReturnTypeNullable,
   });
 
   final String name;
   final String targetMethodName;
   final Iterable<Param> params;
-  final String coreReturnType;
-  final bool emitLastValue;
-  final bool coreReturnTypeNullable;
+  final String returnType;
 
-  factory StreamedCacheMethod.fromElement(
+  factory CachePeekMethod.fromElement(
     MethodElement element,
     List<MethodElement> classMethods,
     Config config,
@@ -33,11 +29,9 @@ class StreamedCacheMethod {
     final annotation = getAnnotation(element);
 
     var methodName = "";
-    var emitLastValue = false;
 
     if (annotation != null) {
       final reader = ConstantReader(annotation);
-      emitLastValue = reader.read('emitLastValue').boolValue;
       methodName = reader.read('methodName').stringValue;
     }
 
@@ -50,23 +44,22 @@ class StreamedCacheMethod {
         element: element,
       );
     }
-    const streamTypeChecker = TypeChecker.fromRuntime(Stream);
-    final coreCacheStreamMethodType =
-        element.returnType.typeArgumentsOf(streamTypeChecker)?.single;
-    final coreCacheSteamMethodTypeStr =
-        coreCacheStreamMethodType?.getDisplayString(withNullability: true);
+
+    final peekCacheMethodType = element.returnType;
+    final peekCacheMethodTypeStr =
+        peekCacheMethodType.getDisplayString(withNullability: false);
 
     const futureTypeChecker = TypeChecker.fromRuntime(Future);
-    final targetMethodSyncReturnType = targetMethod.returnType.isDartAsyncFuture
+    final targetMethodReturnType = targetMethod.returnType.isDartAsyncFuture
         ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
         : targetMethod.returnType;
 
-    final targetMethodSyncTypeStr =
-        targetMethodSyncReturnType?.getDisplayString(withNullability: true);
+    final targetMethodTypeStr =
+        targetMethodReturnType?.getDisplayString(withNullability: false);
 
-    if (coreCacheSteamMethodTypeStr != targetMethodSyncTypeStr) {
+    if (peekCacheMethodTypeStr != targetMethodTypeStr) {
       throw InvalidGenerationSourceError(
-        '[ERROR] Streamed cache method return type needs to be a Stream<$targetMethodSyncTypeStr>',
+        '[ERROR] Peek cache method return type needs to be a $targetMethodTypeStr?',
         element: element,
       );
     }
@@ -100,19 +93,16 @@ class StreamedCacheMethod {
       );
     }
 
-    return StreamedCacheMethod(
+    return CachePeekMethod(
       name: element.name,
-      coreReturnType: coreCacheSteamMethodTypeStr ?? 'dynamic',
-      emitLastValue: emitLastValue,
+      returnType: peekCacheMethodTypeStr,
       params: targetMethodParameters.map((p) => Param.fromElement(p, config)),
       targetMethodName: methodName,
-      coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
-          NullabilitySuffix.question,
     );
   }
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(StreamedCache);
+    const methodAnnotationChecker = TypeChecker.fromRuntime(CachePeek);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }

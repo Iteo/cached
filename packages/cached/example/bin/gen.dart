@@ -66,6 +66,10 @@ abstract class Gen implements _$Gen {
   @StreamedCache(methodName: "getDataWithCached")
   Stream<Response> getDataCacheStream();
 
+  /// Method for getting data of cache method
+  @CachePeek(methodName: "getDataWithCached")
+  Response? peekDataCache();
+
   /// Method annotated with this annotation can be used to clear result
   /// of method annotated with Cached annotation.
   ///
