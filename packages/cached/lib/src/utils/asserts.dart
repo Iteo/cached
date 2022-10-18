@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:cached/src/models/cache_peek_method.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
@@ -160,7 +161,37 @@ void assertOneCacheStreamPerCachedMethod(
   }
 }
 
+void assertOneCachePeekPerCachedMethod(
+  Iterable<MethodElement> methods,
+  Iterable<CachePeekMethod> cachePeekMethods,
+) {
+  for (final method in methods) {
+    final methodName = method.name;
+    final referencingCachePeekMethods =
+        cachePeekMethods.where((s) => s.targetMethodName == methodName);
+
+    if (referencingCachePeekMethods
+            .where((s) => s.targetMethodName == methodName)
+            .length >
+        1) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] `$methodName` cannot be targeted by multiple @CachePeek methods',
+        element: method,
+      );
+    }
+  }
+}
+
 void assertCorrectStreamMethodType(MethodElement element) {
+  if (!element.isAbstract) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] `${element.name}` must be a abstract method',
+      element: element,
+    );
+  }
+}
+
+void assertCorrectCachePeekMethodType(MethodElement element) {
   if (!element.isAbstract) {
     throw InvalidGenerationSourceError(
       '[ERROR] `${element.name}` must be a abstract method',

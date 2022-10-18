@@ -173,5 +173,34 @@ void main() {
 
       await streamSub.cancel();
     });
+
+    test('peek cache should be the same on cached timestamp method', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedTimestamp();
+      final secondCachedValue = cachedClass.timestampCachePeekValue();
+
+      expect(cachedValue, equals(secondCachedValue));
+    });
+
+    test('peek cache should be the same on cached value method', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValue();
+      final secondCachedValue = cachedClass.cachePeekValue();
+
+      expect(cachedValue, equals(secondCachedValue));
+    });
+
+    test(
+        'peek cache should be the same on cached method by generated custom cache key',
+        () {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      for (final exampleValue in ["a", "b", "c"]) {
+        final cachedValue = cachedClass.cachedValueWithCustomKey(exampleValue);
+        final secondCachedValue =
+            cachedClass.peekCachedValueWithCustomKey(exampleValue);
+        expect(cachedValue, equals(secondCachedValue));
+      }
+    });
   });
 }

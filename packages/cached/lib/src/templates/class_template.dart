@@ -1,5 +1,6 @@
 import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/templates/all_params_template.dart';
+import 'package:cached/src/templates/cache_peek_method_template.dart';
 import 'package:cached/src/templates/cached_method_template.dart';
 import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
@@ -49,6 +50,13 @@ class ClassTemplate {
       streamedCacheMethods: classWithCache.streamedCacheMethods,
     );
 
+    final cachePeekMethodTemplates = classWithCache.cachePeekMethods.map(
+      (e) => CachePeekMethodTemplate(
+        e,
+        className: classWithCache.name,
+      ),
+    );
+
     final constructorParamTemplates =
         AllParamsTemplate(classWithCache.constructor.params);
 
@@ -63,14 +71,16 @@ class _${classWithCache.name} with ${classWithCache.name} implements _\$${classW
   ${methodTemplates.map((e) => e.generateCacheMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateTtlMap()).join('\n')}
-  
+
   ${streamedCacheMethodTemplates.map((e) => e.generateStreamMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 
   ${streamedCacheMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
-    
+
   ${clearMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
+
+  ${cachePeekMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 
   ${clearAllMethodTemplate.generateMethod()}
 }
