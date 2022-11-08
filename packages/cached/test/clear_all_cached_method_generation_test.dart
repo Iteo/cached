@@ -12,7 +12,9 @@ Future<void> main() async {
     'AbstractWithParams',
     'ValidAbstractWithTtl',
     'ValidAbstract',
+    'ValidAbstractFuture',
     'ValidReturnFutureBool',
+    'ValidReturnFutureVoid',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

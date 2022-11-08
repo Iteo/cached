@@ -104,6 +104,8 @@ void assertValidateClearCachedMethods(
 }
 
 void assertCorrectClearMethodType(MethodElement element) {
+  final returnType = element.returnType.getDisplayString(withNullability: true);
+
   if (element.isAbstract) {
     if (element.isAsynchronous) {
       throw InvalidGenerationSourceError(
@@ -112,9 +114,9 @@ void assertCorrectClearMethodType(MethodElement element) {
       );
     }
 
-    if (!element.returnType.isVoid) {
+    if (!(isAsyncVoid(returnType) || isVoid(returnType))) {
       throw InvalidGenerationSourceError(
-        '[ERROR] `${element.name}` must be a void method',
+        '[ERROR] `${element.name}` must be a void or Future<void> method',
         element: element,
       );
     }
@@ -126,8 +128,6 @@ void assertCorrectClearMethodType(MethodElement element) {
       );
     }
   } else {
-    final returnType =
-        element.returnType.getDisplayString(withNullability: true);
     if (!isVoid(returnType) &&
         !isBool(returnType) &&
         !isAsyncVoid(returnType) &&
