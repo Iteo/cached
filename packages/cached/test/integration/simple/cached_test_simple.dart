@@ -79,7 +79,7 @@ abstract class SimpleCached implements _$SimpleCached {
   void clearCachedValue();
 
   @ClearCached("cachedTimestamp")
-  void clearTimestamp();
+  Future<void> clearTimestamp();
 
   @clearAllCached
   void clearAll();

@@ -55,7 +55,7 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   Stream<int> asyncCacheStream();
 
   @ClearCached("asyncCachedValue")
-  void clearAsyncCachedValue();
+  Future<void> clearAsyncCachedValue();
 
   @ClearCached("asyncCachedValueWithTTl")
   void clearAsyncTTLCachedValue();

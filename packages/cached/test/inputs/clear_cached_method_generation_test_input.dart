@@ -45,7 +45,10 @@ abstract class InvalidName {
   void something();
 }
 
-@ShouldThrow('[ERROR] `something` must be a void method', element: false)
+@ShouldThrow(
+  '[ERROR] `something` must be a void or Future<void> method',
+  element: false,
+)
 @withCache
 abstract class InvalidReturnType {
   factory InvalidReturnType() = _InvalidReturnType;
@@ -209,6 +212,58 @@ abstract class ValidAbstract {
 
 @ShouldGenerate(
   r'''
+abstract class _$ValidAbstractFuture {}
+
+class _ValidAbstractFuture
+    with ValidAbstractFuture
+    implements _$ValidAbstractFuture {
+  _ValidAbstractFuture();
+
+  final _cachedMethodCached = <String, int>{};
+
+  @override
+  int cachedMethod() {
+    final cachedValue = _cachedMethodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedMethodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Future<void> something() async {
+    _cachedMethodCached.clear();
+  }
+}
+''',
+)
+@withCache
+abstract class ValidAbstractFuture {
+  factory ValidAbstractFuture() = _ValidAbstractFuture;
+
+  @cached
+  int cachedMethod() {
+    return 1;
+  }
+
+  @ClearCached('cachedMethod')
+  Future<void> something();
+}
+
+@ShouldGenerate(
+  r'''
 abstract class _$ValidAbstractWithTwoCachedMethod {}
 
 class _ValidAbstractWithTwoCachedMethod
@@ -356,4 +411,58 @@ abstract class ValidReturnFutureBool {
   Future<bool> something() {
     return true;
   }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$ValidReturnFutureVoid {}
+
+class _ValidReturnFutureVoid
+    with ValidReturnFutureVoid
+    implements _$ValidReturnFutureVoid {
+  _ValidReturnFutureVoid();
+
+  final _cachedMethodCached = <String, int>{};
+
+  @override
+  int cachedMethod() {
+    final cachedValue = _cachedMethodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedMethodCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Future<void> something() async {
+    await super.something();
+
+    _cachedMethodCached.clear();
+  }
+}
+''',
+)
+@withCache
+abstract class ValidReturnFutureVoid {
+  factory ValidReturnFutureVoid() = _ValidReturnFutureVoid;
+
+  @cached
+  int cachedMethod() {
+    return 1;
+  }
+
+  @ClearCached('cachedMethod')
+  Future<void> something() async {}
 }

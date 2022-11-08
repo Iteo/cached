@@ -313,7 +313,7 @@ Possible reasons why the generator gives an error
 
 - if method with `@cached` annotation doesn’t exist
 - if method to pair doesn’t exist
-- if method don’t return `bool`, `Future<bool>` or not a `void`
+- if method don’t return `bool`, `Future<bool>` or not a `void`, `Future<void>`
 
 ### ClearAllCached
 
@@ -354,7 +354,7 @@ Simple example of usage:
 ```dart
 @cached
 int cachedMethod() {
-  return 1;  
+  return 1;
 }
 
 @StreamedCache(methodName: "cachedMethod", emitLastValue: true)
@@ -371,7 +371,7 @@ Example:
 @cached
 Future<String> cachedMethod(int x, @ignore String y) async {
   await Future.delayed(Duration(miliseconds: 100));
-  return x.toString();  
+  return x.toString();
 }
 
 @StreamedCache(methodName: "cachedMethod", emitLastValue: false)

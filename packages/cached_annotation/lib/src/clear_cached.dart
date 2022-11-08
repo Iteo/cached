@@ -12,7 +12,7 @@ const clearCached = ClearCached();
 /// Throws an [InvalidGenerationSourceError]
 /// * if method with @cached annotation doesn’t exist
 /// * if method to pair doesn’t exist
-/// * if method don't return bool, Future<bool> or not a void
+/// * if method don't return bool, Future<bool> or not a void, Future<void>
 ///
 /// ### Example
 ///

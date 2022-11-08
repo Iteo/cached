@@ -11,13 +11,27 @@ class ClearCachedMethodTemplate {
   final AllParamsTemplate paramsTemplate;
   final StreamedCacheMethod? streamedCacheMethod;
 
+  String get asyncModifier => isFuture(method.returnType) ? 'async' : '';
+  String get awaitIfNeeded => isFuture(method.returnType) ? 'await' : '';
+
   String generateMethod() {
     if (method.isAbstract) return _generateAbstractMethod();
-    if (isVoid(method.returnType)) return _generateVoidMethod();
 
-    final asyncModifier = isFuture(method.returnType) ? 'async' : '';
-    final awaitIfNeeded = isFuture(method.returnType) ? 'await' : '';
+    if (isFutureBool(method.returnType) || isBool(method.returnType)) {
+      return _generateBoolMethod();
+    }
 
+    return '''
+    @override
+    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
+      $awaitIfNeeded super.${method.name}(${paramsTemplate.generateParamsUsage()});
+
+      ${_generateClearMaps()}
+    }
+    ''';
+  }
+
+  String _generateBoolMethod() {
     return '''
     @override
     ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
@@ -35,23 +49,12 @@ class ClearCachedMethodTemplate {
     ''';
   }
 
-  String _generateVoidMethod() {
-    return '''
-    @override
-      ${_generateClearMaps()}
-      super.${method.name}(${paramsTemplate.generateParamsUsage()});
-
-      ${getCacheMapName(method.methodName)}.clear();
-    }
-    ''';
-  }
-
   String _generateAbstractMethod() {
     return '''
     @override
-    void ${method.name}() {
+      ${method.returnType} ${method.name}() $asyncModifier {
       ${_generateClearMaps()}
-    } 
+    }
     ''';
   }
 
