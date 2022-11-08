@@ -1,3 +1,6 @@
+## 1.3.1
+* Allow `@ClearCached()` and `@ClearAllCached()` methods to return `Future<void>`
+
 ## 1.3.0
 * Add `@PeakCache()` annotation
 * Fix generating `@StreamedCache()` with ignored parameters
