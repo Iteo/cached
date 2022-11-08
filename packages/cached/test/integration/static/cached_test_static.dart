@@ -16,6 +16,9 @@ abstract class StaticCached implements _$StaticCached {
   @StreamedCache(methodName: "cachedValue")
   Stream<int> cachedValueCacheStream();
 
+  @CachePeek(methodName: "cachedValue")
+  int? cachedValueCachePeek();
+
   @clearAllCached
   void clearCache();
 }

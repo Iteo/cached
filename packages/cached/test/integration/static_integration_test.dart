@@ -35,5 +35,16 @@ void main() {
 
       expect(cachedValue, equals(await next));
     });
+
+    test('peek cache should be static', () {
+      final firstCachedClass = StaticCached(_dataProvider);
+      final secondsCachedClass = StaticCached(_dataProvider);
+
+      final cachedValue = firstCachedClass.cachedValueCachePeek();
+      final cachedValueFromAnotherInstance =
+          secondsCachedClass.cachedValueCachePeek();
+
+      expect(cachedValue, equals(cachedValueFromAnotherInstance));
+    });
   });
 }

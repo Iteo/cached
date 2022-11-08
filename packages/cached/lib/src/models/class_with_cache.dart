@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
+import 'package:cached/src/models/cache_peek_method.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
@@ -21,6 +22,7 @@ class ClassWithCache {
     required this.constructor,
     required this.clearMethods,
     required this.streamedCacheMethods,
+    required this.cachePeekMethods,
     this.clearAllMethod,
   });
 
@@ -30,6 +32,7 @@ class ClassWithCache {
   final Iterable<CachedMethod> methods;
   final Iterable<ClearCachedMethod> clearMethods;
   final Iterable<StreamedCacheMethod> streamedCacheMethods;
+  final Iterable<CachePeekMethod> cachePeekMethods;
   final ClearAllCachedMethod? clearAllMethod;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
@@ -94,6 +97,20 @@ class ClassWithCache {
 
     assertOneCacheStreamPerCachedMethod(element.methods, streamedCacheMethods);
 
+    final cachePeekMethods = element.methods
+        .where((element) => CachePeekMethod.getAnnotation(element) != null)
+        .inspect(assertCorrectCachePeekMethodType)
+        .map(
+          (e) => CachePeekMethod.fromElement(
+            e,
+            element.methods,
+            config,
+          ),
+        )
+        .toList();
+
+    assertOneCachePeekPerCachedMethod(element.methods, cachePeekMethods);
+
     return ClassWithCache(
       name: element.name,
       useStaticCache:
@@ -103,6 +120,7 @@ class ClassWithCache {
       streamedCacheMethods: streamedCacheMethods,
       constructor: constructor,
       clearAllMethod: clearAllMethod.firstOrNull,
+      cachePeekMethods: cachePeekMethods,
     );
   }
 }

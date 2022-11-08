@@ -1,3 +1,7 @@
+## 1.3.0
+* Add `@PeakCache()` annotation
+* Fix generating `@StreamedCache()` with ignored parameters
+
 ## 1.2.2
 * Fix analysis
 

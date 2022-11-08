@@ -54,6 +54,9 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   @StreamedCache(methodName: "asyncCachedValue", emitLastValue: false)
   Stream<int> asyncCacheStream();
 
+  @CachePeek(methodName: "asyncCachedValue")
+  int? asyncCachePeek();
+
   @ClearCached("asyncCachedValue")
   Future<void> clearAsyncCachedValue();
 
