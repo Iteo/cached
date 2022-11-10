@@ -21,4 +21,12 @@ abstract class StaticCached implements _$StaticCached {
 
   @clearAllCached
   void clearCache();
+
+  @DeletesCache(['cachedValue'])
+  void deleteCachedValue() {}
+
+  @DeletesCache(['cachedValue'])
+  void deleteCachedValueFail() {
+    throw Exception();
+  }
 }

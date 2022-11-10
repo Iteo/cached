@@ -58,6 +58,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [ClearAllCached](#clearallcached)
   - [StreamedCache](#streamedcache)
   - [CachePeek](#cachepeek)
+  - [DeletesCache](#deletescache)
 - [Contribution](#contribution)
 
 ## Motivation
@@ -410,6 +411,37 @@ Possible reasons why the generator gives an error
 - if method return type is incorrect
 - if method has different parameters then target function (excluding [Ignore], [IgnoreCache])
 - if method is not abstract
+
+### DeletesCache
+
+@DeletesCache annotaton is a method decorator that marks method to be processed by code generator. Methods preceeded by this annotation clear the cache of all specified methods, annotated with @Cached, if they complete with result.
+
+@DeletesCache annotation takes a list of cached methods that are affected by the use of annotated method, the cache of all specified methods is cleared on method success, but if an error occurs, the cache is not deleted and the error is rethrown.
+
+If there is a cached method:
+```dart
+@Cached()
+Future<SomeResponseType> getSthData() {
+  return dataSource.getData();
+}
+```
+
+Then a method that affects the cache of this method can be written as:
+```dart
+@DeletesCache(['getSthData'])
+Future<SomeResponseType> performOperation() {
+  ...
+  return data;
+}
+```
+
+All methods specified in @DeletesCache annotation must correspond to cached method names. If the performOperation method completes without an error, then the cache of getSthData will be cleared. 
+
+Throws an [InvalidGenerationSourceError]
+* if method with @cached annotation doesn't exist
+* if no target method names are specified
+* if specified target methods are invalid
+* if annotated method is abstract
 
 ## Contribution
 

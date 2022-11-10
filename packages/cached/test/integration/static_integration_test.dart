@@ -46,5 +46,32 @@ void main() {
 
       expect(cachedValue, equals(cachedValueFromAnotherInstance));
     });
+
+    test(
+        'deletes cache method should clear cache if function returns with value',
+        () {
+      final cachedClass = StaticCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValue();
+      cachedClass.deleteCachedValue();
+      final secondCachedValue = cachedClass.cachedValue();
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test(
+        'deletes cache method should not clear cache if function returns with error',
+        () {
+      final cachedClass = StaticCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValue();
+      try {
+        cachedClass.deleteCachedValueFail();
+      } catch (e) {
+        //
+      }
+
+      final secondCachedValue = cachedClass.cachedValue();
+
+      expect(cachedValue != secondCachedValue, false);
+    });
   });
 }

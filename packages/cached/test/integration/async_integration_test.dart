@@ -151,5 +151,80 @@ void main() {
 
       expect(cachedValue, equals(secondCachedValue));
     });
+
+    test(
+        'deletes cache method should clear async cache if future returns value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.asyncCachedValue();
+      await cachedClass.deleteAsyncCachedValue();
+      final secondCachedValue = await cachedClass.asyncCachedValue();
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test(
+        'deletes cache method should not clear async cache if future fails to return value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.asyncCachedValue();
+      try {
+        await cachedClass.deleteAsyncCachedValueFail();
+      } catch (e) {
+        //
+      }
+
+      final secondCachedValue = await cachedClass.asyncCachedValue();
+
+      expect(cachedValue != secondCachedValue, false);
+    });
+
+    test('deletes cache method should clear sync cache if future returns value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.syncCachedValue();
+      await cachedClass.deleteCachedValue();
+      final secondCachedValue = await cachedClass.syncCachedValue();
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test(
+        'deletes cache method should not clear sync cache if future fails to return value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.syncCachedValue();
+      try {
+        await cachedClass.deleteCachedValueFail();
+      } catch (e) {
+        //
+      }
+
+      final secondCachedValue = await cachedClass.syncCachedValue();
+
+      expect(cachedValue != secondCachedValue, false);
+    });
+
+    test(
+        'deletes cache method should clear async cache with ttl if future returns value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.asyncCachedValueWithTTl();
+      await cachedClass.deleteAsyncTTLCachedValue();
+      final secondCachedValue = await cachedClass.asyncCachedValueWithTTl();
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test(
+        'deletes cache method should clear sync cache with ttl if future returns value',
+        () async {
+      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedValue = await cachedClass.syncCachedValueWithTTl();
+      await cachedClass.deleteTTLCachedValue();
+      final secondCachedValue = await cachedClass.syncCachedValueWithTTl();
+
+      expect(cachedValue != secondCachedValue, true);
+    });
   });
 }

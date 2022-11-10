@@ -94,6 +94,14 @@ abstract class SimpleCached implements _$SimpleCached {
 
   @clearAllCached
   void clearAll();
+
+  @DeletesCache(['cachedValue'])
+  void deleteCachedValue() {}
+
+  @DeletesCache(['cachedValue'])
+  void deleteCachedValueFail() {
+    throw Exception();
+  }
 }
 
 String _cachedKeyGenerator(dynamic value) => value.toString();

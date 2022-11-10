@@ -5,6 +5,7 @@ import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
+import 'package:cached/src/models/deletes_cache_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/asserts.dart';
 import 'package:cached/src/utils/utils.dart';
@@ -23,6 +24,7 @@ class ClassWithCache {
     required this.clearMethods,
     required this.streamedCacheMethods,
     required this.cachePeekMethods,
+    required this.deletesCacheMethods,
     this.clearAllMethod,
   });
 
@@ -33,6 +35,7 @@ class ClassWithCache {
   final Iterable<ClearCachedMethod> clearMethods;
   final Iterable<StreamedCacheMethod> streamedCacheMethods;
   final Iterable<CachePeekMethod> cachePeekMethods;
+  final Iterable<DeletesCacheMethod> deletesCacheMethods;
   final ClearAllCachedMethod? clearAllMethod;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
@@ -111,6 +114,20 @@ class ClassWithCache {
 
     assertOneCachePeekPerCachedMethod(element.methods, cachePeekMethods);
 
+    final deletesCacheMethods = element.methods
+        .where((element) => DeletesCacheMethod.getAnnotation(element) != null)
+        .inspect(assertCorrectDeletesCacheMethodType)
+        .map(
+          (e) => DeletesCacheMethod.fromElement(
+            e,
+            config,
+            methodsWithTtls,
+          ),
+        )
+        .toList();
+
+    assertValidateDeletesCacheMethods(deletesCacheMethods, methods);
+
     return ClassWithCache(
       name: element.name,
       useStaticCache:
@@ -121,6 +138,7 @@ class ClassWithCache {
       constructor: constructor,
       clearAllMethod: clearAllMethod.firstOrNull,
       cachePeekMethods: cachePeekMethods,
+      deletesCacheMethods: deletesCacheMethods,
     );
   }
 }
