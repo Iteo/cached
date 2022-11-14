@@ -14,9 +14,9 @@ class IgnoreCacheAnnotation {
 }
 
 class CacheKeyAnnotation {
-  const CacheKeyAnnotation({
-    required this.cacheFunctionCall,
-  });
+  const CacheKeyAnnotation(
+    this.cacheFunctionCall,
+  );
 
   final String cacheFunctionCall;
 
@@ -111,7 +111,7 @@ class Param {
         }
 
         cacheKeyAnnotationData = CacheKeyAnnotation(
-          cacheFunctionCall: cacheKeyFunc.name,
+          cacheKeyFunc.name,
         );
       }
     }

@@ -54,7 +54,7 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   @StreamedCache(methodName: "asyncCachedValue", emitLastValue: false)
   Stream<int> asyncCacheStream();
 
-  @CachePeek(methodName: "asyncCachedValue")
+  @CachePeek("asyncCachedValue")
   int? asyncCachePeek();
 
   @ClearCached("asyncCachedValue")
@@ -75,6 +75,51 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   void resetCounter() => _counter = 0;
 
   int counter() => _counter;
+
+  @Cached(syncWrite: true)
+  Future<int> get syncCachedValueGetter {
+    return dataProvider.fetchRandomValue();
+  }
+
+  @StreamedCache(methodName: "syncCachedValueGetter", emitLastValue: false)
+  Stream<int> syncCachedValueGetterStream();
+
+  @StreamedCache(methodName: "asyncCachedValueGetter", emitLastValue: false)
+  Stream<int> asyncCacheGetterStream();
+
+  @Cached(ttl: ttlDurationSeconds, syncWrite: true)
+  Future<int> get syncCachedValueGetterWithTTl async {
+    _counter++;
+    await Future.delayed(const Duration(milliseconds: 100));
+    return dataProvider.fetchRandomValue();
+  }
+
+  @Cached(syncWrite: false)
+  Future<int> get asyncCachedValueGetter {
+    return dataProvider.fetchRandomValue();
+  }
+
+  @Cached(ttl: ttlDurationSeconds, syncWrite: false)
+  Future<int> get asyncCachedValueGetterWithTTl async {
+    _counter++;
+    await Future.delayed(const Duration(milliseconds: 100));
+    return dataProvider.fetchRandomValue();
+  }
+
+  @CachePeek("asyncCachedValueGetter")
+  int? asyncCacheGetterPeek();
+
+  @ClearCached("asyncCachedValueGetter")
+  Future<void> clearAsyncCachedValueGetter();
+
+  @ClearCached("asyncCachedValueGetterWithTTl")
+  void clearAsyncTTLCachedValueGetter();
+
+  @ClearCached("syncCachedValueGetter")
+  void clearCachedValueGetter();
+
+  @ClearCached("syncCachedValueGetterWithTTl")
+  void clearCachedValueGetterWithTTl();
 
   @DeletesCache(['asyncCachedValue'])
   Future<void> deleteAsyncCachedValue() async {

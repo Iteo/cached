@@ -17,7 +17,7 @@ abstract class NoTargetMethod {
 }
 
 @ShouldThrow(
-  '[ERROR] There are multiple methods which ClearCached annotation with the same argument',
+  '[ERROR] There are multiple targets with ClearCached annotation with the same argument',
   element: false,
 )
 @withCache
@@ -36,7 +36,7 @@ abstract class MultipleClearMethods {
   void clearCachedMethod();
 }
 
-@ShouldThrow('[ERROR] No cache method for `something` method', element: false)
+@ShouldThrow('[ERROR] No cache target for `something` method', element: false)
 @withCache
 abstract class InvalidName {
   factory InvalidName() = _InvalidName;

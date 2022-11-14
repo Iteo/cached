@@ -203,6 +203,84 @@ void main() {
       }
     });
 
+    test('cached value should be the same on the second getter call', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValueGetter;
+      final secondCachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue, equals(secondCachedValue));
+    });
+
+    test('clear cache method should clear getter cache', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValueGetter;
+      cachedClass.clearCachedValueGetter();
+      final secondCachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test('calling other clear cache method, should not clear cache', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValueGetter;
+      cachedClass.clearCachedValue();
+      final secondCachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue == secondCachedValue, true);
+    });
+
+    test('clearing all cache method should clear cache', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValueGetter;
+      await Future.delayed(const Duration(milliseconds: 10));
+
+      cachedClass.clearAll();
+      final secondCachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue != secondCachedValue, true);
+    });
+
+    test('cached value cache should be streamed', () async {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final queue = StreamQueue(cachedClass.streamOfCachedGetterValue());
+      final next = Future.microtask(() => queue.next);
+      await Future.delayed(Duration.zero);
+
+      final cachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue, await next);
+    });
+
+    test('stream should initial emit initialValue even if it is null',
+        () async {
+      final cachedClass = SimpleCached(_dataProvider);
+      cachedClass.nullableCachedValueGetter;
+
+      final streamValue =
+          StreamQueue(cachedClass.nullableCacheGetterValueStream());
+      expect(await streamValue.next, equals(null));
+    });
+
+    test('stream should not emit null if there is not initial value available',
+        () async {
+      final cachedClass = SimpleCached(_dataProvider);
+
+      final streamSub = cachedClass
+          .nullableCacheGetterValueStream()
+          .listen((event) => throw "Unexpected event");
+
+      await streamSub.cancel();
+    });
+
+    test('peek cache should be the same on cached value method', () {
+      final cachedClass = SimpleCached(_dataProvider);
+      final cachedValue = cachedClass.cachedValueGetter;
+      final secondCachedValue = cachedClass.cachedValueGetter;
+
+      expect(cachedValue, equals(secondCachedValue));
+    });
+
     test(
         'deletes cache method should clear cache if function returns with value',
         () {

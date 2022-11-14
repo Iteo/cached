@@ -40,7 +40,7 @@ import 'package:meta/meta_meta.dart';
 /// but if an error occurs, the cache is not deleted and the error is rethrown.
 ///
 /// {@endtemplate}
-@Target({TargetKind.method})
+@Target({TargetKind.method, TargetKind.getter})
 class DeletesCache {
   /// {@macro cached.deletes_cache}
   const DeletesCache(this.methodNames);

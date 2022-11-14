@@ -47,6 +47,44 @@ void main() {
       expect(cachedValue, equals(cachedValueFromAnotherInstance));
     });
 
+    test("cache should be static", () {
+      final firstCachedClass = StaticCached(_dataProvider);
+      final secondsCachedClass = StaticCached(_dataProvider);
+
+      final cachedValue = firstCachedClass.cachedValueGetter;
+      final cachedValueFromAnotherInstance =
+          secondsCachedClass.cachedValueGetter;
+
+      expect(cachedValue, equals(cachedValueFromAnotherInstance));
+    });
+
+    test("stream should emit between instances", () async {
+      final firstCachedClass = StaticCached(_dataProvider);
+      final secondsCachedClass = StaticCached(_dataProvider);
+
+      final queue =
+          StreamQueue(secondsCachedClass.cachedValueGetterCacheStream());
+      final next = Future.microtask(() => queue.next);
+      await Future.delayed(Duration.zero);
+
+      final cachedValue = firstCachedClass.cachedValueGetter;
+
+      expect(cachedValue, equals(await next));
+    });
+
+    test('peek cache should be static', () {
+      final firstCachedClass = StaticCached(_dataProvider);
+      final secondsCachedClass = StaticCached(_dataProvider);
+
+      firstCachedClass.cachedValueGetter;
+
+      final cachedValue = firstCachedClass.cachedValueGetterCachePeek();
+      final cachedValueFromAnotherInstance =
+          secondsCachedClass.cachedValueGetterCachePeek();
+
+      expect(cachedValue, equals(cachedValueFromAnotherInstance));
+    });
+
     test(
         'deletes cache method should clear cache if function returns with value',
         () {

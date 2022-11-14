@@ -56,6 +56,10 @@ abstract class Gen implements _$Gen {
     return get(Uri.parse(_url));
   }
 
+  /// @Cached annotation also works with getters
+  @Cached(syncWrite: true, ttl: 30, limit: 10)
+  Future<Response> get getDataWithCachedGetter async => get(Uri.parse(_url));
+
   /// Method for measure example, you can go to example.dart file
   /// and run main method, so you can check how great [Checked] package is it.
   Future<Response> getDataWithoutCached() {
@@ -67,7 +71,7 @@ abstract class Gen implements _$Gen {
   Stream<Response> getDataCacheStream();
 
   /// Method for getting data of cache method
-  @CachePeek(methodName: "getDataWithCached")
+  @CachePeek("getDataWithCached")
   Response? peekDataCache();
 
   /// Method annotated with this annotation can be used to clear result

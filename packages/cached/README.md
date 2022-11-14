@@ -12,7 +12,7 @@ and the Flutter guide for
 -->
 <div align="center">
 <br /><br />
-<img width="400" src="https://github.com/Iteo/cached/raw/master/packages/cached/cached_sygnet.png">
+<img width="128" src="https://github.com/Iteo/cached/raw/master/packages/cached/cached_sygnet.png">
 <br /><br />
 
 [![Test status](https://github.com/Iteo/cached/workflows/Build/badge.svg)](https://github.com/Iteo/cached/actions/workflows/build.yml)
@@ -173,7 +173,7 @@ abstract class Gen implements _$Gen {
 
 ### Cached
 
-Method decorator that flag it as needing to be processed by `Cached` code generator.
+Method/Getter decorator that flag it as needing to be processed by `Cached` code generator.
 
 There are 3 possible additional parameters:
 
@@ -192,6 +192,13 @@ There are 3 possible additional parameters:
   limit: 100,
 )
 Future<int> getInt(String param) {
+  return Future.value(1);
+}
+```
+
+```dart
+@cached
+Future<int> get getter {
   return Future.value(1);
 }
 ```
@@ -247,7 +254,7 @@ Example use:
 
 ```dart
 @cached
-Future<int> getInt(@CacheKey(cacheKeyGenerator: exampleCacheFunction) int test) async {
+Future<int> getInt(@CacheKey(exampleCacheFunction) int test) async {
   await Future.delayed(Duration(milliseconds: 20));
   return test;
 }
@@ -399,7 +406,7 @@ Future<SomeResponseType> getUserData() {
 to generate peek cache method we can write:
 
 ```dart
-@CachePeek(methodName: "getUserData")
+@CachePeek("getUserData")
 SomeResponseType? peekUserDataCache();
 ```
 

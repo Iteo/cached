@@ -27,7 +27,7 @@ class StreamedCacheMethod {
 
   factory StreamedCacheMethod.fromElement(
     MethodElement element,
-    List<MethodElement> classMethods,
+    List<ExecutableElement> classMethods,
     Config config,
   ) {
     final annotation = getAnnotation(element);
@@ -111,7 +111,7 @@ class StreamedCacheMethod {
     );
   }
 
-  static DartObject? getAnnotation(MethodElement element) {
+  static DartObject? getAnnotation(ExecutableElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(StreamedCache);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }

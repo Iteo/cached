@@ -1,0 +1,401 @@
+import 'package:cached_annotation/cached_annotation.dart';
+import 'package:source_gen_test/annotations.dart';
+
+//MODIFIED CACHED METHOD GENERATION TEST INPUT
+
+@ShouldThrow(
+    '[ERROR] Method Getter returns void or Future<void> which is not allowed')
+@withCache
+abstract class VoidGetter {
+  factory VoidGetter() = _VoidGetter;
+
+  @cached
+  void get Getter {}
+}
+
+@ShouldThrow(
+    '[ERROR] Method Getter returns void or Future<void> which is not allowed')
+@withCache
+abstract class FutureVoidGetter {
+  factory FutureVoidGetter() = _FutureVoidGetter;
+
+  @cached
+  Future<void> get Getter async {}
+}
+
+@ShouldThrow('[ERROR] Cached method Getter is abstract which is not allowed')
+@withCache
+abstract class AbstractGetter {
+  factory AbstractGetter() = _AbstractGetter;
+
+  @cached
+  Future<int> get Getter;
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$Getter {}
+
+class _Getter with Getter implements _$Getter {
+  _Getter();
+
+  final _getterCached = <String, int>{};
+
+  @override
+  int get getter {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class Getter {
+  factory Getter() = _Getter;
+
+  @cached
+  int get getter {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$AsyncGet {}
+
+class _AsyncGet with AsyncGet implements _$AsyncGet {
+  _AsyncGet();
+
+  final _getterCached = <String, int>{};
+
+  @override
+  Future<int> get getter async {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class AsyncGet {
+  factory AsyncGet() = _AsyncGet;
+
+  @cached
+  Future<int> get getter {
+    return Future.value(1);
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$AsyncGeneratorGetter {}
+
+class _AsyncGeneratorGetter
+    with AsyncGeneratorGetter
+    implements _$AsyncGeneratorGetter {
+  _AsyncGeneratorGetter();
+
+  final _getterCached = <String, Stream<int>>{};
+
+  @override
+  Stream<int> get getter async* {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final Stream<int> toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      yield* toReturn;
+    } else {
+      yield* cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class AsyncGeneratorGetter {
+  factory AsyncGeneratorGetter() = _AsyncGeneratorGetter;
+
+  @cached
+  Stream<int> get getter async* {
+    yield 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$SyncGeneratorGetter {}
+
+class _SyncGeneratorGetter
+    with SyncGeneratorGetter
+    implements _$SyncGeneratorGetter {
+  _SyncGeneratorGetter();
+
+  final _getterCached = <String, Iterable<int>>{};
+
+  @override
+  Iterable<int> get getter sync* {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final Iterable<int> toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      yield* toReturn;
+    } else {
+      yield* cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class SyncGeneratorGetter {
+  factory SyncGeneratorGetter() = _SyncGeneratorGetter;
+
+  @cached
+  Iterable<int> get getter sync* {
+    yield 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$CachedWithLimit {}
+
+class _CachedWithLimit with CachedWithLimit implements _$CachedWithLimit {
+  _CachedWithLimit();
+
+  final _getterCached = <String, int>{};
+
+  @override
+  int get getter {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      if (_getterCached.length > 10) {
+        _getterCached.remove(_getterCached.entries.last.key);
+      }
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class CachedWithLimit {
+  factory CachedWithLimit() = _CachedWithLimit;
+
+  @Cached(limit: 10)
+  int get getter {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$CachedWithTtl {}
+
+class _CachedWithTtl with CachedWithTtl implements _$CachedWithTtl {
+  _CachedWithTtl();
+
+  final _getterCached = <String, int>{};
+
+  final _getterTtl = <String, DateTime>{};
+
+  @override
+  int get getter {
+    final now = DateTime.now();
+    final currentTtl = _getterTtl[""];
+
+    if (currentTtl != null && currentTtl.isBefore(now)) {
+      _getterTtl.remove("");
+      _getterCached.remove("");
+    }
+
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      _getterTtl[""] = DateTime.now().add(const Duration(seconds: 30));
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class CachedWithTtl {
+  factory CachedWithTtl() = _CachedWithTtl;
+
+  @Cached(ttl: 30)
+  int get getter {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$AsyncSyncWrite {}
+
+class _AsyncSyncWrite with AsyncSyncWrite implements _$AsyncSyncWrite {
+  _AsyncSyncWrite();
+
+  final _getterSync = <String, Future<int>>{};
+
+  final _getterCached = <String, int>{};
+
+  @override
+  Future<int> get getter async {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final cachedFuture = _getterSync[""];
+
+      if (cachedFuture != null) {
+        return cachedFuture;
+      }
+
+      final int toReturn;
+      try {
+        final result = super.getter;
+        _getterSync[''] = result;
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {
+        _getterSync.remove('');
+      }
+
+      _getterCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class AsyncSyncWrite {
+  factory AsyncSyncWrite() = _AsyncSyncWrite;
+
+  @Cached(syncWrite: true)
+  Future<int> get getter async {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$SyncSyncWrite {}
+
+class _SyncSyncWrite with SyncSyncWrite implements _$SyncSyncWrite {
+  _SyncSyncWrite();
+
+  final _getterSync = <String, Future<int>>{};
+
+  final _getterCached = <String, int>{};
+
+  @override
+  int get getter {
+    final cachedValue = _getterCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.getter;
+
+        toReturn = result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _getterCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class SyncSyncWrite {
+  factory SyncSyncWrite() = _SyncSyncWrite;
+
+  @Cached(syncWrite: true)
+  int get getter {
+    return 1;
+  }
+}

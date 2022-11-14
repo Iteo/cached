@@ -22,7 +22,7 @@ abstract class SimpleCached implements _$SimpleCached {
 
   @cached
   int cachedValueWithCustomKey(
-    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+    @CacheKey(_cachedKeyGenerator) String value,
   ) {
     return dataProvider.getRandomValue();
   }
@@ -75,15 +75,15 @@ abstract class SimpleCached implements _$SimpleCached {
   @StreamedCache(methodName: "nullableCachedValue", emitLastValue: true)
   Stream<int?> nullableCacheValueStream();
 
-  @CachePeek(methodName: "cachedValue")
+  @CachePeek("cachedValue")
   int? cachePeekValue();
 
-  @CachePeek(methodName: "cachedTimestamp")
+  @CachePeek("cachedTimestamp")
   int? timestampCachePeekValue();
 
-  @CachePeek(methodName: "cachedValueWithCustomKey")
+  @CachePeek("cachedValueWithCustomKey")
   int? peekCachedValueWithCustomKey(
-    @CacheKey(cacheKeyGenerator: _cachedKeyGenerator) String value,
+    @CacheKey(_cachedKeyGenerator) String value,
   );
 
   @clearCached
@@ -94,6 +94,34 @@ abstract class SimpleCached implements _$SimpleCached {
 
   @clearAllCached
   void clearAll();
+
+  @cached
+  int get cachedValueGetter {
+    return dataProvider.getRandomValue();
+  }
+
+  @cached
+  int? get nullableCachedValueGetter {
+    return null;
+  }
+
+  @StreamedCache(
+    methodName: "nullableCachedValueGetter",
+    emitLastValue: true,
+  )
+  Stream<int?> nullableCacheGetterValueStream();
+
+  @StreamedCache(methodName: "cachedValueGetter")
+  Stream<int> streamOfCachedGetterValue();
+
+  @CachePeek("nullableCachedValueGetter")
+  int? nullableCacheGetterPeekValue();
+
+  @CachePeek("cachedValueGetter")
+  int? cacheGetterPeekValue();
+
+  @clearCached
+  void clearCachedValueGetter();
 
   @DeletesCache(['cachedValue'])
   void deleteCachedValue() {}

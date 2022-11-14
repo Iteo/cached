@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cache_peek_method.dart';
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
@@ -25,6 +26,7 @@ class ClassWithCache {
     required this.streamedCacheMethods,
     required this.cachePeekMethods,
     required this.deletesCacheMethods,
+    required this.getters,
     this.clearAllMethod,
   });
 
@@ -37,6 +39,7 @@ class ClassWithCache {
   final Iterable<CachePeekMethod> cachePeekMethods;
   final Iterable<DeletesCacheMethod> deletesCacheMethods;
   final ClearAllCachedMethod? clearAllMethod;
+  final Iterable<CachedGetter> getters;
 
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
     assertAbstract(element);
@@ -70,18 +73,39 @@ class ClassWithCache {
         if (method.ttl != null) method.name
     };
 
+    final getters = element.accessors
+        .where((element) => element.isGetter)
+        .where(
+          (element) => CachedGetter.getAnnotation(element) != null,
+        )
+        .map((e) => CachedGetter.fromElement(e, config));
+
+    final gettersWithTtls = getters
+        .where((getter) => getter.ttl != null)
+        .map((getter) => getter.name);
+
     final clearMethods = element.methods
         .where((element) => ClearCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
-        .map((e) => ClearCachedMethod.fromElement(e, config, methodsWithTtls));
+        .map(
+          (e) => ClearCachedMethod.fromElement(
+            e,
+            config,
+            <String>{...methodsWithTtls, ...gettersWithTtls},
+          ),
+        );
 
-    assertValidateClearCachedMethods(clearMethods, methods);
+    assertValidateClearCachedMethods(clearMethods, methods, getters);
 
     final clearAllMethod = element.methods
         .where((element) => ClearAllCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
         .map(
-          (e) => ClearAllCachedMethod.fromElement(e, config, methodsWithTtls),
+          (e) => ClearAllCachedMethod.fromElement(
+            e,
+            config,
+            <String>{...methodsWithTtls, ...gettersWithTtls},
+          ),
         );
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
@@ -92,13 +116,16 @@ class ClassWithCache {
         .map(
           (e) => StreamedCacheMethod.fromElement(
             e,
-            element.methods,
+            [...element.methods, ...element.accessors],
             config,
           ),
         )
         .toList();
 
-    assertOneCacheStreamPerCachedMethod(element.methods, streamedCacheMethods);
+    assertOneCacheStreamPerCachedMethod(
+      [...element.methods, ...element.accessors],
+      streamedCacheMethods,
+    );
 
     final cachePeekMethods = element.methods
         .where((element) => CachePeekMethod.getAnnotation(element) != null)
@@ -106,13 +133,16 @@ class ClassWithCache {
         .map(
           (e) => CachePeekMethod.fromElement(
             e,
-            element.methods,
+            [...element.methods, ...element.accessors],
             config,
           ),
         )
         .toList();
 
-    assertOneCachePeekPerCachedMethod(element.methods, cachePeekMethods);
+    assertOneCachePeekPerCachedMethod(
+      [...element.methods, ...element.accessors],
+      cachePeekMethods,
+    );
 
     final deletesCacheMethods = element.methods
         .where((element) => DeletesCacheMethod.getAnnotation(element) != null)
@@ -121,12 +151,15 @@ class ClassWithCache {
           (e) => DeletesCacheMethod.fromElement(
             e,
             config,
-            methodsWithTtls,
+            <String>{...methodsWithTtls, ...gettersWithTtls},
           ),
         )
         .toList();
 
-    assertValidateDeletesCacheMethods(deletesCacheMethods, methods);
+    assertValidateDeletesCacheMethods(
+      deletesCacheMethods,
+      [...methods, ...getters],
+    );
 
     return ClassWithCache(
       name: element.name,
@@ -139,6 +172,7 @@ class ClassWithCache {
       clearAllMethod: clearAllMethod.firstOrNull,
       cachePeekMethods: cachePeekMethods,
       deletesCacheMethods: deletesCacheMethods,
+      getters: getters,
     );
   }
 }

@@ -11,7 +11,7 @@ abstract class CachePeekMethodReturnType {
     return 1;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   String cachedPeek();
 }
 
@@ -25,7 +25,7 @@ abstract class MethodShouldExists {
     return 1;
   }
 
-  @CachePeek(methodName: "totallyWrongName")
+  @CachePeek("totallyWrongName")
   int? cachedPeek();
 }
 
@@ -39,7 +39,7 @@ abstract class MethodShouldHaveCachedAnnotation {
     return 1;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek();
 }
 
@@ -54,7 +54,7 @@ abstract class MethodShouldHaveSameParams {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int z);
 }
 
@@ -70,7 +70,7 @@ abstract class MethodShouldHaveSameParamsNullable {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int z);
 }
 
@@ -86,7 +86,7 @@ abstract class MethodShouldHaveSameParamsNoParams {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int z);
 }
 
@@ -102,7 +102,7 @@ abstract class MethodShouldHaveSameParamsWithoutIgnore {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int x);
 }
 
@@ -118,7 +118,7 @@ abstract class MethodShouldHaveSameParamsWithoutIgnoreCache {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int x, bool ignoreCache);
 }
 
@@ -168,7 +168,7 @@ abstract class SimpleMethod {
     return 1;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek();
 }
 
@@ -218,7 +218,7 @@ abstract class FutureMethod {
     return 1;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek();
 }
 
@@ -268,7 +268,7 @@ abstract class Parameters {
     return 1;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(String y);
 }
 
@@ -283,10 +283,10 @@ abstract class DuplicateTarget {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int x);
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int anotherSameCachePeek(int x);
 }
 
@@ -300,7 +300,7 @@ abstract class ShouldBeAbstract {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int x) => 1;
 }
 
@@ -352,7 +352,7 @@ abstract class CachePeekWithCacheKey {
     return x[0];
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(@iterableCacheKey List<int> x);
 }
 
@@ -402,6 +402,6 @@ abstract class StaticCache {
     return y;
   }
 
-  @CachePeek(methodName: "cachedMethod")
+  @CachePeek("cachedMethod")
   int? cachedPeek(int x);
 }

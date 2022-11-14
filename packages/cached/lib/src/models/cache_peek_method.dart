@@ -23,7 +23,7 @@ class CachePeekMethod {
 
   factory CachePeekMethod.fromElement(
     MethodElement element,
-    List<MethodElement> classMethods,
+    List<ExecutableElement> classMethods,
     Config config,
   ) {
     final annotation = getAnnotation(element);
