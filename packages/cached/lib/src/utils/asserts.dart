@@ -3,6 +3,7 @@ import 'package:cached/src/models/cache_peek_method.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
+import 'package:cached/src/models/deletes_cache_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
@@ -197,5 +198,41 @@ void assertCorrectCachePeekMethodType(MethodElement element) {
       '[ERROR] `${element.name}` must be a abstract method',
       element: element,
     );
+  }
+}
+
+void assertCorrectDeletesCacheMethodType(MethodElement element) {
+  if (element.isAbstract) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] `${element.name}` cant be an abstract method',
+      element: element,
+    );
+  }
+}
+
+void assertValidateDeletesCacheMethods(
+  Iterable<DeletesCacheMethod> deletesCacheMethods,
+  Iterable<CachedMethod> methods,
+) {
+  for (final deletesCacheMethod in deletesCacheMethods) {
+    final invalidTargetMethods = deletesCacheMethod.methodNames.where(
+      (method) => !methods.map((e) => e.name).contains(method),
+    );
+
+    if (invalidTargetMethods.isNotEmpty) {
+      final message = invalidTargetMethods
+          .map(
+            (invalidTargetMethod) =>
+                "[ERROR] $invalidTargetMethod is not a valid target for ${deletesCacheMethod.name}",
+          )
+          .join('\n');
+      throw InvalidGenerationSourceError(message);
+    }
+
+    if (deletesCacheMethod.methodNames.isEmpty) {
+      throw InvalidGenerationSourceError(
+        '[ERROR] No target method names specified for ${deletesCacheMethod.name}',
+      );
+    }
   }
 }

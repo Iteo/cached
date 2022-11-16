@@ -79,6 +79,18 @@ abstract class Gen implements _$Gen {
   @ClearCached('getDataWithCached')
   void clearDataCache();
 
+  /// Method annotated with @DeletesCache annotation will clear
+  /// cached results if it returns with value; however if this method
+  /// would throw exception, cached data would not be cleared
+  ///
+  /// IMPORTANT!
+  /// Method names passed in annotation must correspond to
+  /// valid cached method names
+  @DeletesCache(["getDataWithCached"])
+  Future<int> deletesCache() async {
+    return 1;
+  }
+
   /// Method with this annotation will clear cached values for all methods.
   @clearAllCached
   void clearAllCache();

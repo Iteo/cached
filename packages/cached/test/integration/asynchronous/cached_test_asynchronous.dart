@@ -75,4 +75,48 @@ abstract class AsynchronousCached implements _$AsynchronousCached {
   void resetCounter() => _counter = 0;
 
   int counter() => _counter;
+
+  @DeletesCache(['asyncCachedValue'])
+  Future<void> deleteAsyncCachedValue() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+
+  @DeletesCache(['asyncCachedValue'])
+  Future<void> deleteAsyncCachedValueFail() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    throw Exception();
+  }
+
+  @DeletesCache(['asyncCachedValueWithTTl'])
+  Future<void> deleteAsyncTTLCachedValue() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+
+  @DeletesCache(['asyncCachedValueWithTTl'])
+  Future<void> deleteAsyncTTLCachedValueFail() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    throw Exception();
+  }
+
+  @DeletesCache(['syncCachedValue'])
+  Future<void> deleteCachedValue() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+
+  @DeletesCache(['syncCachedValue'])
+  Future<void> deleteCachedValueFail() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    throw Exception();
+  }
+
+  @DeletesCache(['syncCachedValueWithTTl'])
+  Future<void> deleteTTLCachedValue() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+  }
+
+  @DeletesCache(['syncCachedValueWithTTl'])
+  Future<void> deleteTTLCachedValueFail() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    throw Exception();
+  }
 }
