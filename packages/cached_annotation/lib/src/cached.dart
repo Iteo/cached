@@ -37,7 +37,7 @@ const cached = Cached();
 /// if you want to clear cache method use [ClearCached]
 /// or [ClearAllCached] annotation
 /// {@endtemplate}
-@Target({TargetKind.method})
+@Target({TargetKind.method, TargetKind.getter})
 class Cached {
   /// {@macro cached.cached}
   const Cached({

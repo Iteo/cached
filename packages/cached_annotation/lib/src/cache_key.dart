@@ -29,13 +29,13 @@ typedef CacheKeyGeneratorFunc = String Function(dynamic);
 /// {@endtemplate}
 @Target({TargetKind.parameter})
 class CacheKey {
-  const CacheKey({required this.cacheKeyGenerator});
+  const CacheKey(this.cacheKeyGenerator);
 
   final CacheKeyGeneratorFunc cacheKeyGenerator;
 }
 
 /// const instance of [CacheKey] that uses [iterableCacheKeyGenerator]
-const iterableCacheKey = CacheKey(cacheKeyGenerator: iterableCacheKeyGenerator);
+const iterableCacheKey = CacheKey(iterableCacheKeyGenerator);
 
 /// Calculates good hashcode for list of values
 String iterableCacheKeyGenerator(dynamic l) {

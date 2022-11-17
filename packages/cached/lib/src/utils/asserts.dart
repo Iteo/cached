@@ -1,5 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cache_peek_method.dart';
+import 'package:cached/src/models/cached_function.dart';
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
@@ -8,7 +10,7 @@ import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
-void assertMethodNotVoid(MethodElement element) {
+void assertMethodNotVoid(ExecutableElement element) {
   if (element.returnType.isVoid ||
       element.returnType.getDisplayString(withNullability: false) ==
           'Future<void>') {
@@ -19,7 +21,7 @@ void assertMethodNotVoid(MethodElement element) {
   }
 }
 
-void assertMethodIsNotAbstract(MethodElement element) {
+void assertMethodIsNotAbstract(ExecutableElement element) {
   if (element.isAbstract) {
     throw InvalidGenerationSourceError(
       '[ERROR] Cached method ${element.name} is abstract which is not allowed',
@@ -81,15 +83,17 @@ void assertOneClearAllCachedAnnotation(
 void assertValidateClearCachedMethods(
   Iterable<ClearCachedMethod> clearMethods,
   Iterable<CachedMethod> methods,
+  Iterable<CachedGetter> getters,
 ) {
   for (final ClearCachedMethod clearMethod in clearMethods) {
-    final hasPair = methods
-        .where((element) => element.name == clearMethod.methodName)
-        .isNotEmpty;
+    final hasPair = [
+      methods.where((element) => element.name == clearMethod.methodName),
+      getters.where((element) => element.name == clearMethod.methodName),
+    ].expand((element) => element).isNotEmpty;
 
     if (!hasPair) {
       throw InvalidGenerationSourceError(
-        '[ERROR] No cache method for `${clearMethod.name}` method',
+        '[ERROR] No cache target for `${clearMethod.name}` method',
       );
     }
 
@@ -98,7 +102,7 @@ void assertValidateClearCachedMethods(
             .length >
         1) {
       throw InvalidGenerationSourceError(
-        '[ERROR] There are multiple methods which ClearCached annotation with the same argument',
+        '[ERROR] There are multiple targets with ClearCached annotation with the same argument',
       );
     }
   }
@@ -142,7 +146,7 @@ void assertCorrectClearMethodType(MethodElement element) {
 }
 
 void assertOneCacheStreamPerCachedMethod(
-  Iterable<MethodElement> methods,
+  Iterable<ExecutableElement> methods,
   Iterable<StreamedCacheMethod> streamedCacheMethods,
 ) {
   for (final method in methods) {
@@ -163,7 +167,7 @@ void assertOneCacheStreamPerCachedMethod(
 }
 
 void assertOneCachePeekPerCachedMethod(
-  Iterable<MethodElement> methods,
+  Iterable<ExecutableElement> methods,
   Iterable<CachePeekMethod> cachePeekMethods,
 ) {
   for (final method in methods) {
@@ -212,7 +216,7 @@ void assertCorrectDeletesCacheMethodType(MethodElement element) {
 
 void assertValidateDeletesCacheMethods(
   Iterable<DeletesCacheMethod> deletesCacheMethods,
-  Iterable<CachedMethod> methods,
+  Iterable<CachedFunction> methods,
 ) {
   for (final deletesCacheMethod in deletesCacheMethods) {
     final invalidTargetMethods = deletesCacheMethod.methodNames.where(

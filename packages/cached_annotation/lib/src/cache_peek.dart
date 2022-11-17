@@ -27,9 +27,9 @@ import 'package:meta/meta_meta.dart';
 @Target({TargetKind.method})
 class CachePeek {
   /// {@macro cached.cache_peek}
-  const CachePeek({
-    required this.methodName,
-  });
+  const CachePeek(
+    this.methodName,
+  );
 
   /// Name of method to be cache peek
   final String methodName;

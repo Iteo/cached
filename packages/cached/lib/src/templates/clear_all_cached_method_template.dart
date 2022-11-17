@@ -1,3 +1,4 @@
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
@@ -8,6 +9,7 @@ class ClearAllCachedMethodTemplate {
   ClearAllCachedMethodTemplate({
     this.method,
     required this.cachedMethods,
+    required this.cachedGetters,
     required Iterable<StreamedCacheMethod> streamedCacheMethods,
   })  : paramsTemplate = AllParamsTemplate(method?.params ?? {}),
         streamedCacheMethodPerName = {
@@ -16,14 +18,17 @@ class ClearAllCachedMethodTemplate {
 
   final ClearAllCachedMethod? method;
   final Iterable<CachedMethod> cachedMethods;
+  final Iterable<CachedGetter> cachedGetters;
   final Map<String, StreamedCacheMethod> streamedCacheMethodPerName;
   final AllParamsTemplate paramsTemplate;
 
   String get asyncModifier => isFuture(method!.returnType) ? 'async' : '';
   String get awaitIfNeeded => isFuture(method!.returnType) ? 'await' : '';
 
-  String _generateCacheClearMethods() =>
-      cachedMethods.map(_generateClearMaps).join("\n");
+  String _generateCacheClearMethods() => [
+        ...cachedMethods.map(_generateClearMapsFromMethod),
+        ...cachedGetters.map(_generateClearMapsFromGetter),
+      ].join("\n");
 
   String generateMethod() {
     if (method == null) return '';
@@ -71,10 +76,26 @@ class ClearAllCachedMethodTemplate {
     ''';
   }
 
-  String _generateClearMaps(CachedMethod clearedMethod) {
+  String _generateClearMapsFromMethod(CachedMethod clearedMethod) {
     final baseName = clearedMethod.name;
-    final streamedCacheMethod = streamedCacheMethodPerName[baseName];
+    return _generateClearMaps(
+      baseName,
+      streamedCacheMethodPerName[baseName],
+    );
+  }
 
+  String _generateClearMapsFromGetter(CachedGetter clearedMethod) {
+    final baseName = clearedMethod.name;
+    return _generateClearMaps(
+      baseName,
+      streamedCacheMethodPerName[baseName],
+    );
+  }
+
+  String _generateClearMaps(
+    String baseName,
+    StreamedCacheMethod? streamedCacheMethod,
+  ) {
     return '''
 ${getCacheMapName(baseName)}.clear();
 ${method?.ttlsToClear.contains(baseName) ?? false ? "${getTtlMapName(baseName)}.clear();" : ""}

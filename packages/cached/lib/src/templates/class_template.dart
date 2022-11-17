@@ -1,6 +1,7 @@
 import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/templates/cache_peek_method_template.dart';
+import 'package:cached/src/templates/cached_getter_template.dart';
 import 'package:cached/src/templates/cached_method_template.dart';
 import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
@@ -19,7 +20,15 @@ class ClassTemplate {
     final methodTemplates = classMethods.map(
       (e) => CachedMethodTemplate(
         e,
-        methods: classMethods,
+        useStaticCache: classWithCache.useStaticCache,
+        isCacheStreamed: classWithCache.streamedCacheMethods
+            .any((s) => s.targetMethodName == e.name),
+      ),
+    );
+
+    final getterTemplates = classWithCache.getters.map(
+      (e) => CachedGetterTemplate(
+        e,
         useStaticCache: classWithCache.useStaticCache,
         isCacheStreamed: classWithCache.streamedCacheMethods
             .any((s) => s.targetMethodName == e.name),
@@ -48,6 +57,7 @@ class ClassTemplate {
     final clearAllMethodTemplate = ClearAllCachedMethodTemplate(
       method: classWithCache.clearAllMethod,
       cachedMethods: classMethods,
+      cachedGetters: classWithCache.getters,
       streamedCacheMethods: classWithCache.streamedCacheMethods,
     );
 
@@ -80,14 +90,18 @@ class _${classWithCache.name} with ${classWithCache.name} implements _\$${classW
   ${constructorParamTemplates.generateFields(addOverrideAnnotation: true)}
 
   ${methodTemplates.map((e) => e.generateSyncMap()).join('\n')}
+  ${getterTemplates.map((e) => e.generateSyncMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateCacheMap()).join('\n')}
+  ${getterTemplates.map((e) => e.generateCacheMap()).join('\n')}
 
   ${methodTemplates.map((e) => e.generateTtlMap()).join('\n')}
+  ${getterTemplates.map((e) => e.generateTtlMap()).join('\n')}
 
   ${streamedCacheMethodTemplates.map((e) => e.generateStreamMap()).join('\n')}
 
-  ${methodTemplates.map((e) => e.generateMethod()).join('\n\n')}
+  ${methodTemplates.map((e) => e.generate()).join('\n\n')}
+  ${getterTemplates.map((e) => e.generate()).join('\n\n')}
 
   ${streamedCacheMethodTemplates.map((e) => e.generateMethod()).join('\n\n')}
 

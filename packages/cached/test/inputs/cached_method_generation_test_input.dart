@@ -840,9 +840,7 @@ abstract class CacheKeyParam {
   factory CacheKeyParam() = _UseCacheKeyParam;
 
   @cached
-  int method(
-      {@CacheKey(cacheKeyGenerator: _cacheKeyGenerator)
-          bool something = false}) {
+  int method({@CacheKey(_cacheKeyGenerator) bool something = false}) {
     return 1;
   }
 }
@@ -854,9 +852,7 @@ abstract class IgnoreCacheWithCacheKeyParam {
 
   @cached
   int method(
-      {@IgnoreCache()
-      @CacheKey(cacheKeyGenerator: _cacheKeyGenerator)
-          bool something = false}) {
+      {@IgnoreCache() @CacheKey(_cacheKeyGenerator) bool something = false}) {
     return 1;
   }
 }
