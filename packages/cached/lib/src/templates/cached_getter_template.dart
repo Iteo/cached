@@ -1,7 +1,7 @@
 import 'package:cached/src/models/cached_getter.dart';
-import 'package:cached/src/templates/cached_function_template.dart';
+import 'package:cached/src/templates/cached_method_template.dart';
 
-class CachedGetterTemplate extends CachedFunctionTemplate {
+class CachedGetterTemplate extends CachedMethodTemplate {
   CachedGetterTemplate(
     CachedGetter getter, {
     required bool useStaticCache,
