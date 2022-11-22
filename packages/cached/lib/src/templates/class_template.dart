@@ -2,7 +2,7 @@ import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/templates/cache_peek_method_template.dart';
 import 'package:cached/src/templates/cached_getter_template.dart';
-import 'package:cached/src/templates/cached_method_template.dart';
+import 'package:cached/src/templates/cached_method_with_params_template.dart';
 import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
 import 'package:cached/src/templates/deletes_cache_method_template.dart';
@@ -18,7 +18,7 @@ class ClassTemplate {
     final classMethods = classWithCache.methods;
 
     final methodTemplates = classMethods.map(
-      (e) => CachedMethodTemplate(
+      (e) => CachedMethodWithParamsTemplate(
         e,
         useStaticCache: classWithCache.useStaticCache,
         isCacheStreamed: classWithCache.streamedCacheMethods
