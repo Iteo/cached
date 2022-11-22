@@ -1,3 +1,8 @@
+## 1.4.0
+* Add `@DeletesCache()` annotation
+* Make parameters anonymous in `@CachePeek()` and `@CacheKey()` annotations
+* Add support for getters for `@Cached()` annotation
+
 ## 1.3.1
 * Allow `@ClearCached()` and `@ClearAllCached()` methods to return `Future<void>`
 
