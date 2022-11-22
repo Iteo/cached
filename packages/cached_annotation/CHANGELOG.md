@@ -1,3 +1,8 @@
+## 1.4.0
+* Add `@DeletesCache()` annotation
+* Make parameters anonymous in `@CachePeek()` and `@CacheKey()` annotations
+* Add support for getters for `@Cached()` annotation
+
 ## 1.3.0
 * Add `@PeakCache()` annotation
 * Fix generating `@StreamedCache()` with ignored parameters
