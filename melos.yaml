@@ -1,5 +1,9 @@
 name: cached
 
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
 packages:
   - packages/**
 

@@ -13,3 +13,7 @@ coverage/
 .history
 .svn/
 coverage.lcov
+*.iml
+
+# Melos-generated file
+pubspec_overrides.yaml
