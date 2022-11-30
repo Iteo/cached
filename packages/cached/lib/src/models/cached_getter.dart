@@ -23,9 +23,8 @@ class CachedGetter extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    final localConfig = CachedFunctionLocalConfig.fromAnnotation(
-      CachedFunction.getAnnotation(element),
-    );
+    final annotation = CachedFunction.getAnnotation(element);
+    final localConfig = CachedFunctionLocalConfig.fromAnnotation(annotation);
 
     final method = CachedGetter._(
       name: element.name,

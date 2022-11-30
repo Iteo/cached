@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cache_peek_method.dart';
+import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
@@ -64,19 +65,18 @@ class ClassWithCache {
 
     final methods = element.methods
         .where(
-          (element) => CachedMethod.getAnnotation(element) != null,
+          (element) => CachedFunction.hasCachedAnnotation(element),
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
-    final methodsWithTtls = {
-      for (final method in methods)
-        if (method.ttl != null) method.name
-    };
+    final methodsWithTtls = methods
+        .where((method) => method.ttl != null)
+        .map((method) => method.name);
 
     final getters = element.accessors
         .where((element) => element.isGetter)
         .where(
-          (element) => CachedGetter.getAnnotation(element) != null,
+          (element) => CachedFunction.hasCachedAnnotation(element),
         )
         .map((e) => CachedGetter.fromElement(e, config));
 

@@ -28,16 +28,15 @@ class CachedMethod extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    final localConfig = CachedFunctionLocalConfig.fromAnnotation(
-      CachedFunction.getAnnotation(element),
-    );
+    final annotation = CachedFunction.getAnnotation(element);
+    final localConfig = CachedFunctionLocalConfig.fromAnnotation(annotation);
 
     final method = CachedMethod._(
       name: element.name,
       syncWrite:
           localConfig.syncWrite ?? config.syncWrite ?? _defaultSyncWriteValue,
       limit: localConfig.limit ?? config.limit,
-      ttl: localConfig.limit ?? config.ttl,
+      ttl: localConfig.ttl ?? config.ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
       returnType: element.returnType.getDisplayString(withNullability: true),
       isAsync: element.isAsynchronous,
