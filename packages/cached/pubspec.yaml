@@ -7,7 +7,7 @@ homepage: https://github.com/Iteo/cached
 documentation: https://github.com/Iteo/cached/blob/master/packages/cached/README.md
 
 environment:
-  sdk: ">=2.16.1 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   analyzer: ^5.2.0
