@@ -28,7 +28,7 @@ const cached = Cached();
 /// or with parameters
 ///
 /// ```dart
-/// @Cached(syncWrite: true, ttl: 30, limit: 10)
+/// @Cached(syncWrite: true, ttl: 30, limit: 10, where: _checkIfShouldCache,)
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
@@ -44,6 +44,7 @@ class Cached {
     this.limit,
     this.syncWrite,
     this.ttl,
+    this.where,
   });
 
   /// limit how many results for different method call
@@ -62,4 +63,14 @@ class Cached {
   /// all of them will get result from the first call.
   /// Default value is set to `false`.
   final bool? syncWrite;
+
+  /// Function triggered before caching the value. Should return `bool`
+  ///
+  /// if returns `true`: value will be cached,
+  /// if returns `false`: value wil be ignored
+  ///
+  /// Useful to signal that a certain result must not be cached,
+  /// but @IgnoreCache is not enough
+  /// (e.g. condition whether or not to cache known once acquiring data)
+  final Function? where;
 }

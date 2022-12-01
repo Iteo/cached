@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:http/http.dart';
 
@@ -26,7 +28,7 @@ abstract class Gen implements _$Gen {
   /// Method decorator that flag it as needing to be processed
   /// by Cached code generator.
   ///
-  /// There are 3 possible additional parameters:
+  /// There are 4 possible additional parameters:
   ///
   /// * ttl - time to live. In seconds. Set how long cache will be alive.
   ///         Default value is set to null, means infinitive ttl.
@@ -39,6 +41,12 @@ abstract class Gen implements _$Gen {
   /// * limit - limit how many results for different method call arguments
   ///           combination will be cached. Default value null, means no limit.
   ///
+  /// * where - function triggered before caching the value.
+  ///           If returns `true`: value will be cached,
+  ///           if returns `false`: cache will not happen.
+  ///           Useful to signal that a certain result must not be cached
+  ///           (e.g. condition whether or not to cache known once acquiring data)
+  ///
   /// Additional annotation @IgnoreCache
   ///
   /// That annotation must be above a field in a method and must be bool,
@@ -49,7 +57,12 @@ abstract class Gen implements _$Gen {
   /// Additional annotation @ignore
   ///
   /// Arguments with @ignore annotations will be ignored while generating cache key.
-  @Cached(syncWrite: true, ttl: 30, limit: 10)
+  @Cached(
+    syncWrite: true,
+    ttl: 30,
+    limit: 10,
+    where: _shouldCache,
+  )
   Future<Response> getDataWithCached({
     @IgnoreCache(useCacheOnError: true) bool ignoreCache = false,
   }) {
@@ -57,7 +70,12 @@ abstract class Gen implements _$Gen {
   }
 
   /// @Cached annotation also works with getters
-  @Cached(syncWrite: true, ttl: 30, limit: 10)
+  @Cached(
+    syncWrite: true,
+    ttl: 30,
+    limit: 10,
+    where: _shouldCache,
+  )
   Future<Response> get getDataWithCachedGetter async => get(Uri.parse(_url));
 
   /// Method for measure example, you can go to example.dart file
@@ -98,4 +116,11 @@ abstract class Gen implements _$Gen {
   /// Method with this annotation will clear cached values for all methods.
   @clearAllCached
   void clearAllCache();
+}
+
+Future<bool> _shouldCache(Response response) async {
+  final json = jsonDecode(response.body) as Map<String, dynamic>;
+  print('Up to you: check conditionally and decide if should cache: $json');
+  print('For now: always cache');
+  return true;
 }

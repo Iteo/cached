@@ -45,21 +45,28 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 <!-- pub.dev accepts anchors only with lowercase -->
 
-- [Motivation](#motivation)
-- [Setup](#setup)
-  - [Run the generator](#run-the-generator)
-- [Basics](#basics)
-  - [WithCache](#withcache)
-  - [Cached](#cached-1)
-  - [IgnoreCache](#ignorecache)
-  - [Ignore](#ignore)
-  - [CacheKey](#cachekey)
-  - [ClearCached](#clearcached)
-  - [ClearAllCached](#clearallcached)
-  - [StreamedCache](#streamedcache)
-  - [CachePeek](#cachepeek)
-  - [DeletesCache](#deletescache)
-- [Contribution](#contribution)
+- [Cached](#cached)
+  - [Least Recently Used (LRU) cache algorithm](#least-recently-used-lru-cache-algorithm)
+  - [Contents](#contents)
+  - [Motivation](#motivation)
+  - [Setup](#setup)
+      - [Install package](#install-package)
+    - [Run the generator](#run-the-generator)
+  - [Basics](#basics)
+    - [WithCache](#withcache)
+    - [Cached](#cached-1)
+    - [IgnoreCache](#ignorecache)
+    - [Ignore](#ignore)
+    - [CacheKey](#cachekey)
+    - [ClearCached](#clearcached)
+    - [ClearAllCached](#clearallcached)
+    - [StreamedCache](#streamedcache)
+    - [CachePeek](#cachepeek)
+    - [DeletesCache](#deletescache)
+  - [Contribution](#contribution)
+    - [feature request](#feature-request)
+    - [Fix](#fix)
+  - [Contributors](#contributors)
 
 ## Motivation
 
@@ -175,7 +182,7 @@ abstract class Gen implements _$Gen {
 
 Method/Getter decorator that flag it as needing to be processed by `Cached` code generator.
 
-There are 3 possible additional parameters:
+There are 4 possible additional parameters:
 
 - `ttl` - time to live. In seconds. Set how long cache will be alive. Default value is set to null, means infinitive
   ttl.
@@ -184,15 +191,21 @@ There are 3 possible additional parameters:
   is set to `false`;
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
   means no limit.
+- `where` - function triggered before caching the value. If returns `true`: value will be cached, if returns `false`: value wil be ignored. Useful to signal that a certain result must not be cached, but `@IgnoreCache` is not enough (e.g. condition whether or not to cache known once acquiring data)
 
 ```dart
 @Cached(
   ttl: 60,
   syncWrite: true,
   limit: 100,
+  where: _shouldCache
 )
 Future<int> getInt(String param) {
   return Future.value(1);
+}
+
+bool _shouldCache(dynamic candidate) {
+  return (candidate as Int) > 0;
 }
 ```
 
@@ -360,6 +373,7 @@ Use `@StreamedCache` annotation to get a stream of cache updates from a cached m
 Remember to provide at least the name of the cached class method in the `methodName` parameter.
 
 Simple example of usage:
+
 ```dart
 @cached
 int cachedMethod() {
@@ -376,6 +390,7 @@ Return type of this method should be a `Stream<sync type of target method>` - fo
 the return type will be `Stream<String>`
 
 Example:
+
 ```dart
 @cached
 Future<String> cachedMethod(int x, @ignore String y) async {
@@ -426,6 +441,7 @@ Possible reasons why the generator gives an error
 @DeletesCache annotation takes a list of cached methods that are affected by the use of annotated method, the cache of all specified methods is cleared on method success, but if an error occurs, the cache is not deleted and the error is rethrown.
 
 If there is a cached method:
+
 ```dart
 @Cached()
 Future<SomeResponseType> getSthData() {
@@ -434,6 +450,7 @@ Future<SomeResponseType> getSthData() {
 ```
 
 Then a method that affects the cache of this method can be written as:
+
 ```dart
 @DeletesCache(['getSthData'])
 Future<SomeResponseType> performOperation() {
@@ -442,13 +459,14 @@ Future<SomeResponseType> performOperation() {
 }
 ```
 
-All methods specified in @DeletesCache annotation must correspond to cached method names. If the performOperation method completes without an error, then the cache of getSthData will be cleared. 
+All methods specified in @DeletesCache annotation must correspond to cached method names. If the performOperation method completes without an error, then the cache of getSthData will be cleared.
 
 Throws an [InvalidGenerationSourceError]
-* if method with @cached annotation doesn't exist
-* if no target method names are specified
-* if specified target methods are invalid
-* if annotated method is abstract
+
+- if method with @cached annotation doesn't exist
+- if no target method names are specified
+- if specified target methods are invalid
+- if annotated method is abstract
 
 ## Contribution
 
@@ -456,7 +474,7 @@ We accept any contribution to the project!
 
 Suggestions of a new feature or fix should be created via pull-request or issue.
 
-### feature request:
+### feature request
 
 - Check if feature is already addressed or declined
 
