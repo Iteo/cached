@@ -2,7 +2,7 @@ name: Build
 
 on:
   pull_request:
-    branches: [ master, develop, main ]
+    branches: [master, develop, main]
 
 jobs:
   build:
@@ -22,6 +22,9 @@ jobs:
       - name: Install coverage
         run: dart pub global activate coverage
 
+      - name: Melos Bootstrap
+        run: melos bs
+
       - name: Install dependencies
         run: melos run get
 
@@ -33,4 +36,3 @@ jobs:
 
       - name: Run tests
         run: melos run test:coverage
-        
