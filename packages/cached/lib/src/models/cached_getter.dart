@@ -23,8 +23,10 @@ class CachedGetter extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    final annotation = CachedFunction.getAnnotation(element);
-    final localConfig = CachedFunctionLocalConfig.fromAnnotation(annotation);
+    final localConfig = CachedFunctionLocalConfig.fromElement(element);
+
+    final returnType =
+        element.returnType.getDisplayString(withNullability: true);
 
     final method = CachedGetter._(
       name: element.name,
@@ -33,7 +35,7 @@ class CachedGetter extends CachedFunction {
       limit: localConfig.limit ?? config.limit,
       ttl: localConfig.ttl ?? config.ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      returnType: element.returnType.getDisplayString(withNullability: true),
+      returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
     );

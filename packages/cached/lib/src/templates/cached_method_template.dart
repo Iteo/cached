@@ -43,41 +43,47 @@ abstract class CachedMethodTemplate {
   }
 
   String generate() {
-    final syncModifier =
+    final syncGeneratorModifier =
         function.isGenerator && !function.isAsync ? 'sync' : '';
-    final asyncModifier = _returnsFuture || function.isAsync ? 'async' : '';
+    final asyncModifier = (_returnsFuture ||
+            function.isAsync ||
+            function.checkIfShouldCacheMethod?.isAsync == true)
+        ? 'async'
+        : '';
     final generatorModifier = function.isGenerator ? '*' : '';
-    final returnKeyword = function.isGenerator ? 'yield*' : 'return';
-    final awaitIfNeeded = _returnsFuture ? 'await' : '';
 
     return '''
 @override
-${function.returnType} ${generateDefinition()} $syncModifier$asyncModifier$generatorModifier {
+${function.returnType} ${generateDefinition()} $syncGeneratorModifier$asyncModifier$generatorModifier {
+
+  
   ${_generateRemoveTtlLogic()}
   final cachedValue = $_cacheMapName["$paramsKey"];
   if (cachedValue == null ${generateAdditionalCacheCondition()}) {
     ${_generateGetSyncedLogic()}
 
-    final $_syncReturnType toReturn;
+    final $_syncReturnType $_toReturnVariable;
     try {
       final result = super.${generateUsage()};
       ${function.syncWrite && _returnsFuture ? "$_syncMapName['$paramsKey'] = result;" : ""}
-      toReturn = $awaitIfNeeded result;
+      $_toReturnVariable = ${_returnsFuture ? 'await' : ''} result;
     } catch(_) {
       ${generateOnCatch()}
     } finally {
       ${function.syncWrite && _returnsFuture ? "$_syncMapName.remove('$paramsKey');" : ""}
     }
 
-    $_cacheMapName["$paramsKey"] = toReturn;
+    ${_generateCheckIfShouldCache()}
+
+    $_cacheMapName["$paramsKey"] = $_toReturnVariable;
 
     ${_generateStreamCall()}
 
     ${_generateLimitLogic()}
     ${_generateAddTtlLogic()}
-    $returnKeyword toReturn;
+    $_returnKeyword $_toReturnVariable;
   } else {
-    $returnKeyword cachedValue;
+    $_returnKeyword cachedValue;
   }
 }
 
@@ -132,6 +138,10 @@ $_ttlMapName["$paramsKey"] = DateTime.now().add(const Duration(seconds: ${functi
 
   String get _syncReturnType => syncReturnType(function.returnType);
 
+  String get _returnKeyword => function.isGenerator ? 'yield*' : 'return';
+
+  String get _toReturnVariable => 'toReturn';
+
   String _generateLimitLogic() {
     if (function.limit == null) return '';
 
@@ -151,8 +161,22 @@ if ($_cacheMapName.length > ${function.limit}) {
               ${useStaticCache ? '' : 'instance: this,'}
               paramsKey: "$paramsKey",
             ),
-            toReturn,
+            $_toReturnVariable,
           ));
           ''';
+  }
+
+  String _generateCheckIfShouldCache() {
+    final checkIfShouldCacheMethod = function.checkIfShouldCacheMethod;
+    if (checkIfShouldCacheMethod == null) {
+      return '';
+    }
+
+    return '''
+      final shouldCache = ${checkIfShouldCacheMethod.isAsync ? 'await' : ''} ${checkIfShouldCacheMethod.name}($_toReturnVariable);
+      if (!shouldCache) {
+         $_returnKeyword $_toReturnVariable;
+      }
+    ''';
   }
 }

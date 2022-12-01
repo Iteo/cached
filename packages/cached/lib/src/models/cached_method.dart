@@ -28,8 +28,11 @@ class CachedMethod extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    final annotation = CachedFunction.getAnnotation(element);
-    final localConfig = CachedFunctionLocalConfig.fromAnnotation(annotation);
+    final localConfig = CachedFunctionLocalConfig.fromElement(element);
+
+    final returnType =
+        element.returnType.getDisplayString(withNullability: true);
+    final params = element.parameters.map((e) => Param.fromElement(e, config));
 
     final method = CachedMethod._(
       name: element.name,
@@ -38,10 +41,10 @@ class CachedMethod extends CachedFunction {
       limit: localConfig.limit ?? config.limit,
       ttl: localConfig.ttl ?? config.ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      returnType: element.returnType.getDisplayString(withNullability: true),
+      returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
-      params: element.parameters.map((e) => Param.fromElement(e, config)),
+      params: params,
     );
 
     assertOneIgnoreCacheParam(method);
