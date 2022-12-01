@@ -55,6 +55,11 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [Basics](#basics)
     - [WithCache](#withcache)
     - [Cached](#cached-1)
+      - [Example](#example)
+      - [Example with getter](#example-with-getter)
+      - [where](#where)
+        - [sync example](#sync-example)
+        - [async example](#async-example)
     - [IgnoreCache](#ignorecache)
     - [Ignore](#ignore)
     - [CacheKey](#cachekey)
@@ -193,6 +198,34 @@ There are 4 possible additional parameters:
   means no limit.
 - `where` - function triggered before caching the value. If returns `true`: value will be cached, if returns `false`: value wil be ignored. Useful to signal that a certain result must not be cached, but `@IgnoreCache` is not enough (e.g. condition whether or not to cache known once acquiring data)
 
+#### Example
+
+```dart
+@Cached(
+  ttl: 60,
+  syncWrite: true,
+  limit: 100,
+)
+Future<int> getInt(String param) {
+  return Future.value(1);
+}
+```
+
+#### Example with getter
+
+```dart
+@cached
+Future<int> get getter {
+  return Future.value(1);
+}
+```
+
+#### where
+
+As mentioned before, `where` takes top-level function to check whether to cache value or not. It also supports `async` calls, so feel free to create conditional caching based on e.g. `http` response parsing.
+
+##### sync example
+
 ```dart
 @Cached(
   ttl: 60,
@@ -204,16 +237,29 @@ Future<int> getInt(String param) {
   return Future.value(1);
 }
 
-bool _shouldCache(dynamic candidate) {
-  return (candidate as Int) > 0;
+bool _shouldCache(int candidate) {
+  return candidate > 0;
 }
 ```
 
+##### async example
+
 ```dart
-@cached
-Future<int> get getter {
-  return Future.value(1);
+@Cached(
+  where: _asyncShouldCache,
+)
+Future<Response> getDataWithCached() {
+  return http.get(Uri.parse(_url));
 }
+
+Future<bool> _asyncShouldCache(http.Response response) async {
+final json = jsonDecode(response.body) as Map<String, dynamic>;
+print('Up to you: check conditionally and decide if should cache: $json');
+
+print('For now: always cache');
+return true;
+}
+
 ```
 
 ### IgnoreCache
