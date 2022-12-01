@@ -52,10 +52,13 @@ class CachedFunctionLocalConfig {
         final syncAnnotatedMethodType =
             syncReturnType(annotatedMethodReturnType);
 
-        if ((isFuture(annotatedMethodReturnType) &&
-                !isFuture(whereFuncReturnType)) ||
-            (isFuture(whereFuncReturnType) &&
-                !isFuture(annotatedMethodReturnType))) {
+        final annotatedMethodIsFuture = isFuture(annotatedMethodReturnType);
+        final whereFuncIsFuture = isFuture(whereFuncReturnType);
+
+        final hasSyncAndAsyncMismatch =
+            annotatedMethodIsFuture ^ whereFuncIsFuture;
+
+        if (hasSyncAndAsyncMismatch) {
           throw InvalidGenerationSourceError(
             '[ERROR] Asynchronous and synchronous mismatch. Check return types of: ${element.name} and ${whereFunc.name}.',
             element: whereFunc,
