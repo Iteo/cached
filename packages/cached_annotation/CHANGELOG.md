@@ -1,3 +1,6 @@
+## 1.5.0 
+* Add `@Cached(where: )` parameter - function triggered before caching the value for conditional caching.
+
 ## 1.4.0
 * Add `@DeletesCache()` annotation
 * Make parameters anonymous in `@CachePeek()` and `@CacheKey()` annotations
