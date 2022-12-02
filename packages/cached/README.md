@@ -27,7 +27,7 @@ and the Flutter guide for
 
 ---
 
-# Cached
+<h1>Cached</h1>
 
 Simple Dart package with build-in code generation. It simplifies and speedup creation of cache mechanism for dart
 classes.
@@ -45,33 +45,32 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 
 <!-- pub.dev accepts anchors only with lowercase -->
 
-- [Cached](#cached)
-  - [Least Recently Used (LRU) cache algorithm](#least-recently-used-lru-cache-algorithm)
-  - [Contents](#contents)
-  - [Motivation](#motivation)
-  - [Setup](#setup)
-      - [Install package](#install-package)
-    - [Run the generator](#run-the-generator)
-  - [Basics](#basics)
-    - [WithCache](#withcache)
-    - [Cached](#cached-1)
-      - [Example](#example)
-      - [Example with getter](#example-with-getter)
-      - [where](#where)
-        - [sync example](#sync-example)
-        - [async example](#async-example)
-    - [IgnoreCache](#ignorecache)
-    - [Ignore](#ignore)
-    - [CacheKey](#cachekey)
-    - [ClearCached](#clearcached)
-    - [ClearAllCached](#clearallcached)
-    - [StreamedCache](#streamedcache)
-    - [CachePeek](#cachepeek)
-    - [DeletesCache](#deletescache)
-  - [Contribution](#contribution)
-    - [feature request](#feature-request)
-    - [Fix](#fix)
-  - [Contributors](#contributors)
+- [Least Recently Used (LRU) cache algorithm](#least-recently-used-lru-cache-algorithm)
+- [Contents](#contents)
+- [Motivation](#motivation)
+- [Setup](#setup)
+  - [Install package](#install-package)
+  - [Run the generator](#run-the-generator)
+- [Basics](#basics)
+  - [WithCache](#withcache)
+  - [Cached](#cached)
+    - [Example](#example)
+    - [Example with getter](#example-with-getter)
+    - [where](#where)
+      - [sync example](#sync-example)
+      - [async example](#async-example)
+  - [IgnoreCache](#ignorecache)
+  - [Ignore](#ignore)
+  - [CacheKey](#cachekey)
+  - [ClearCached](#clearcached)
+  - [ClearAllCached](#clearallcached)
+  - [StreamedCache](#streamedcache)
+  - [CachePeek](#cachepeek)
+  - [DeletesCache](#deletescache)
+- [Contribution](#contribution)
+  - [feature request](#feature-request)
+  - [Fix](#fix)
+- [Contributors](#contributors)
 
 ## Motivation
 
@@ -116,7 +115,7 @@ abstract class RemoteRepository implements Repository, _$RemoteRepository {
 
 ## Setup
 
-#### Install package
+### Install package
 
 Run command:
 
@@ -141,13 +140,13 @@ That's it! Now, you can write your own cached class :tada:
 
 To run the code generator, execute the following command:
 
-```
+```dart
 dart run build_runner build
 ```
 
 For Flutter projects, you can run:
 
-```
+```dart
 flutter pub run build_runner build
 ```
 
@@ -233,8 +232,8 @@ As mentioned before, `where` takes top-level function to check whether to cache 
   limit: 100,
   where: _shouldCache
 )
-Future<int> getInt(String param) {
-  return Future.value(1);
+int getInt(String param) {
+  return 1;
 }
 
 bool _shouldCache(int candidate) {
@@ -248,16 +247,16 @@ bool _shouldCache(int candidate) {
 @Cached(
   where: _asyncShouldCache,
 )
-Future<Response> getDataWithCached() {
+Future<http.Response> getDataWithCached() {
   return http.get(Uri.parse(_url));
 }
 
 Future<bool> _asyncShouldCache(http.Response response) async {
-final json = jsonDecode(response.body) as Map<String, dynamic>;
-print('Up to you: check conditionally and decide if should cache: $json');
+  final json = jsonDecode(response.body) as Map<String, dynamic>;
+  print('Up to you: check conditionally and decide if should cache: $json');
 
-print('For now: always cache');
-return true;
+  print('For now: always cache');
+  return true;
 }
 
 ```

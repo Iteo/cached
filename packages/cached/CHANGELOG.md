@@ -1,3 +1,7 @@
+## 1.5.1
+* Fix documentation links
+* Fix intendation in documentation
+  
 ## 1.5.0 
 * Add `@Cached(where: )` parameter - function triggered before caching the value for conditional caching.
 * Documentation update with examples for `where:` parameter
