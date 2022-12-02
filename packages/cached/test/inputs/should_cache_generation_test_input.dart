@@ -2,7 +2,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
 @ShouldThrow(
-    '[ERROR] Condition parameter: candidate (of type String) should have the same type as annotated method: cachedMethod (of type int).')
+    '[ERROR] Parameter: candidate (of type String) should match type int.')
 @withCache
 abstract class ShouldCacheIncompatibleTypes {
   factory ShouldCacheIncompatibleTypes() = _ShouldCacheIncompatibleTypes;
