@@ -3,14 +3,10 @@ import 'package:cached/src/templates/cached_method_template.dart';
 
 class CachedGetterTemplate extends CachedMethodTemplate {
   CachedGetterTemplate(
-    CachedGetter getter, {
-    required bool useStaticCache,
-    required bool isCacheStreamed,
-  }) : super(
-          getter,
-          useStaticCache: useStaticCache,
-          isCacheStreamed: isCacheStreamed,
-        );
+    CachedGetter super.getter, {
+    required super.useStaticCache,
+    required super.isCacheStreamed,
+  });
 
   @override
   String get paramsKey => "";

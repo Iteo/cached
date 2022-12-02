@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:cached/src/models/cache_peek_method.dart';
 import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/models/cached_getter.dart';
@@ -238,5 +239,67 @@ void assertValidateDeletesCacheMethods(
         '[ERROR] No target method names specified for ${deletesCacheMethod.name}',
       );
     }
+  }
+}
+
+void assertMethodReturnsBool(ExecutableElement element) {
+  final returnType =
+      element.returnType.getDisplayString(withNullability: false);
+  if (!(isFutureBool(returnType) || isBool(returnType))) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] `${element.name}` must be a bool or Future<bool> method',
+      element: element,
+    );
+  }
+}
+
+void assertHasSingleParameterWithGivenType(
+  ExecutableElement element,
+  DartType expectedType,
+) {
+  final params = element.parameters;
+  if (params.length != 1) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] `${element.name}` should have exactly one parameter',
+      element: element,
+    );
+  }
+
+  final firstParameter = element.parameters[0];
+  final syncParamType = syncReturnType(
+    firstParameter.type.getDisplayString(withNullability: false),
+  );
+
+  final returnType = expectedType.getDisplayString(withNullability: false);
+  final syncExpectedType = syncReturnType(returnType);
+
+  if (syncParamType != syncExpectedType) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] Parameter: ${firstParameter.name} (of type ${firstParameter.type}) should match type $expectedType.',
+      element: element,
+    );
+  }
+}
+
+void assertNotSyncAsyncMismatch(
+  ExecutableElement first,
+  ExecutableElement second,
+) {
+  final firstReturnType =
+      first.returnType.getDisplayString(withNullability: false);
+  final firstReturnTypeIsFuture = isFuture(firstReturnType);
+
+  final secondReturnType =
+      second.returnType.getDisplayString(withNullability: false);
+  final secondReturnTypeIsFuture = isFuture(secondReturnType);
+
+  final hasSyncAndAsyncMismatch =
+      firstReturnTypeIsFuture ^ secondReturnTypeIsFuture;
+
+  if (hasSyncAndAsyncMismatch) {
+    throw InvalidGenerationSourceError(
+      '[ERROR] Asynchronous and synchronous mismatch. Check return types of: ${first.name} and ${second.name}.',
+      element: first,
+    );
   }
 }
