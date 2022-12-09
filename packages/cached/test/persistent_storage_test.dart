@@ -13,6 +13,10 @@ Future<void> main() async {
   const expectedAnnotatedTests = {
     'StaticPersistedRepository',
     'NonStaticPersistedRepository',
+    'CachedPersistentStorageError',
+    'CachedWithClearAllPersistentStorageError',
+    'CachedWithClearPersistentStorageError',
+    'CachedWithDeletePersistentStorageError'
   };
 
   final reader = await initializeLibraryReaderForDirectory(

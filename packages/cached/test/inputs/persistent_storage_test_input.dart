@@ -552,3 +552,85 @@ abstract class NonStaticPersistedRepository {
     await Future.delayed(duration);
   }
 }
+
+@withCache
+@ShouldThrow(
+  '[ERROR] shouldThrowGenerationError has to be async and return Future, '
+  'if you want to use persistent storage.',
+  element: false,
+)
+abstract class CachedPersistentStorageError {
+  factory CachedPersistentStorageError() = _CachedPersistentStorageError;
+
+  @Cached(persistentStorage: true)
+  int shouldThrowGenerationError() {
+    return 1;
+  }
+}
+
+@withCache
+@ShouldThrow(
+  '[ERROR] shouldThrowGenerationError has to be async and return Future, '
+  'if you want to use persistent storage.',
+  element: false,
+)
+abstract class CachedWithClearAllPersistentStorageError {
+  factory CachedPersistentStorageError() = _CachedPersistentStorageError;
+
+  @Cached(persistentStorage: true)
+  Future<int> something() async {
+    const delay = Duration(milliseconds: 5);
+    await Future.delayed(delay);
+    return 1;
+  }
+
+  @ClearAllCached()
+  void shouldThrowGenerationError() {}
+}
+
+@withCache
+@ShouldThrow(
+  '[ERROR] shouldThrowGenerationError has to be async and return Future, '
+  'if you want to use persistent storage.',
+  element: false,
+)
+abstract class CachedWithClearPersistentStorageError {
+  factory CachedPersistentStorageError() = _CachedPersistentStorageError;
+
+  @Cached(persistentStorage: true)
+  Future<int> something() async {
+    const delay = Duration(milliseconds: 5);
+    await Future.delayed(delay);
+    return 1;
+  }
+
+  @ClearCached('something')
+  void shouldThrowGenerationError() {}
+}
+
+@withCache
+@ShouldThrow(
+  '[ERROR] All of Cached Persistent Storage methods '
+  'have to be async. Source: shouldThrowGenerationError',
+  element: false,
+)
+abstract class CachedWithDeletePersistentStorageError {
+  factory CachedPersistentStorageError() = _CachedPersistentStorageError;
+
+  @Cached(persistentStorage: true)
+  Future<int> something1() async {
+    const delay = Duration(milliseconds: 3);
+    await Future.delayed(delay);
+    return 1;
+  }
+
+  @Cached(persistentStorage: true)
+  Future<int> something2() async {
+    const delay = Duration(milliseconds: 3);
+    await Future.delayed(delay);
+    return 2;
+  }
+
+  @DeletesCache(['something1', 'something2'])
+  void shouldThrowGenerationError() {}
+}
