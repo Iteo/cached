@@ -2,6 +2,7 @@ import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/common_generator.dart';
+import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
 
 class ClearCachedMethodTemplate {
@@ -109,12 +110,12 @@ class ClearCachedMethodTemplate {
       final isAsync = method.isAsync;
       final mapName = getCacheMapName(method.methodName);
       final body = isAsync
-          ? "await PersistentStorageHolder.delete('$mapName');"
-          : "PersistentStorageHolder.delete('$mapName');";
+          ? "await $deleteText('$mapName')"
+          : "$deleteText('$mapName')";
 
       return '''
-        if (PersistentStorageHolder.isStorageSet) {
-           $body
+        if ($isStorageSetText) {
+           $body;
         }
       ''';
     }

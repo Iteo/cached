@@ -1,6 +1,8 @@
 import 'package:cached/src/models/deletes_cache_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
+import 'package:cached/src/utils/common_generator.dart';
+import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -40,22 +42,11 @@ class DeletesCacheMethodTemplate {
   }
 
   String _generatePersistentStorageAwait() {
-    if (!isPersisted) {
-      return '';
-    }
-
-    if (!method.isAsync) {
-      final name = method.name;
-      final message = '[ERROR] $name has to be async and return Future, '
-          'if you want to use persistent storage.';
-      throw InvalidGenerationSourceError(message);
-    }
-
-    return '''
-       if (PersistentStorageHolder.isStorageSet) {
-          await _completerFuture; 
-       }
-    ''';
+    return CommonGenerator.generatePersistentStorageAwait(
+      isPersisted: isPersisted,
+      isAsync: method.isAsync,
+      name: method.name,
+    );
   }
 
   String _generateClearMaps() {
@@ -80,7 +71,7 @@ class DeletesCacheMethodTemplate {
     if (isPersisted) {
       final mappedMethods = method.methodNames.map(_generateClearStorage);
       return '''
-         if (PersistentStorageHolder.isStorageSet) {
+         if ($isStorageSetText) {
             ${mappedMethods.join('\n')}
          }
       ''';
@@ -92,9 +83,8 @@ class DeletesCacheMethodTemplate {
   String _generateClearStorage(String methodName) {
     final isAsync = method.isAsync;
     final mapName = getCacheMapName(methodName);
-    final body = isAsync
-        ? "await PersistentStorageHolder.delete('$mapName')"
-        : "PersistentStorageHolder.delete('$mapName')";
+    final body =
+        isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
 
     return '$body;';
   }

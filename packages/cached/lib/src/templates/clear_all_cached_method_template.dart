@@ -4,6 +4,7 @@ import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/common_generator.dart';
+import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
 
 class ClearAllCachedMethodTemplate {
@@ -71,13 +72,11 @@ class ClearAllCachedMethodTemplate {
   String _generateClearPersistentStorage() {
     if (isPersisted) {
       final isAsync = method?.isAsync ?? false;
-      final body = isAsync
-          ? 'await PersistentStorageHolder.deleteAll();'
-          : 'PersistentStorageHolder.deleteAll();';
+      final body = isAsync ? 'await $deleteAllText' : deleteAllText;
 
       return '''
-        if (PersistentStorageHolder.isStorageSet) {
-           $body
+        if ($isStorageSetText) {
+           $body;
         }
       ''';
     }

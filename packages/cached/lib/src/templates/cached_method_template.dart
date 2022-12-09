@@ -1,8 +1,7 @@
 import 'package:cached/src/models/cached_function.dart';
+import 'package:cached/src/utils/common_generator.dart';
+import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
-
-const _readCode = 'await PersistentStorageHolder.read';
-const _writeCode = 'await PersistentStorageHolder.write';
 
 abstract class CachedMethodTemplate {
   CachedMethodTemplate(
@@ -153,7 +152,7 @@ abstract class CachedMethodTemplate {
   }
 
   String _getCacheInit() {
-    final init = "$_cacheMapName = $_readCode('$_cacheMapName');";
+    final init = "$_cacheMapName = $readCodeText('$_cacheMapName');";
     return _wrapWithTryCatchAndAssignEmptyMap(
       init,
       _cacheMapName,
@@ -161,7 +160,7 @@ abstract class CachedMethodTemplate {
   }
 
   String _getTtlInit() {
-    final init = "$_ttlMapName = $_readCode('$_ttlMapName');";
+    final init = "$_ttlMapName = $readCodeText('$_ttlMapName');";
     return _wrapWithTryCatchAndAssignEmptyMap(
       init,
       _ttlMapName,
@@ -225,7 +224,7 @@ abstract class CachedMethodTemplate {
 
   String _generateCacheWrite() {
     if (_shouldUsePersistentStorage) {
-      return "$_writeCode('$_cacheMapName', $_cacheMapName);";
+      return "$writeCodeText('$_cacheMapName', $_cacheMapName);";
     }
 
     return '';
@@ -233,7 +232,7 @@ abstract class CachedMethodTemplate {
 
   String _generateTtlWrite() {
     if (_hasTtl && _shouldUsePersistentStorage) {
-      return "$_writeCode('$_ttlMapName', $_ttlMapName);";
+      return "$writeCodeText('$_ttlMapName', $_ttlMapName);";
     }
 
     return '';
@@ -281,7 +280,7 @@ abstract class CachedMethodTemplate {
 
   String _generateStorageAwait() {
     if (_shouldUsePersistentStorage) {
-      return 'await _completerFuture;';
+      return CommonGenerator.awaitCompleterFutureText;
     }
 
     return '';

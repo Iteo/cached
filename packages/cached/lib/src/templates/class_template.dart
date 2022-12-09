@@ -13,6 +13,7 @@ import 'package:cached/src/templates/clear_all_cached_method_template.dart';
 import 'package:cached/src/templates/clear_cached_method_template.dart';
 import 'package:cached/src/templates/deletes_cache_method_template.dart';
 import 'package:cached/src/templates/streamed_method_template.dart';
+import 'package:cached/src/utils/common_generator.dart';
 import 'package:collection/collection.dart';
 
 class ClassTemplate {
@@ -44,7 +45,7 @@ class ClassTemplate {
          _${classWithCache.name}(${constructorParamTemplates.generateThisParams()})${_initAsyncStorage(methodTemplates)}
 
          ${constructorParamTemplates.generateFields(addOverrideAnnotation: true)}
-         ${_generateCompleterFields(methodTemplates)}
+         ${_generateCompleterFields()}
          ${_generateStaticLock(methodTemplates)}
 
          ${methodTemplates.map((e) => e.generateSyncMap()).join('\n')}
@@ -82,10 +83,10 @@ class ClassTemplate {
          { _init(); }
               
          Future<void> _init() async {
-            ${_generateStaticReturn(methodTemplates)}   
+            ${_generateStaticReturn()}   
                     
             ${methodTemplates.map((e) => e.generateAsyncPersistentStorageInit()).join('\n')}
-            _completer.complete();            
+            ${CommonGenerator.completerCompleteText}            
          }
      ''';
     }
@@ -93,9 +94,7 @@ class ClassTemplate {
     return ';';
   }
 
-  String _generateCompleterFields(
-    Iterable<CachedMethodWithParamsTemplate> methodTemplates,
-  ) {
+  String _generateCompleterFields() {
     if (_isPersisted) {
       return '''
          final _completer = Completer<void>();
@@ -110,8 +109,8 @@ class ClassTemplate {
     final function = element.function;
     final method = element.method;
 
-    final hasPersistentFunction = method.persistentStorage == true;
-    final hasPersistentMethod = function.persistentStorage == true;
+    final hasPersistentFunction = function.persistentStorage == true;
+    final hasPersistentMethod = method.persistentStorage == true;
 
     return hasPersistentFunction || hasPersistentMethod;
   }
@@ -127,14 +126,12 @@ class ClassTemplate {
     return '';
   }
 
-  String _generateStaticReturn(
-    Iterable<CachedMethodWithParamsTemplate> methodTemplates,
-  ) {
+  String _generateStaticReturn() {
     final isStatic = classWithCache.useStaticCache;
     if (_isPersisted && isStatic) {
       return '''
          if (_isStaticCacheLocked == true) {
-            return _completer.complete();
+            return ${CommonGenerator.completerCompleteText}
          } else {
             _isStaticCacheLocked = true;
          }
@@ -147,15 +144,15 @@ class ClassTemplate {
   Iterable<CachedMethodWithParamsTemplate> _getMethodTemplates(
     Iterable<CachedMethod> classMethods,
   ) {
-    return classMethods.map(_classMethodsMapper);
+    return classMethods.map(_methodToTemplateMapper);
   }
 
-  CachedMethodWithParamsTemplate _classMethodsMapper(CachedMethod method) {
+  CachedMethodWithParamsTemplate _methodToTemplateMapper(CachedMethod method) {
     final useStaticCache = classWithCache.useStaticCache;
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
     final isCacheStreamed = streamedCacheMethods.any(
-        (s) => s.targetMethodName == method.name,
-      );
+      (s) => s.targetMethodName == method.name,
+    );
 
     return CachedMethodWithParamsTemplate(
       method,
@@ -167,16 +164,16 @@ class ClassTemplate {
   Iterable<CachedGetterTemplate> _getGetterTemplates() {
     final getters = classWithCache.getters;
     return getters.map(
-      _gettersMapper,
+      _getterToTemplateMapper,
     );
   }
 
-  CachedGetterTemplate _gettersMapper(CachedGetter getter) {
+  CachedGetterTemplate _getterToTemplateMapper(CachedGetter getter) {
     final useStaticCache = classWithCache.useStaticCache;
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
     final isCacheStreamed = streamedCacheMethods.any(
-        (s) => s.targetMethodName == getter.name,
-      );
+      (s) => s.targetMethodName == getter.name,
+    );
 
     return CachedGetterTemplate(
       getter,
@@ -187,10 +184,10 @@ class ClassTemplate {
 
   Iterable<StreamedCacheMethodTemplate> _getStreamedCacheMethodTemplates() {
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
-    return streamedCacheMethods.map(_streamedCacheMethodsMapper);
+    return streamedCacheMethods.map(_streamedMethodToTemplateMapper);
   }
 
-  StreamedCacheMethodTemplate _streamedCacheMethodsMapper(
+  StreamedCacheMethodTemplate _streamedMethodToTemplateMapper(
     StreamedCacheMethod method,
   ) {
     final useStaticCache = classWithCache.useStaticCache;
@@ -205,10 +202,12 @@ class ClassTemplate {
 
   Iterable<ClearCachedMethodTemplate> _getClearMethodTemplates() {
     final clearMethods = classWithCache.clearMethods;
-    return clearMethods.map(_clearMethodsMapper);
+    return clearMethods.map(_clearMethodToTemplateMapper);
   }
 
-  ClearCachedMethodTemplate _clearMethodsMapper(ClearCachedMethod method) {
+  ClearCachedMethodTemplate _clearMethodToTemplateMapper(
+    ClearCachedMethod method,
+  ) {
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
     final streamedCacheMethod = streamedCacheMethods.firstWhereOrNull(
       (m) => m.targetMethodName == method.name,
@@ -239,10 +238,10 @@ class ClassTemplate {
 
   Iterable<CachePeekMethodTemplate> _getCachePeekMethodTemplates() {
     final cachePeekMethods = classWithCache.cachePeekMethods;
-    return cachePeekMethods.map(_cachePeekMethodsMapper);
+    return cachePeekMethods.map(_cachePeekToTemplateMapper);
   }
 
-  CachePeekMethodTemplate _cachePeekMethodsMapper(CachePeekMethod method) {
+  CachePeekMethodTemplate _cachePeekToTemplateMapper(CachePeekMethod method) {
     final name = classWithCache.name;
     return CachePeekMethodTemplate(method, className: name);
   }
