@@ -2,46 +2,100 @@ import 'package:cached/src/models/deletes_cache_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/utils.dart';
+import 'package:source_gen/source_gen.dart';
 
 class DeletesCacheMethodTemplate {
   DeletesCacheMethodTemplate(
     this.method,
-    this.streamedCacheMethods,
-  ) : paramsTemplate = AllParamsTemplate(method.params);
+    this.streamedCacheMethods, {
+    this.isPersisted = false,
+  }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final DeletesCacheMethod method;
   final AllParamsTemplate paramsTemplate;
   final List<StreamedCacheMethod>? streamedCacheMethods;
+  final bool isPersisted;
 
   String generateMethod() {
     final asyncModifier = isFuture(method.returnType) ? 'async' : '';
     final awaitIfNeeded = isFuture(method.returnType) ? 'await' : '';
 
+    final params = paramsTemplate.generateParams();
+    final paramsUsage = paramsTemplate.generateParamsUsage();
+
     return '''
     @override
-    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
-      final result = $awaitIfNeeded super.${method.name}(${paramsTemplate.generateParamsUsage()});
+    ${method.returnType} ${method.name}($params) $asyncModifier {
+      ${_generatePersistentStorageAwait()}
+      
+      final result = $awaitIfNeeded super.${method.name}($paramsUsage);
 
       ${_generateClearMaps()}
-
+      
+      ${_mapPersistentStorages()}
+      
       return result;
     }
     ''';
   }
 
+  String _generatePersistentStorageAwait() {
+    if (!isPersisted) {
+      return '';
+    }
+
+    if (!method.isAsync) {
+      final name = method.name;
+      final message = '[ERROR] $name has to be async and return Future, '
+          'if you want to use persistent storage.';
+      throw InvalidGenerationSourceError(message);
+    }
+
+    return '''
+       if (PersistentStorageHolder.isStorageSet) {
+          await _completerFuture; 
+       }
+    ''';
+  }
+
   String _generateClearMaps() {
     return [
-      ...method.methodNames.map(
-        (methodToClear) => "${getCacheMapName(methodToClear)}.clear();",
-      ),
-      ...method.ttlsToClear.map(
-        (ttlToClearMethodName) =>
-            "${getTtlMapName(ttlToClearMethodName)}.clear();",
-      ),
-      ...streamedCacheMethods?.map(
-            (streamedMethod) => clearStreamedCache(streamedMethod),
-          ) ??
-          <String>[]
-    ].join("\n");
+      ...method.methodNames.map(_methodToClear),
+      ...method.ttlsToClear.map(_methodTtlsToClear),
+      ...streamedCacheMethods?.map(clearStreamedCache) ?? <String>[]
+    ].join('\n');
+  }
+
+  String _methodToClear(String methodToClear) {
+    final cacheMapName = getCacheMapName(methodToClear);
+    return '$cacheMapName.clear();';
+  }
+
+  String _methodTtlsToClear(String ttlToClearMethodName) {
+    final ttlMapName = getTtlMapName(ttlToClearMethodName);
+    return '$ttlMapName.clear();';
+  }
+
+  String _mapPersistentStorages() {
+    if (isPersisted) {
+      final mappedMethods = method.methodNames.map(_generateClearStorage);
+      return '''
+         if (PersistentStorageHolder.isStorageSet) {
+            ${mappedMethods.join('\n')}
+         }
+      ''';
+    }
+
+    return '';
+  }
+
+  String _generateClearStorage(String methodName) {
+    final isAsync = method.isAsync;
+    final mapName = getCacheMapName(methodName);
+    final body = isAsync
+        ? "await PersistentStorageHolder.delete('$mapName')"
+        : "PersistentStorageHolder.delete('$mapName')";
+
+    return '$body;';
   }
 }

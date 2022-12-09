@@ -18,9 +18,8 @@ class CachedMethod extends CachedFunction {
     required super.limit,
     required super.ttl,
     required super.checkIfShouldCacheMethod,
+    required super.persistentStorage,
   });
-
-  final Iterable<Param> params;
 
   factory CachedMethod.fromElement(
     MethodElement element,
@@ -29,21 +28,32 @@ class CachedMethod extends CachedFunction {
     CachedFunction.assertIsValid(element);
 
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
+    if (localConfig.persistentStorage == true) {
+      assertPersistentStorageShouldBeAsync(element);
+    }
 
-    final returnType =
-        element.returnType.getDisplayString(withNullability: true);
-    final params = element.parameters.map((e) => Param.fromElement(e, config));
+    final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
+    final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
+    final limit = localConfig.limit ?? config.limit;
+    final ttl = localConfig.ttl ?? config.ttl;
+    final persistentStorage = localConfig.persistentStorage ?? false;
+    final returnType = element.returnType.getDisplayString(
+      withNullability: true,
+    );
+    final params = element.parameters.map(
+      (e) => Param.fromElement(e, config),
+    );
 
     final method = CachedMethod._(
       name: element.name,
-      syncWrite:
-          localConfig.syncWrite ?? config.syncWrite ?? _defaultSyncWriteValue,
-      limit: localConfig.limit ?? config.limit,
-      ttl: localConfig.ttl ?? config.ttl,
+      syncWrite: syncWrite,
+      limit: limit,
+      ttl: ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
+      persistentStorage: persistentStorage,
+      returnType: returnType,
       params: params,
     );
 
@@ -51,4 +61,6 @@ class CachedMethod extends CachedFunction {
 
     return method;
   }
+
+  final Iterable<Param> params;
 }

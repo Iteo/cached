@@ -16,11 +16,6 @@ class CachePeekMethod {
     required this.params,
   });
 
-  final String name;
-  final String targetMethodName;
-  final Iterable<Param> params;
-  final String returnType;
-
   factory CachePeekMethod.fromElement(
     MethodElement element,
     List<ExecutableElement> classMethods,
@@ -28,15 +23,18 @@ class CachePeekMethod {
   ) {
     final annotation = getAnnotation(element);
 
-    var methodName = "";
+    var methodName = '';
 
     if (annotation != null) {
       final reader = ConstantReader(annotation);
       methodName = reader.read('methodName').stringValue;
     }
 
-    final targetMethod =
-        classMethods.where((m) => m.name == methodName).firstOrNull;
+    final targetMethod = classMethods
+        .where(
+          (m) => m.name == methodName,
+        )
+        .firstOrNull;
 
     if (targetMethod == null) {
       throw InvalidGenerationSourceError(
@@ -46,16 +44,18 @@ class CachePeekMethod {
     }
 
     final peekCacheMethodType = element.returnType;
-    final peekCacheMethodTypeStr =
-        peekCacheMethodType.getDisplayString(withNullability: false);
+    final peekCacheMethodTypeStr = peekCacheMethodType.getDisplayString(
+      withNullability: false,
+    );
 
     const futureTypeChecker = TypeChecker.fromRuntime(Future);
     final targetMethodReturnType = targetMethod.returnType.isDartAsyncFuture
         ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
         : targetMethod.returnType;
 
-    final targetMethodTypeStr =
-        targetMethodReturnType?.getDisplayString(withNullability: false);
+    final targetMethodTypeStr = targetMethodReturnType?.getDisplayString(
+      withNullability: false,
+    );
 
     if (peekCacheMethodTypeStr != targetMethodTypeStr) {
       throw InvalidGenerationSourceError(
@@ -86,7 +86,10 @@ class CachePeekMethod {
       EqualityBy(
         (p) => Param.fromElement(p, config),
       ),
-    ).equals(targetMethodParameters, element.parameters)) {
+    ).equals(
+      targetMethodParameters,
+      element.parameters,
+    )) {
       throw InvalidGenerationSourceError(
         '[ERROR] Method "${targetMethod.name}" should have same parameters as "${element.name}", excluding ones marked with @ignore and @ignoreCache',
         element: element,
@@ -100,6 +103,11 @@ class CachePeekMethod {
       targetMethodName: methodName,
     );
   }
+
+  final String name;
+  final String targetMethodName;
+  final Iterable<Param> params;
+  final String returnType;
 
   static DartObject? getAnnotation(MethodElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(CachePeek);

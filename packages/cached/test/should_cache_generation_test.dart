@@ -1,6 +1,6 @@
 import 'package:cached/src/cached_generator.dart';
 import 'package:cached/src/config.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:source_gen_test/source_gen_test.dart';
 
 Future<void> main() async {
@@ -18,7 +18,7 @@ Future<void> main() async {
   };
 
   final reader = await initializeLibraryReaderForDirectory(
-    p.join('test', 'inputs'),
+    path.join('test', 'inputs'),
     'should_cache_generation_test_input.dart',
   );
 

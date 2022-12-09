@@ -43,15 +43,6 @@ class Param {
     this.defaultValue,
   });
 
-  final String name;
-  final String type;
-  final bool isNamed;
-  final bool isOptional;
-  final String? defaultValue;
-  final IgnoreCacheAnnotation? ignoreCacheAnnotation;
-  final bool ignoreCacheKey;
-  final CacheKeyAnnotation? cacheKeyAnnotation;
-
   factory Param.fromElement(ParameterElement element, Config config) {
     // Ignore cache annotation data
     const paramAnnotationChecker = TypeChecker.fromRuntime(IgnoreCache);
@@ -116,7 +107,6 @@ class Param {
       }
     }
 
-    // Ignore parameters annotation data
     const ignoreParamAnnotationChecker = TypeChecker.fromRuntime(Ignore);
     final ignoreAnnotation =
         ignoreParamAnnotationChecker.firstAnnotationOf(element);
@@ -132,6 +122,15 @@ class Param {
       cacheKeyAnnotation: cacheKeyAnnotationData,
     );
   }
+
+  final String name;
+  final String type;
+  final bool isNamed;
+  final bool isOptional;
+  final String? defaultValue;
+  final IgnoreCacheAnnotation? ignoreCacheAnnotation;
+  final bool ignoreCacheKey;
+  final CacheKeyAnnotation? cacheKeyAnnotation;
 
   bool get isPositional => !isNamed;
 

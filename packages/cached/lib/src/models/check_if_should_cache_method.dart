@@ -9,10 +9,6 @@ class CheckIfShouldCacheMethod {
     required this.isAsync,
   });
 
-  final String name;
-  final String returnType;
-  final bool isAsync;
-
   factory CheckIfShouldCacheMethod.fromElements({
     required ExecutableElement annotatedMethod,
     required ExecutableElement shouldCacheFunction,
@@ -39,4 +35,8 @@ class CheckIfShouldCacheMethod {
       isAsync: isAsync,
     );
   }
+
+  final String name;
+  final String returnType;
+  final bool isAsync;
 }

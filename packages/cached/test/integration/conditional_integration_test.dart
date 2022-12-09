@@ -61,7 +61,7 @@ void main() {
           () async {
         final cachedClass = ConditionalCached(dataProvider);
         final cachedValue = cachedClass.alwaysCachedTimestampWithIgnore();
-        await Future.delayed(const Duration(milliseconds: 10));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
         final secondCachedValue = cachedClass.cachedTimestamp(refresh: true);
 
         expect(cachedValue, isNot(equals(secondCachedValue)));
@@ -72,7 +72,7 @@ void main() {
           () async {
         final cachedClass = ConditionalCached(dataProvider);
         final cachedValue = cachedClass.neverCachedTimestampWithIgnore();
-        await Future.delayed(const Duration(milliseconds: 10));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
         final secondCachedValue = cachedClass.cachedTimestamp(refresh: true);
 
         expect(cachedValue, isNot(equals(secondCachedValue)));

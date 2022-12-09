@@ -2,8 +2,8 @@ import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/templates/class_template.dart';
 import 'package:cached/src/templates/interface_template.dart';
 
-class FileTemeplate {
-  FileTemeplate(ClassWithCache classWithCache)
+class FileTemplate {
+  FileTemplate(ClassWithCache classWithCache)
       : mixinTemplate = InterfaceTemplate(classWithCache),
         classTemplate = ClassTemplate(classWithCache);
 
@@ -12,9 +12,9 @@ class FileTemeplate {
 
   String generate() {
     return '''
-${mixinTemplate.generate()}
+       ${mixinTemplate.generate()}
 
-${classTemplate.generate()}
-''';
+       ${classTemplate.generate()}
+    ''';
   }
 }

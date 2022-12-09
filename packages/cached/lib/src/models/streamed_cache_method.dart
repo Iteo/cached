@@ -18,13 +18,6 @@ class StreamedCacheMethod {
     required this.coreReturnTypeNullable,
   });
 
-  final String name;
-  final String targetMethodName;
-  final Iterable<Param> params;
-  final String coreReturnType;
-  final bool emitLastValue;
-  final bool coreReturnTypeNullable;
-
   factory StreamedCacheMethod.fromElement(
     MethodElement element,
     List<ExecutableElement> classMethods,
@@ -32,7 +25,7 @@ class StreamedCacheMethod {
   ) {
     final annotation = getAnnotation(element);
 
-    var methodName = "";
+    var methodName = '';
     var emitLastValue = false;
 
     if (annotation != null) {
@@ -110,6 +103,13 @@ class StreamedCacheMethod {
           NullabilitySuffix.question,
     );
   }
+
+  final String name;
+  final String targetMethodName;
+  final Iterable<Param> params;
+  final String coreReturnType;
+  final bool emitLastValue;
+  final bool coreReturnTypeNullable;
 
   static DartObject? getAnnotation(ExecutableElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(StreamedCache);

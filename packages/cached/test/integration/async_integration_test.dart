@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:test/test.dart';
 
 import '../utils/test_utils.dart';
@@ -8,14 +9,14 @@ int _slightlyLessThanTTL() => ttlDurationSeconds * 1000 - 10;
 
 void main() {
   group('AsynchronousCache with syncWrite: TRUE', () {
-    late TestDataProvider _dataProvider;
+    late TestDataProvider dataProvider;
 
     setUp(() {
-      _dataProvider = TestDataProvider();
+      dataProvider = TestDataProvider();
     });
 
     test('cached value should be the same on the second method call', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final results = await Future.wait(
         [cachedClass.syncCachedValue(), cachedClass.syncCachedValue()],
@@ -25,7 +26,7 @@ void main() {
     });
 
     test('clear cache method should clear cache', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValue();
       cachedClass.clearCachedValue();
       final secondCachedValue = await cachedClass.syncCachedValue();
@@ -34,7 +35,7 @@ void main() {
     });
 
     test('should ignore the argument as a cache key', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue =
           await cachedClass.syncCachedValueWithIgnore(smth: true);
       final secondCachedValue = await cachedClass.syncCachedValueWithIgnore();
@@ -45,7 +46,7 @@ void main() {
     test(
         'setting ignoreCache to true should ignore cached value and return new one',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValue();
       final secondCachedValue =
           await cachedClass.syncCachedValue(refresh: true);
@@ -56,14 +57,14 @@ void main() {
     test(
         'cached method with set TTL, should return old value when there is no timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueWithTTl();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.syncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
       await cachedClass.syncCachedValueWithTTl();
 
       expect(cachedClass.counter(), 1);
@@ -71,24 +72,24 @@ void main() {
 
     test('cached method with set TTL, should return new value when TTL timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueWithTTl();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.syncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(const Duration(seconds: ttlDurationSeconds));
+      await Future<void>.delayed(const Duration(seconds: ttlDurationSeconds));
       await cachedClass.syncCachedValueWithTTl();
 
       expect(cachedClass.counter(), 2);
     });
 
     test('cached stream works', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final streamValue = StreamQueue(cachedClass.asyncCacheStream());
       final next = Future.microtask(() => streamValue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = await cachedClass.asyncCachedValue();
 
@@ -96,7 +97,7 @@ void main() {
     });
 
     test('cached value should be the same on the second getter call', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final results = await Future.wait(
         [cachedClass.syncCachedValueGetter, cachedClass.syncCachedValueGetter],
@@ -106,7 +107,7 @@ void main() {
     });
 
     test('clear cache method should clear cache', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValueGetter;
       cachedClass.clearCachedValueGetter();
       final secondCachedValue = await cachedClass.syncCachedValueGetter;
@@ -117,14 +118,14 @@ void main() {
     test(
         'cached getter with set TTL, should return old value when there is no timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueGetterWithTTl;
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.syncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
       await cachedClass.syncCachedValueGetterWithTTl;
 
       expect(cachedClass.counter(), 1);
@@ -132,24 +133,24 @@ void main() {
 
     test('cached getter with set TTL, should return new value when TTL timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.syncCachedValueGetterWithTTl;
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.syncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(const Duration(seconds: ttlDurationSeconds));
+      await Future<void>.delayed(const Duration(seconds: ttlDurationSeconds));
       await cachedClass.syncCachedValueGetterWithTTl;
 
       expect(cachedClass.counter(), 2);
     });
 
     test('cached stream works', () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final streamValue = StreamQueue(cachedClass.asyncCacheGetterStream());
       final next = Future.microtask(() => streamValue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = await cachedClass.asyncCachedValueGetter;
 
@@ -157,16 +158,16 @@ void main() {
     });
   });
   group('AsynchronousCache with syncWrite: FALSE', () {
-    late TestDataProvider _dataProvider;
+    late TestDataProvider dataProvider;
 
     setUp(() {
-      _dataProvider = TestDataProvider();
+      dataProvider = TestDataProvider();
     });
 
     test(
         'two calls of the same async functions, should return different values',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final results = await Future.wait(
         [cachedClass.asyncCachedValue(), cachedClass.asyncCachedValue()],
       );
@@ -177,28 +178,28 @@ void main() {
     test(
         'cached method with set TTL, should return old value when there is no timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueWithTTl();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.asyncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
 
       expect(cachedClass.counter(), 2);
     });
 
     test('cached method with set TTL, should return new value when TTL timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueWithTTl();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.asyncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(const Duration(seconds: ttlDurationSeconds));
+      await Future<void>.delayed(const Duration(seconds: ttlDurationSeconds));
       await cachedClass.asyncCachedValueWithTTl();
 
       expect(cachedClass.counter(), 3);
@@ -206,7 +207,7 @@ void main() {
 
     test('peek cache value should be the same on the async cached value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.asyncCachedValue();
       final secondCachedValue = cachedClass.asyncCachePeek();
 
@@ -214,7 +215,7 @@ void main() {
     });
     test('two calls of the same async getter, should return different values',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final results = await Future.wait(
         [
           cachedClass.asyncCachedValueGetter,
@@ -228,28 +229,28 @@ void main() {
     test(
         'cached getter with set TTL, should return old value when there is no timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueGetterWithTTl;
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.asyncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
 
       expect(cachedClass.counter(), 2);
     });
 
     test('cached method with set TTL, should return new value when TTL timeout',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
 
       final cachedValueFuture = cachedClass.asyncCachedValueGetterWithTTl;
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValueFuture = cachedClass.asyncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future.delayed(const Duration(seconds: ttlDurationSeconds));
+      await Future<void>.delayed(const Duration(seconds: ttlDurationSeconds));
       await cachedClass.asyncCachedValueGetterWithTTl;
 
       expect(cachedClass.counter(), 3);
@@ -257,7 +258,7 @@ void main() {
 
     test('peek cache value should be the same on the async cached value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.asyncCachedValueGetter;
       final secondCachedValue = cachedClass.asyncCacheGetterPeek();
 
@@ -267,7 +268,7 @@ void main() {
     test(
         'deletes cache method should clear async cache if future returns value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.asyncCachedValue();
       await cachedClass.deleteAsyncCachedValue();
       final secondCachedValue = await cachedClass.asyncCachedValue();
@@ -278,7 +279,7 @@ void main() {
     test(
         'deletes cache method should not clear async cache if future fails to return value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.asyncCachedValue();
       try {
         await cachedClass.deleteAsyncCachedValueFail();
@@ -293,7 +294,7 @@ void main() {
 
     test('deletes cache method should clear sync cache if future returns value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValue();
       await cachedClass.deleteCachedValue();
       final secondCachedValue = await cachedClass.syncCachedValue();
@@ -304,7 +305,7 @@ void main() {
     test(
         'deletes cache method should not clear sync cache if future fails to return value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValue();
       try {
         await cachedClass.deleteCachedValueFail();
@@ -320,7 +321,7 @@ void main() {
     test(
         'deletes cache method should clear async cache with ttl if future returns value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.asyncCachedValueWithTTl();
       await cachedClass.deleteAsyncTTLCachedValue();
       final secondCachedValue = await cachedClass.asyncCachedValueWithTTl();
@@ -331,7 +332,7 @@ void main() {
     test(
         'deletes cache method should clear sync cache with ttl if future returns value',
         () async {
-      final cachedClass = AsynchronousCached(_dataProvider);
+      final cachedClass = AsynchronousCached(dataProvider);
       final cachedValue = await cachedClass.syncCachedValueWithTTl();
       await cachedClass.deleteTTLCachedValue();
       final secondCachedValue = await cachedClass.syncCachedValueWithTTl();

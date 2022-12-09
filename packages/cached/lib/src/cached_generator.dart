@@ -27,7 +27,7 @@ class CachedGenerator extends GeneratorForAnnotation<WithCache> {
     }
 
     final cachedClass = ClassWithCache.fromElement(element, config);
-    final template = FileTemeplate(cachedClass);
+    final template = FileTemplate(cachedClass);
 
     return template.generate();
   }

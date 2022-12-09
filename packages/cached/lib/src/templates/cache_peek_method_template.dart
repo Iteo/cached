@@ -13,13 +13,17 @@ class CachePeekMethodTemplate {
   final AllParamsTemplate paramsTemplate;
 
   String generateMethod() {
-    return '''
-@override
-${method.returnType}? ${method.name}(${paramsTemplate.generateParams()})  {
-  final paramsKey = "${getParamKey(method.params)}";
+    final params = paramsTemplate.generateParams();
+    final paramKey = getParamKey(method.params);
+    final cacheMapName = getCacheMapName(method.targetMethodName);
 
-  return ${getCacheMapName(method.targetMethodName)}[paramsKey];
-}
+    return '''
+      @override
+      ${method.returnType}? ${method.name}($params)  {
+        final paramsKey = "$paramKey";
+
+        return $cacheMapName[paramsKey];
+    }
     ''';
   }
 }

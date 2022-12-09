@@ -13,10 +13,10 @@ abstract class StaticCached implements _$StaticCached {
     return dataProvider.getRandomValue();
   }
 
-  @StreamedCache(methodName: "cachedValue")
+  @StreamedCache(methodName: 'cachedValue')
   Stream<int> cachedValueCacheStream();
 
-  @CachePeek("cachedValue")
+  @CachePeek('cachedValue')
   int? cachedValueCachePeek();
 
   @clearAllCached
@@ -27,10 +27,10 @@ abstract class StaticCached implements _$StaticCached {
     return dataProvider.getRandomValue();
   }
 
-  @StreamedCache(methodName: "cachedValueGetter")
+  @StreamedCache(methodName: 'cachedValueGetter')
   Stream<int> cachedValueGetterCacheStream();
 
-  @CachePeek("cachedValueGetter")
+  @CachePeek('cachedValueGetter')
   int? cachedValueGetterCachePeek();
 
   @DeletesCache(['cachedValue'])

@@ -45,6 +45,7 @@ class Cached {
     this.syncWrite,
     this.ttl,
     this.where,
+    this.persistentStorage,
   });
 
   /// limit how many results for different method call
@@ -73,4 +74,6 @@ class Cached {
   /// but @IgnoreCache is not enough
   /// (e.g. condition whether or not to cache known once acquiring data)
   final Function? where;
+
+  final bool? persistentStorage;
 }

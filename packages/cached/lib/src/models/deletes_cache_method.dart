@@ -17,14 +17,6 @@ class DeletesCacheMethod {
     required this.ttlsToClear,
   });
 
-  final String name;
-  final List<String> methodNames;
-  final String returnType;
-  final bool isGenerator;
-  final bool isAsync;
-  final Iterable<Param> params;
-  final List<String> ttlsToClear;
-
   factory DeletesCacheMethod.fromElement(
     MethodElement element,
     Config config,
@@ -64,6 +56,14 @@ class DeletesCacheMethod {
           : [],
     );
   }
+
+  final String name;
+  final List<String> methodNames;
+  final String returnType;
+  final bool isGenerator;
+  final bool isAsync;
+  final Iterable<Param> params;
+  final List<String> ttlsToClear;
 
   static DartObject? getAnnotation(MethodElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(DeletesCache);

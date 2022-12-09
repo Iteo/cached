@@ -66,7 +66,7 @@ String _generateParamKeyPartCall({
   required CacheKeyAnnotation? cacheKeyAnnotation,
 }) =>
     cacheKeyAnnotation != null
-        ? "\${${cacheKeyAnnotation.cacheFunctionCall}($name)}"
+        ? '\${${cacheKeyAnnotation.cacheFunctionCall}($name)}'
         : '\${$name.hashCode}';
 
 extension Inspect<T> on Iterable<T> {

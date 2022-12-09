@@ -19,19 +19,25 @@ class StreamedCacheMethodTemplate {
   }
 
   String generateMethod() {
+    final params = paramsTemplate.generateParams();
+    final paramKey = getParamKey(method.params);
+    final cacheStreamControllerName = getCacheStreamControllerName(
+      method.targetMethodName,
+    );
+
     return '''
-@override
-Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams()}) async* {
-  final paramsKey = "${getParamKey(method.params)}";
-  final streamController = ${getCacheStreamControllerName(method.targetMethodName)};
-  final stream = streamController.stream
-        ${_streamFilter()}
-        .map((event) => event.value);
+       @override
+       Stream<${method.coreReturnType}> ${method.name}($params) async* {
+          final paramsKey = "$paramKey";
+          final streamController = $cacheStreamControllerName;
+          final stream = streamController.stream
+             ${_streamFilter()}
+             .map((event) => event.value);
         
-  ${_lastValueEmit()}
+          ${_lastValueEmit()}
   
-  yield* stream;
-}
+          yield* stream;
+    }
     ''';
   }
 
@@ -40,9 +46,10 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
       return '';
     }
 
+    final cacheMapName = getCacheMapName(method.targetMethodName);
     return '''
-      if(${getCacheMapName(method.targetMethodName)}.containsKey(paramsKey)) {
-        final lastValue = ${getCacheMapName(method.targetMethodName)}[paramsKey];
+      if($cacheMapName.containsKey(paramsKey)) {
+        final lastValue = $cacheMapName[paramsKey];
         ${_yieldLastValue()}
       }
     ''';
@@ -63,8 +70,13 @@ Stream<${method.coreReturnType}> ${method.name}(${paramsTemplate.generateParams(
   String _streamMapInitializer() =>
       '''StreamController<MapEntry<StreamEventIdentifier<_$className>,${method.coreReturnType}>>.broadcast()''';
 
-  String _streamFilter() => '''
-      ${useStaticCache ? "" : ".where((event) => event.key.instance == this)"}
+  String _streamFilter() {
+    const eventFilter = '.where((event) => event.key.instance == this)';
+    final text = useStaticCache ? '' : eventFilter;
+
+    return '''
+      $text
       .where((event) => event.key.paramsKey == null || event.key.paramsKey == paramsKey)
-        ''';
+    ''';
+  }
 }

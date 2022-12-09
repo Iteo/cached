@@ -137,12 +137,13 @@ class _ValidTtl with ValidTtl implements _$ValidTtl {
 
   final _getSthDataCached = <String, String?>{};
 
-  final _getSthDataTtl = <String, DateTime>{};
+  final _getSthDataTtl = <String, String>{};
 
   @override
   Future<String?> getSthData(String id) async {
     final now = DateTime.now();
-    final currentTtl = _getSthDataTtl["${id.hashCode}"];
+    final cachedTtl = _getSthDataTtl["${id.hashCode}"];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
       _getSthDataTtl.remove("${id.hashCode}");
@@ -162,8 +163,9 @@ class _ValidTtl with ValidTtl implements _$ValidTtl {
 
       _getSthDataCached["${id.hashCode}"] = toReturn;
 
+      const duration = Duration(seconds: 60);
       _getSthDataTtl["${id.hashCode}"] =
-          DateTime.now().add(const Duration(seconds: 60));
+          DateTime.now().add(duration).toIso8601String();
 
       return toReturn;
     } else {
@@ -297,12 +299,13 @@ class _ValidTwoMethods with ValidTwoMethods implements _$ValidTwoMethods {
   final _getSthDataCached = <String, String?>{};
   final _getSthDataNoTtlCached = <String, String>{};
 
-  final _getSthDataTtl = <String, DateTime>{};
+  final _getSthDataTtl = <String, String>{};
 
   @override
   Future<String?> getSthData(String id) async {
     final now = DateTime.now();
-    final currentTtl = _getSthDataTtl["${id.hashCode}"];
+    final cachedTtl = _getSthDataTtl["${id.hashCode}"];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
       _getSthDataTtl.remove("${id.hashCode}");
@@ -322,8 +325,9 @@ class _ValidTwoMethods with ValidTwoMethods implements _$ValidTwoMethods {
 
       _getSthDataCached["${id.hashCode}"] = toReturn;
 
+      const duration = Duration(seconds: 60);
       _getSthDataTtl["${id.hashCode}"] =
-          DateTime.now().add(const Duration(seconds: 60));
+          DateTime.now().add(duration).toIso8601String();
 
       return toReturn;
     } else {

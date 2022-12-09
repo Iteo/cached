@@ -87,12 +87,12 @@ bool _neverCache(int candidate) {
 }
 
 Future<bool> _alwaysCacheFutureCondition(int candidate) async {
-  await Future.delayed(const Duration(milliseconds: 100));
+  await Future<void>.delayed(const Duration(milliseconds: 100));
   return Future.value(true);
 }
 
 Future<bool> _neverCacheFutureCondition(int candidate) async {
-  await Future.delayed(const Duration(milliseconds: 100));
+  await Future<void>.delayed(const Duration(milliseconds: 100));
   return Future.value(false);
 }
 

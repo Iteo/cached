@@ -1,6 +1,9 @@
 import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/utils/utils.dart';
 
+const _readCode = 'await PersistentStorageHolder.read';
+const _writeCode = 'await PersistentStorageHolder.write';
+
 abstract class CachedMethodTemplate {
   CachedMethodTemplate(
     this.function, {
@@ -18,115 +21,9 @@ abstract class CachedMethodTemplate {
 
   String generateOnCatch();
 
-  String generateAdditionalCacheCondition() => "";
+  String generateAdditionalCacheCondition() => '';
 
   String get paramsKey;
-
-  String generateSyncMap() {
-    if (!function.syncWrite) {
-      return '';
-    }
-
-    return '${_getStaticModifier()} final $_syncMapName = <String, Future<$_syncReturnType>>{};';
-  }
-
-  String generateCacheMap() {
-    return '${_getStaticModifier()} final $_cacheMapName = <String, $_syncReturnType>{};';
-  }
-
-  String generateTtlMap() {
-    if (function.ttl == null) {
-      return '';
-    }
-
-    return '${_getStaticModifier()} final $_ttlMapName = <String, DateTime>{};';
-  }
-
-  String generate() {
-    final syncGeneratorModifier =
-        function.isGenerator && !function.isAsync ? 'sync' : '';
-    final asyncModifier = (_returnsFuture ||
-            function.isAsync ||
-            function.checkIfShouldCacheMethod?.isAsync == true)
-        ? 'async'
-        : '';
-    final generatorModifier = function.isGenerator ? '*' : '';
-
-    return '''
-@override
-${function.returnType} ${generateDefinition()} $syncGeneratorModifier$asyncModifier$generatorModifier {
-
-  
-  ${_generateRemoveTtlLogic()}
-  final cachedValue = $_cacheMapName["$paramsKey"];
-  if (cachedValue == null ${generateAdditionalCacheCondition()}) {
-    ${_generateGetSyncedLogic()}
-
-    final $_syncReturnType $_toReturnVariable;
-    try {
-      final result = super.${generateUsage()};
-      ${function.syncWrite && _returnsFuture ? "$_syncMapName['$paramsKey'] = result;" : ""}
-      $_toReturnVariable = ${_returnsFuture ? 'await' : ''} result;
-    } catch(_) {
-      ${generateOnCatch()}
-    } finally {
-      ${function.syncWrite && _returnsFuture ? "$_syncMapName.remove('$paramsKey');" : ""}
-    }
-
-    ${_generateCheckIfShouldCache()}
-
-    $_cacheMapName["$paramsKey"] = $_toReturnVariable;
-
-    ${_generateStreamCall()}
-
-    ${_generateLimitLogic()}
-    ${_generateAddTtlLogic()}
-    $_returnKeyword $_toReturnVariable;
-  } else {
-    $_returnKeyword cachedValue;
-  }
-}
-
-''';
-  }
-
-  String _getStaticModifier() {
-    return useStaticCache ? 'static' : '';
-  }
-
-  String _generateGetSyncedLogic() {
-    if (!function.syncWrite || !_returnsFuture) return '';
-
-    return '''
-final cachedFuture = $_syncMapName["$paramsKey"];
-
-if (cachedFuture != null) {
-  return cachedFuture;
-}
-''';
-  }
-
-  String _generateRemoveTtlLogic() {
-    if (function.ttl == null) return '';
-
-    return '''
-final now = DateTime.now();
-final currentTtl = $_ttlMapName["$paramsKey"];
-
-if (currentTtl != null && currentTtl.isBefore(now)) {
-  $_ttlMapName.remove("$paramsKey");
-  $_cacheMapName.remove("$paramsKey");
-}
-''';
-  }
-
-  String _generateAddTtlLogic() {
-    if (function.ttl == null) return '';
-
-    return '''
-$_ttlMapName["$paramsKey"] = DateTime.now().add(const Duration(seconds: ${function.ttl}));
-''';
-  }
 
   String get _cacheMapName => getCacheMapName(function.name);
 
@@ -142,28 +39,230 @@ $_ttlMapName["$paramsKey"] = DateTime.now().add(const Duration(seconds: ${functi
 
   String get _toReturnVariable => 'toReturn';
 
+  bool get _shouldUsePersistentStorage => function.persistentStorage ?? false;
+
+  bool get _hasTtl => function.ttl != null;
+
+  String generate() {
+    final generatorModifier = function.isGenerator ? '*' : '';
+
+    final isGeneratorOrAsync = function.isGenerator && !function.isAsync;
+    final syncGeneratorModifier = isGeneratorOrAsync ? 'sync' : '';
+
+    final returnsFutureOrIsAsync = _returnsFuture || function.isAsync;
+    final checkIfShouldCacheMethod = function.checkIfShouldCacheMethod;
+    final shouldCacheAsync = checkIfShouldCacheMethod?.isAsync;
+    final cacheAsync = shouldCacheAsync == true;
+    final useAsyncKeyword = returnsFutureOrIsAsync || cacheAsync;
+    final asyncModifier = useAsyncKeyword ? 'async' : '';
+
+    final generatedDefinition = generateDefinition();
+    final generatedCacheCondition = generateAdditionalCacheCondition();
+    final usage = generateUsage();
+
+    return '''
+       @override
+       ${function.returnType} $generatedDefinition $syncGeneratorModifier$asyncModifier$generatorModifier {
+          ${_generateStorageAwait()}
+                 
+          ${_generateRemoveTtlLogic()}
+          
+          final cachedValue = $_cacheMapName["$paramsKey"];
+          if (cachedValue == null $generatedCacheCondition) {
+             ${_generateGetSyncedLogic()}
+   
+             final $_syncReturnType $_toReturnVariable;
+             try {
+                  final result = super.$usage;
+                  ${function.syncWrite && _returnsFuture ? '$_syncMapName["$paramsKey"] = result;' : ""}
+                  $_toReturnVariable = ${_returnsFuture ? 'await' : ''} result;
+             } catch(_) {
+                  ${generateOnCatch()}
+             } finally {
+                  ${function.syncWrite && _returnsFuture ? "$_syncMapName.remove('$paramsKey');" : ""}
+             }
+   
+             ${_generateCheckIfShouldCache()}
+   
+             $_cacheMapName["$paramsKey"] = $_toReturnVariable;
+   
+             ${_generateStreamCall()}
+   
+             ${_generateLimitLogic()}
+             ${_generateAddTtlLogic()}
+       
+             ${_generateCacheWrite()}
+             ${_generateTtlWrite()}
+       
+             $_returnKeyword $_toReturnVariable;
+          } else {
+             $_returnKeyword cachedValue;
+          }
+        }
+   ''';
+  }
+
+  String generateSyncMap() {
+    if (!function.syncWrite) {
+      return '';
+    }
+
+    final staticModifier = _getStaticModifier();
+    return '$staticModifier final $_syncMapName = <String, Future<$_syncReturnType>>{};';
+  }
+
+  String generateCacheMap() {
+    final staticModifier = _getStaticModifier();
+
+    if (function.persistentStorage ?? false) {
+      return '$staticModifier late final $_cacheMapName;';
+    }
+
+    return '$staticModifier final $_cacheMapName = <String, $_syncReturnType>{};';
+  }
+
+  String generateTtlMap() {
+    final staticModifier = _getStaticModifier();
+
+    if (!_hasTtl) {
+      return '';
+    }
+
+    if (function.persistentStorage ?? false) {
+      return '$staticModifier late final $_ttlMapName;';
+    }
+
+    return '$staticModifier final $_ttlMapName = <String, String>{};';
+  }
+
+  String generateAsyncPersistentStorageInit() {
+    final buffer = StringBuffer();
+    if (_shouldUsePersistentStorage) {
+      final cacheInit = _getCacheInit();
+      buffer.writeln(cacheInit);
+      buffer.writeln('\n');
+    }
+
+    if (_shouldUsePersistentStorage && _hasTtl) {
+      final ttlInit = _getTtlInit();
+      buffer.writeln(ttlInit);
+      buffer.writeln('\n');
+    }
+
+    return buffer.toString();
+  }
+
+  String _getCacheInit() {
+    final init = "$_cacheMapName = $_readCode('$_cacheMapName');";
+    return _wrapWithTryCatchAndAssignEmptyMap(
+      init,
+      _cacheMapName,
+    );
+  }
+
+  String _getTtlInit() {
+    final init = "$_ttlMapName = $_readCode('$_ttlMapName');";
+    return _wrapWithTryCatchAndAssignEmptyMap(
+      init,
+      _ttlMapName,
+    );
+  }
+
+  String _wrapWithTryCatchAndAssignEmptyMap(
+    String dangerousInit,
+    String mapName,
+  ) {
+    final buffer = StringBuffer();
+
+    buffer.writeln('try {');
+    buffer.writeln(dangerousInit);
+    buffer.writeln('} catch (e) {');
+    buffer.writeln('$mapName = <String, dynamic>{};');
+    buffer.writeln('}');
+
+    return buffer.toString();
+  }
+
+  String _getStaticModifier() {
+    return useStaticCache ? 'static' : '';
+  }
+
+  String _generateGetSyncedLogic() {
+    if (!function.syncWrite || !_returnsFuture) return '';
+
+    return '''
+       final cachedFuture = $_syncMapName["$paramsKey"];
+
+       if (cachedFuture != null) {
+          return cachedFuture;
+       }
+   ''';
+  }
+
+  String _generateRemoveTtlLogic() {
+    if (!_hasTtl) return '';
+
+    return '''
+       final now = DateTime.now();
+       final cachedTtl = $_ttlMapName["$paramsKey"];
+       final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
+
+       if (currentTtl != null && currentTtl.isBefore(now)) {
+          $_ttlMapName.remove("$paramsKey");
+          $_cacheMapName.remove("$paramsKey");
+       }
+    ''';
+  }
+
+  String _generateAddTtlLogic() {
+    if (!_hasTtl) return '';
+
+    return '''
+       const duration = Duration(seconds: ${function.ttl});
+       $_ttlMapName["$paramsKey"] = DateTime.now().add(duration).toIso8601String();
+    ''';
+  }
+
+  String _generateCacheWrite() {
+    if (_shouldUsePersistentStorage) {
+      return "$_writeCode('$_cacheMapName', $_cacheMapName);";
+    }
+
+    return '';
+  }
+
+  String _generateTtlWrite() {
+    if (_hasTtl && _shouldUsePersistentStorage) {
+      return "$_writeCode('$_ttlMapName', $_ttlMapName);";
+    }
+
+    return '';
+  }
+
   String _generateLimitLogic() {
     if (function.limit == null) return '';
 
     return '''
-if ($_cacheMapName.length > ${function.limit}) {
-  $_cacheMapName.remove($_cacheMapName.entries.last.key);
-}
-''';
+       if ($_cacheMapName.length > ${function.limit}) {
+          $_cacheMapName.remove($_cacheMapName.entries.last.key);
+       }
+    ''';
   }
 
   String _generateStreamCall() {
     if (!isCacheStreamed) {
       return '';
     }
+
     return '''
-          ${getCacheStreamControllerName(function.name)}.sink.add(MapEntry(StreamEventIdentifier(
-              ${useStaticCache ? '' : 'instance: this,'}
-              paramsKey: "$paramsKey",
-            ),
-            $_toReturnVariable,
-          ));
-          ''';
+       ${getCacheStreamControllerName(function.name)}.sink.add(MapEntry(StreamEventIdentifier(
+           ${useStaticCache ? '' : 'instance: this,'}
+            paramsKey: "$paramsKey",
+           ),
+           $_toReturnVariable,
+           )
+      );
+    ''';
   }
 
   String _generateCheckIfShouldCache() {
@@ -178,5 +277,13 @@ if ($_cacheMapName.length > ${function.limit}) {
          $_returnKeyword $_toReturnVariable;
       }
     ''';
+  }
+
+  String _generateStorageAwait() {
+    if (_shouldUsePersistentStorage) {
+      return 'await _completerFuture;';
+    }
+
+    return '';
   }
 }

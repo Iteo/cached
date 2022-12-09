@@ -1,4 +1,4 @@
-include: package:lint/analysis_options.yaml
+include: package:linteo/analysis_options.yaml
 
 analyzer:
   errors:
@@ -6,3 +6,14 @@ analyzer:
   exclude:
     - ./**/*.cached.dart
     - test/inputs/*
+
+linter:
+  rules:
+    avoid_annotating_with_dynamic: false
+    comment_references: false
+    prefer_constructors_over_static_methods: false
+    avoid_print: false
+    avoid_classes_with_only_static_members: false
+    avoid_setters_without_getters: false
+    sort_pub_dependencies: false
+

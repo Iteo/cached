@@ -86,7 +86,7 @@ void assertValidateClearCachedMethods(
   Iterable<CachedMethod> methods,
   Iterable<CachedGetter> getters,
 ) {
-  for (final ClearCachedMethod clearMethod in clearMethods) {
+  for (final clearMethod in clearMethods) {
     final hasPair = [
       methods.where((element) => element.name == clearMethod.methodName),
       getters.where((element) => element.name == clearMethod.methodName),
@@ -228,7 +228,7 @@ void assertValidateDeletesCacheMethods(
       final message = invalidTargetMethods
           .map(
             (invalidTargetMethod) =>
-                "[ERROR] $invalidTargetMethod is not a valid target for ${deletesCacheMethod.name}",
+                '[ERROR] $invalidTargetMethod is not a valid target for ${deletesCacheMethod.name}',
           )
           .join('\n');
       throw InvalidGenerationSourceError(message);
@@ -301,5 +301,18 @@ void assertNotSyncAsyncMismatch(
       '[ERROR] Asynchronous and synchronous mismatch. Check return types of: ${first.name} and ${second.name}.',
       element: first,
     );
+  }
+}
+
+void assertPersistentStorageShouldBeAsync(ExecutableElement element) {
+  final returnType = element.returnType;
+  final returnTypeIsNotFuture = !returnType.isDartAsyncFuture;
+  final isNotAsync = !element.isAsynchronous;
+
+  if (returnTypeIsNotFuture && isNotAsync) {
+    final name = element.name;
+    final message = '[ERROR] $name has to be async and return Future, '
+        'if you want to use persistent storage.';
+    throw InvalidGenerationSourceError(message);
   }
 }

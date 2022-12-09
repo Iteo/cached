@@ -2,11 +2,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
 @ShouldThrow(
-  '''
-[ERROR] Name of method for which cache should be cleared is not provider.
-Provide it trougth annotation parameter (`@ClearCached('methodName')`)
-or trougth clear function name e.g. `void clearMethodName();`
-''',
+  "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or trougth clear function name e.g. `void clearMethodName();`",
 )
 @withCache
 abstract class NoTargetMethod {
@@ -106,12 +102,13 @@ class _ValidAbstractWithTtl
 
   final _cachedMethodCached = <String, int>{};
 
-  final _cachedMethodTtl = <String, DateTime>{};
+  final _cachedMethodTtl = <String, String>{};
 
   @override
   int cachedMethod() {
     final now = DateTime.now();
-    final currentTtl = _cachedMethodTtl[""];
+    final cachedTtl = _cachedMethodTtl[""];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
       _cachedMethodTtl.remove("");
@@ -131,7 +128,8 @@ class _ValidAbstractWithTtl
 
       _cachedMethodCached[""] = toReturn;
 
-      _cachedMethodTtl[""] = DateTime.now().add(const Duration(seconds: 30));
+      const duration = Duration(seconds: 30);
+      _cachedMethodTtl[""] = DateTime.now().add(duration).toIso8601String();
 
       return toReturn;
     } else {
