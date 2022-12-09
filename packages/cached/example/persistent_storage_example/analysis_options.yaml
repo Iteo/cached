@@ -1,0 +1,14 @@
+include: package:linteo/analysis_options.yaml
+
+analyzer:
+  errors:
+    invalid_dependency: ignore
+    return_of_invalid_type: ignore
+    argument_type_not_assignable: ignore
+    inference_failure_on_function_invocation: ignore
+  exclude: [ 'lib/**cached.dart' ]
+
+linter:
+  rules:
+   avoid_positional_boolean_parameters: false
+   sort_pub_dependencies: false

@@ -4,7 +4,6 @@ import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/common_generator.dart';
 import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
-import 'package:source_gen/source_gen.dart';
 
 class DeletesCacheMethodTemplate {
   DeletesCacheMethodTemplate(

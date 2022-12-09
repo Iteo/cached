@@ -1,0 +1,36 @@
+name: persistent_storage_example
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.5 <3.0.0'
+
+dependencies:
+  cached_annotation:
+    path: ../../../../packages/cached_annotation
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.5
+  injecteo: ^1.0.0
+  flutter_bloc: ^8.1.1
+  flutter_hooks: ^0.18.5+1
+  hooked_bloc: ^1.2.1
+  shared_preferences: 2.0.15
+  hive: ^2.2.3
+  hive_flutter: 1.1.0
+  path_provider: ^2.0.11
+  equatable: ^2.0.5
+
+dev_dependencies:
+  linteo: 1.0.1
+  hive_generator: 2.0.0
+  cached:
+    path: ../../../../packages/cached
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.3.2
+  injecteo_generator: ^1.0.1
+
+flutter:
+  uses-material-design: true
