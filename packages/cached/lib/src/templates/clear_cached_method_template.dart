@@ -109,9 +109,8 @@ class ClearCachedMethodTemplate {
     if (isPersisted) {
       final isAsync = method.isAsync;
       final mapName = getCacheMapName(method.methodName);
-      final body = isAsync
-          ? "await $deleteText('$mapName')"
-          : "$deleteText('$mapName')";
+      final body =
+          isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
 
       return '''
         if ($isStorageSetText) {

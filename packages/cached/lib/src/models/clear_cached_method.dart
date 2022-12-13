@@ -95,7 +95,7 @@ class ClearCachedMethod {
 
     if (prefixNotContained) {
       const message =
-          "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or trougth clear function name e.g. `void ${_clearPrefix}MethodName();`";
+          "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or through clear function name e.g. `void ${_clearPrefix}MethodName();`";
       throw InvalidGenerationSourceError(message, element: element);
     }
 

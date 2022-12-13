@@ -197,7 +197,7 @@ There are 4 possible additional parameters:
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
   means no limit.
 - `where` - function triggered before caching the value. If returns `true`: value will be cached, if returns `false`: value wil be ignored. Useful to signal that a certain result must not be cached, but `@IgnoreCache` is not enough (e.g. condition whether or not to cache known once acquiring data)
-- `persistentStorage` - Defines optional usage of external persistent storage (e.g. shared preferences). If set to `true` in order to work, you have to set `PersistentStorageHolder.storage` in your main.dart file. Check the last section of this README for more information.
+- `persistentStorage` - Defines optional usage of external persistent storage (e.g. shared preferences). If set to `true` in order to work, you have to set `PersistentStorageHolder.storage` in your main.dart file. Check the [Persistent storage section](#persistent-storage) of this README for more information.
 
 #### Example
 

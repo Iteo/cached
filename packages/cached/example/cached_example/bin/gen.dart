@@ -4,13 +4,13 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:http/http.dart';
 
 /// Do not forget add part keyword for file,
-/// beacuse then class not be generated.
+/// because then class not be generated.
 part 'gen.cached.dart';
 
 /// You can change url to your own and run main method to check
 /// how many time you save with [Cached] package.
 ///
-/// IMPORATANT!
+/// IMPORTANT!
 /// response body must be a json string
 const _url = 'https://jsonplaceholder.typicode.com/todos/94';
 
@@ -46,6 +46,18 @@ abstract class Gen implements _$Gen {
   ///           if returns `false`: cache will not happen.
   ///           Useful to signal that a certain result must not be cached
   ///           (e.g. condition whether or not to cache known once acquiring data)
+  ///
+  /// * persistentStorage - defines optional usage of external persistent
+  ///                       storage (e.g. shared preferences)
+  ///
+  ///                       If set to `true` in order to work, you have to set
+  ///                       `PersistentStorageHolder.storage` in your main.dart
+  ///                       file
+  ///
+  ///                       Important:
+  ///                       If you want to utilize persistent storage, all
+  ///                       methods which use Cached library's annotations has
+  ///                       to be async
   ///
   /// Additional annotation @IgnoreCache
   ///

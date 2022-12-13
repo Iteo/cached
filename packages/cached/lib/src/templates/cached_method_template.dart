@@ -114,7 +114,7 @@ abstract class CachedMethodTemplate {
     final staticModifier = _getStaticModifier();
 
     if (function.persistentStorage ?? false) {
-      return '$staticModifier late final $_cacheMapName;';
+      return '$staticModifier late final Map<String, dynamic> $_cacheMapName;';
     }
 
     return '$staticModifier final $_cacheMapName = <String, $_syncReturnType>{};';
@@ -259,7 +259,7 @@ abstract class CachedMethodTemplate {
             paramsKey: "$paramsKey",
            ),
            $_toReturnVariable,
-           )
+           ),
       );
     ''';
   }

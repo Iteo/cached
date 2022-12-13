@@ -227,13 +227,15 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
 
       _getSthDataCached["${id.hashCode}"] = toReturn;
 
-      _getSthDataCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "${id.hashCode}",
+      _getSthDataCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "${id.hashCode}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {

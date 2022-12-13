@@ -1,3 +1,1 @@
-# cached_storage_example
-
-Simple app using `Cached` library with `persistantStorage` functionality.
+A simple command-line application.

@@ -64,7 +64,8 @@ void main() {
       final secondCachedValueFuture = cachedClass.syncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      final duration = Duration(milliseconds: _slightlyLessThanTTL());
+      await Future<void>.delayed(duration);
       await cachedClass.syncCachedValueWithTTl();
 
       expect(cachedClass.counter(), 1);
@@ -125,7 +126,8 @@ void main() {
       final secondCachedValueFuture = cachedClass.syncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      final duration = Duration(milliseconds: _slightlyLessThanTTL());
+      await Future<void>.delayed(duration);
       await cachedClass.syncCachedValueGetterWithTTl;
 
       expect(cachedClass.counter(), 1);
@@ -185,7 +187,8 @@ void main() {
       final secondCachedValueFuture = cachedClass.asyncCachedValueWithTTl();
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      final duration = Duration(milliseconds: _slightlyLessThanTTL());
+      await Future<void>.delayed(duration);
 
       expect(cachedClass.counter(), 2);
     });
@@ -236,7 +239,8 @@ void main() {
       final secondCachedValueFuture = cachedClass.asyncCachedValueGetterWithTTl;
 
       await Future.wait([cachedValueFuture, secondCachedValueFuture]);
-      await Future<void>.delayed(Duration(milliseconds: _slightlyLessThanTTL()));
+      final duration = Duration(milliseconds: _slightlyLessThanTTL());
+      await Future<void>.delayed(duration);
 
       expect(cachedClass.counter(), 2);
     });

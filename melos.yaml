@@ -7,9 +7,6 @@ command:
 packages:
   - packages/**
 
-ignore:
-  - packages/cached/example/**
-
 scripts:
   get:
     run: melos exec dart pub get

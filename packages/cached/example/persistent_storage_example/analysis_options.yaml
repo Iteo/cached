@@ -12,3 +12,7 @@ linter:
   rules:
    avoid_positional_boolean_parameters: false
    sort_pub_dependencies: false
+   unnecessary_lambdas: false
+   avoid_dynamic_calls: false
+   avoid_print: false
+   comment_references: false

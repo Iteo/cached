@@ -59,9 +59,9 @@ class _StaticPersistedRepository
 
   static final _getBoolSync = <String, Future<bool>>{};
 
-  static late final _getNumberCached;
-  static late final _getBoolCached;
-  static late final _getTextCached;
+  static late final Map<String, dynamic> _getNumberCached;
+  static late final Map<String, dynamic> _getBoolCached;
+  static late final Map<String, dynamic> _getTextCached;
 
   static late final _getNumberTtl;
   static late final _getBoolTtl;
@@ -331,9 +331,9 @@ class _NonStaticPersistedRepository
 
   final _getBoolSync = <String, Future<bool>>{};
 
-  late final _getNumberCached;
-  late final _getBoolCached;
-  late final _getTextCached;
+  late final Map<String, dynamic> _getNumberCached;
+  late final Map<String, dynamic> _getBoolCached;
+  late final Map<String, dynamic> _getTextCached;
 
   late final _getNumberTtl;
   late final _getBoolTtl;

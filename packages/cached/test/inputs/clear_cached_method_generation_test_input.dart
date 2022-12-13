@@ -2,7 +2,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
 @ShouldThrow(
-  "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or trougth clear function name e.g. `void clearMethodName();`",
+  "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or through clear function name e.g. `void clearMethodName();`",
 )
 @withCache
 abstract class NoTargetMethod {
