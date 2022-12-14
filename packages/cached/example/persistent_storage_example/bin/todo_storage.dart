@@ -1,11 +1,11 @@
-import 'dart:convert';
-
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:hive/hive.dart';
 
+import 'todo.dart';
+
 /// Example Hive database configuration
 const _path = './database/';
-const _storageKey = '_ExampleHiveStorage';
+const _storageKey = '_todos';
 
 /// You have to extend [CachedStorage] to use Cached library's persistent
 /// storage functionality. You have to provide your own CRUD logic by
@@ -18,45 +18,47 @@ const _storageKey = '_ExampleHiveStorage';
 /// Important:
 /// Please be aware of typing and error handling. This has to be done on your
 /// side.
-class HiveStorage extends CachedStorage {
-  HiveStorage._();
+class TodoStorage extends CachedStorage {
+  TodoStorage._();
 
   /// You can connect to your storage asynchronously, but it isn't mandatory
-  static Future<HiveStorage> create() async {
+  static Future<TodoStorage> create() async {
     Hive.init(_path);
-    await Hive.openBox(_storageKey);
+    Hive.registerAdapter(TodoAdapter());
+    await Hive.openBox<Map>(_storageKey);
 
-    return HiveStorage._();
+    return TodoStorage._();
   }
 
   /// In [write] method, you only have to provide a way to serialize
-  /// your fresh data. This example uses one of the simplest ways:
-  /// the [jsonEncode] method.
+  /// your fresh data. In our case, Hive is doing the job for us with
+  /// its adapter.
   ///
   /// Use a given [key] parameter as your key to store results.
   ///
   /// DO NOT modify [key] parameter value!
   @override
   Future<void> write(String key, Map<String, dynamic> data) async {
-    final box = Hive.box(_storageKey);
-    final encodedData = jsonEncode(data);
-
-    return box.put(key, encodedData);
+    final box = Hive.box<Map>(_storageKey);
+    return box.put(key, data);
   }
 
   /// In [read] method, have to provide a way to read your previously serialized
-  /// data. To be compatible with our [write] method, we'll use [jsonDecode].
+  /// data. Again, in this example, Hive is doing the job for us.
   ///
   /// Use a [key] parameter as your key to read/filter results.
   ///
   /// DO NOT modify [key] parameter value!
   @override
   Future<Map<String, dynamic>> read(String key) async {
-    final box = Hive.box(_storageKey);
-    final position = box.get(key);
-    final value = jsonDecode(position);
+    final box = Hive.box<Map>(_storageKey);
+    final result = box.get(key) ?? {};
 
-    return value;
+    /// This is necessary to provide compatibility with Hive, because it
+    /// can only return `Map<dynamic, dynamic>`, not `Map<String, dynamic>`
+    return result.map(
+      (key, value) => MapEntry('$key', value.cast<Todo>()),
+    );
   }
 
   /// In [delete] method, you have to provide a deletion logic only
@@ -65,7 +67,7 @@ class HiveStorage extends CachedStorage {
   /// DO NOT modify [key] parameter value!
   @override
   Future<void> delete(String key) async {
-    final box = Hive.box(_storageKey);
+    final box = Hive.box<Map>(_storageKey);
     return box.delete(key);
   }
 
@@ -73,7 +75,7 @@ class HiveStorage extends CachedStorage {
   /// all persisted data.
   @override
   Future<void> deleteAll() async {
-    final box = Hive.box(_storageKey);
+    final box = Hive.box<Map>(_storageKey);
     return box.deleteFromDisk();
   }
 }

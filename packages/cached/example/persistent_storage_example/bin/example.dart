@@ -1,41 +1,41 @@
 import 'package:cached_annotation/cached_annotation.dart';
 
 import 'gen.dart';
-import 'hive_storage.dart';
-import 'todo.dart';
+import 'todo_storage.dart';
 
 /// Open [cached_example] project in ../example directory to check
 /// how use [Cached] package.
-final _gen = Gen();
-
+///
+///
 /// Run this method. It'll create a database folder with two files:
-/// - _examplehivestorage.hive
-/// - _examplehivestorage.lock
+/// - todos.hive
+/// - todos.lock
 ///
 /// From now on, every program run will use data stored in these files.
 ///
 /// Examples of fetching times:
 /// - 1st run: 306 ms
-/// - 2nd run: 8 ms
-/// - Delete ./database directory  manually or with [_gen.clearTodos] method
+/// - 2nd run: 1 ms
+/// - Delete ./database directory  manually or with [gen.clearTodos] method
 /// - 3rd run: 298 ms
 Future<void> main(List<String> arguments) async {
   /// The assignment of this variable is mandatory for [Cached] to store
   /// data in permanent memory.
-  PersistentStorageHolder.storage = await HiveStorage.create();
+  PersistentStorageHolder.storage = await TodoStorage.create();
+
+  final gen = Gen();
 
   /// Uncomment to deleteTodos
-  // await _gen.clearTodos();
+  // await gen.clearTodos();
 
-  await _fetchTodos();
+  await _fetchTodos(gen);
 }
 
-Future<void> _fetchTodos() async {
+Future<void> _fetchTodos(Gen gen) async {
   final stopwatch = Stopwatch();
 
   stopwatch.start();
-  final rawTodos = await _gen.getTodos();
-  final todos = rawTodos.map((e) => Todo.fromJson(e)).toList();
+  final todos = await gen.getTodos();
   stopwatch.stop();
 
   final count = todos.length;

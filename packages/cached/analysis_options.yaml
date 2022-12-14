@@ -16,4 +16,3 @@ linter:
     avoid_classes_with_only_static_members: false
     avoid_setters_without_getters: false
     sort_pub_dependencies: false
-

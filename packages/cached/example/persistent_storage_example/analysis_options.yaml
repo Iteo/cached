@@ -6,7 +6,9 @@ analyzer:
     return_of_invalid_type: ignore
     argument_type_not_assignable: ignore
     inference_failure_on_function_invocation: ignore
-  exclude: [ 'lib/**cached.dart' ]
+    inference_failure_on_untyped_parameter: ignore
+    strict_raw_type: ignore
+  exclude: [ 'bin/**cached.dart' ]
 
 linter:
   rules:

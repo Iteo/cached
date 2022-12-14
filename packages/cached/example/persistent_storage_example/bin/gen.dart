@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:http/http.dart' as http;
 
+import 'todo.dart';
+
 part 'gen.cached.dart';
 
 /// Sample API URL
@@ -32,11 +34,12 @@ abstract class Gen implements _$Gen {
   /// For the sake of readability, we will pass only a [persistentStorage]
   /// here, but you can use any params combination
   @Cached(persistentStorage: true)
-  Future<List<dynamic>> getTodos() async {
+  Future<List<Todo>> getTodos() async {
     final uri = Uri.parse(_url);
     final response = await http.get(uri);
+    final decodedBody = jsonDecode(response.body);
 
-    return jsonDecode(response.body);
+    return decodedBody.map<Todo>((e) => Todo.fromJson(e)).toList();
   }
 
   /// To delete persisted data, you can also use [ClearAllCached],
