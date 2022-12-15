@@ -1,7 +1,7 @@
 import 'package:cached/src/models/cached_function.dart';
-import 'package:cached/src/utils/cast_appender.dart';
 import 'package:cached/src/utils/common_generator.dart';
 import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
+import 'package:cached/src/utils/type_cast_appender.dart';
 import 'package:cached/src/utils/utils.dart';
 
 abstract class CachedMethodTemplate {
@@ -108,7 +108,7 @@ abstract class CachedMethodTemplate {
       return '$code;';
     }
 
-    final appender = CastAppender();
+    final appender = TypeCastAppender();
     return appender.wrapWithTryCatchAndAddGenericCast(
       codeToWrap: code,
       returnType: function.returnType,

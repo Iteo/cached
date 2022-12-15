@@ -1,12 +1,13 @@
 import 'package:meta/meta.dart';
 
-class CastAppender {
+class TypeCastAppender {
   String wrapWithTryCatchAndAddGenericCast({
     required String returnType,
     required String codeToWrap,
   }) {
     final result = appendCastIfNeeded(returnType);
-    return """
+    if (result.isNotEmpty) {
+      return """
          try {
             $codeToWrap$result;
          } on NoSuchMethodError {
@@ -26,6 +27,9 @@ class CastAppender {
             ''');
          }
       """;
+    }
+
+    return '$codeToWrap;';
   }
 
   @visibleForTesting

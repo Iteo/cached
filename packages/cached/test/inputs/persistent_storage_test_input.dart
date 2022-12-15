@@ -634,3 +634,253 @@ abstract class CachedWithDeletePersistentStorageError {
   @DeletesCache(['something1', 'something2'])
   void shouldThrowGenerationError() {}
 }
+
+@ShouldGenerate(
+  r"""
+abstract class _$NonStaticNestedGenericType {}
+
+class _NonStaticNestedGenericType
+    with NonStaticNestedGenericType
+    implements _$NonStaticNestedGenericType {
+  _NonStaticNestedGenericType() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      _getNumbersCached =
+          await PersistentStorageHolder.read('_getNumbersCached');
+    } catch (e) {
+      _getNumbersCached = <String, dynamic>{};
+    }
+
+    try {
+      _getNumbersTtl = await PersistentStorageHolder.read('_getNumbersTtl');
+    } catch (e) {
+      _getNumbersTtl = <String, dynamic>{};
+    }
+
+    _completer.complete();
+  }
+
+  final _completer = Completer<void>();
+  Future<void> get _completerFuture => _completer.future;
+
+  final _getNumbersSync = <String, Future<List<int>>>{};
+
+  late final Map<String, dynamic> _getNumbersCached;
+
+  late final _getNumbersTtl;
+
+  @override
+  Future<List<int>> getNumbers() async {
+    await _completerFuture;
+
+    final now = DateTime.now();
+    final cachedTtl = _getNumbersTtl[""];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
+
+    if (currentTtl != null && currentTtl.isBefore(now)) {
+      _getNumbersTtl.remove("");
+      _getNumbersCached.remove("");
+    }
+
+    final cachedValue = _getNumbersCached[""];
+    if (cachedValue == null) {
+      final cachedFuture = _getNumbersSync[""];
+
+      if (cachedFuture != null) {
+        return cachedFuture;
+      }
+
+      final List<int> toReturn;
+      try {
+        final result = super.getNumbers();
+        _getNumbersSync[""] = result;
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {
+        _getNumbersSync.remove('');
+      }
+
+      _getNumbersCached[""] = toReturn;
+
+      if (_getNumbersCached.length > 10) {
+        _getNumbersCached.remove(_getNumbersCached.entries.last.key);
+      }
+
+      const duration = Duration(seconds: 30);
+      _getNumbersTtl[""] = DateTime.now().add(duration).toIso8601String();
+
+      await PersistentStorageHolder.write(
+          '_getNumbersCached', _getNumbersCached);
+      await PersistentStorageHolder.write('_getNumbersTtl', _getNumbersTtl);
+
+      return toReturn;
+    } else {
+      try {
+        return cachedValue.cast<int>();
+      } on NoSuchMethodError {
+        throw Exception('''
+             You have to provide your generic classes with a `.cast<T>()` 
+             method, if you want to store them inside a persistent storage. 
+             E.g.:
+             
+             class MyClass<T> {
+               // ...       
+                       
+               MyClass<S> cast<S>() {
+                 return MyClass<S>();
+               }
+             }
+
+            ''');
+      }
+    }
+  }
+}
+""",
+)
+@withCache
+abstract class NonStaticNestedGenericType {
+  factory NonStaticNestedGenericType() = _NonStaticNestedGenericType;
+
+  @Cached(
+    persistentStorage: true,
+    ttl: 30,
+    syncWrite: true,
+    limit: 10,
+  )
+  Future<List<int>> getNumbers() async {
+    return [1, 2, 3, 5, 8];
+  }
+}
+
+@ShouldGenerate(r"""
+abstract class _$StaticNestedGenericType {}
+
+class _StaticNestedGenericType
+    with StaticNestedGenericType
+    implements _$StaticNestedGenericType {
+  _StaticNestedGenericType() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    if (_isStaticCacheLocked == true) {
+      return _completer.complete();
+    } else {
+      _isStaticCacheLocked = true;
+    }
+
+    try {
+      _getNumbersCached =
+          await PersistentStorageHolder.read('_getNumbersCached');
+    } catch (e) {
+      _getNumbersCached = <String, dynamic>{};
+    }
+
+    try {
+      _getNumbersTtl = await PersistentStorageHolder.read('_getNumbersTtl');
+    } catch (e) {
+      _getNumbersTtl = <String, dynamic>{};
+    }
+
+    _completer.complete();
+  }
+
+  final _completer = Completer<void>();
+  Future<void> get _completerFuture => _completer.future;
+
+  static bool _isStaticCacheLocked = false;
+
+  static final _getNumbersSync = <String, Future<List<int>>>{};
+
+  static late final Map<String, dynamic> _getNumbersCached;
+
+  static late final _getNumbersTtl;
+
+  @override
+  Future<List<int>> getNumbers() async {
+    await _completerFuture;
+
+    final now = DateTime.now();
+    final cachedTtl = _getNumbersTtl[""];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
+
+    if (currentTtl != null && currentTtl.isBefore(now)) {
+      _getNumbersTtl.remove("");
+      _getNumbersCached.remove("");
+    }
+
+    final cachedValue = _getNumbersCached[""];
+    if (cachedValue == null) {
+      final cachedFuture = _getNumbersSync[""];
+
+      if (cachedFuture != null) {
+        return cachedFuture;
+      }
+
+      final List<int> toReturn;
+      try {
+        final result = super.getNumbers();
+        _getNumbersSync[""] = result;
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {
+        _getNumbersSync.remove('');
+      }
+
+      _getNumbersCached[""] = toReturn;
+
+      if (_getNumbersCached.length > 30) {
+        _getNumbersCached.remove(_getNumbersCached.entries.last.key);
+      }
+
+      const duration = Duration(seconds: 20);
+      _getNumbersTtl[""] = DateTime.now().add(duration).toIso8601String();
+
+      await PersistentStorageHolder.write(
+          '_getNumbersCached', _getNumbersCached);
+      await PersistentStorageHolder.write('_getNumbersTtl', _getNumbersTtl);
+
+      return toReturn;
+    } else {
+      try {
+        return cachedValue.cast<int>();
+      } on NoSuchMethodError {
+        throw Exception('''
+             You have to provide your generic classes with a `.cast<T>()` 
+             method, if you want to store them inside a persistent storage. 
+             E.g.:
+             
+             class MyClass<T> {
+               // ...       
+                       
+               MyClass<S> cast<S>() {
+                 return MyClass<S>();
+               }
+             }
+
+            ''');
+      }
+    }
+  }
+}
+""")
+@WithCache(useStaticCache: true)
+abstract class StaticNestedGenericType {
+  factory NonStaticNestedGenericType() = _NonStaticNestedGenericType;
+
+  @Cached(
+    persistentStorage: true,
+    ttl: 20,
+    syncWrite: true,
+    limit: 30,
+  )
+  Future<List<int>> getNumbers() async {
+    return [13, 21, 34];
+  }
+}

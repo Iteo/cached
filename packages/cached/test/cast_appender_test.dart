@@ -1,4 +1,4 @@
-import 'package:cached/src/utils/cast_appender.dart';
+import 'package:cached/src/utils/type_cast_appender.dart';
 import 'package:test/test.dart';
 
 typedef TestFunction = void Function(String, String);
@@ -23,7 +23,7 @@ void main() {
     required bool usingStorage,
   }) {
     return (String input, String expected) {
-      final appender = CastAppender();
+      final appender = TypeCastAppender();
 
       test('Should generate correct cast for $input', () {
         final result = appender.appendCastIfNeeded(input);
