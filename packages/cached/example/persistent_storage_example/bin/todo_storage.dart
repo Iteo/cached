@@ -54,11 +54,10 @@ class TodoStorage extends CachedStorage {
     final box = Hive.box<Map>(_storageKey);
     final result = box.get(key) ?? {};
 
-    /// This is necessary to provide compatibility with Hive, because it
-    /// can only return `Map<dynamic, dynamic>`, not `Map<String, dynamic>`
-    return result.map(
-      (key, value) => MapEntry('$key', value.cast<Todo>()),
-    );
+    /// This is necessary for generic classes to provide compatibility
+    /// with Hive, because it can only return
+    /// `Map<dynamic, dynamic>`, not `Map<String, dynamic>`
+    return result.cast<String, dynamic>();
   }
 
   /// In [delete] method, you have to provide a deletion logic only
