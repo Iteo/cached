@@ -131,7 +131,7 @@ class ClassTemplate {
     if (_isPersisted && isStatic) {
       return '''
          if (_isStaticCacheLocked == true) {
-            return ${CommonGenerator.completerCompleteText}
+            return;
          } else {
             _isStaticCacheLocked = true;
          }

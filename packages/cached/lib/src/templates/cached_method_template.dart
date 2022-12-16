@@ -185,15 +185,13 @@ abstract class CachedMethodTemplate {
     String dangerousInit,
     String mapName,
   ) {
-    final buffer = StringBuffer();
-
-    buffer.writeln('try {');
-    buffer.writeln(dangerousInit);
-    buffer.writeln('} catch (e) {');
-    buffer.writeln('$mapName = <String, dynamic>{};');
-    buffer.writeln('}');
-
-    return buffer.toString();
+    return '''
+       try {
+          $dangerousInit
+       } catch (e) {
+          $mapName = <String, dynamic>{};
+       }
+    ''';
   }
 
   String _getStaticModifier() {

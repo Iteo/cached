@@ -14,7 +14,7 @@ class _StaticPersistedRepository
 
   Future<void> _init() async {
     if (_isStaticCacheLocked == true) {
-      return _completer.complete();
+      return;
     } else {
       _isStaticCacheLocked = true;
     }
@@ -769,7 +769,7 @@ class _StaticNestedGenericType
 
   Future<void> _init() async {
     if (_isStaticCacheLocked == true) {
-      return _completer.complete();
+      return;
     } else {
       _isStaticCacheLocked = true;
     }
