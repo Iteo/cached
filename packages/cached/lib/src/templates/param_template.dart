@@ -1,9 +1,14 @@
 import 'package:cached/src/models/param.dart';
 
 class ParamTemplate {
+  const ParamTemplate(this.param);
+
   final Param param;
 
-  const ParamTemplate(this.param);
+  String get _requiredKeyword => param.isRequiredNamed ? 'required' : '';
+
+  String get _defaultValue =>
+      param.defaultValue != null ? '= ${param.defaultValue}' : '';
 
   String generateParam() {
     return '$_requiredKeyword ${param.type} ${param.name} $_defaultValue';
@@ -24,9 +29,4 @@ class ParamTemplate {
       return param.name;
     }
   }
-
-  String get _requiredKeyword => param.isRequiredNamed ? 'required' : '';
-
-  String get _defaultValue =>
-      param.defaultValue != null ? '= ${param.defaultValue}' : '';
 }

@@ -1,68 +1,124 @@
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
+import 'package:cached/src/utils/common_generator.dart';
+import 'package:cached/src/utils/persistent_storage_holder_texts.dart';
 import 'package:cached/src/utils/utils.dart';
 
 class ClearCachedMethodTemplate {
-  ClearCachedMethodTemplate(this.method, {this.streamedCacheMethod})
-      : paramsTemplate = AllParamsTemplate(method.params);
+  ClearCachedMethodTemplate(
+    this.method, {
+    this.streamedCacheMethod,
+    this.isPersisted = false,
+  }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
   final StreamedCacheMethod? streamedCacheMethod;
+  final bool isPersisted;
 
   String get asyncModifier => isFuture(method.returnType) ? 'async' : '';
+
   String get awaitIfNeeded => isFuture(method.returnType) ? 'await' : '';
 
   String generateMethod() {
-    if (method.isAbstract) return _generateAbstractMethod();
+    if (method.isAbstract) {
+      return _generateAbstractMethod();
+    }
 
-    if (isFutureBool(method.returnType) || isBool(method.returnType)) {
+    final isFutureBoolType = isFutureBool(method.returnType);
+    final isBoolType = isBool(method.returnType);
+    if (isFutureBoolType || isBoolType) {
       return _generateBoolMethod();
     }
 
-    return '''
-    @override
-    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
-      $awaitIfNeeded super.${method.name}(${paramsTemplate.generateParamsUsage()});
+    final storageAwait = _generatePersistentStorageAwait();
+    final params = paramsTemplate.generateParams();
+    final paramsUsage = paramsTemplate.generateParamsUsage();
 
-      ${_generateClearMaps()}
-    }
+    return '''
+       @override
+       ${method.returnType} ${method.name}($params) $asyncModifier {
+         $storageAwait
+         
+         $awaitIfNeeded super.${method.name}($paramsUsage);
+   
+         ${_generateClearMaps()}
+      
+         ${_generateClearPersistentStorage()}
+       }
     ''';
   }
 
   String _generateBoolMethod() {
+    final storageAwait = _generatePersistentStorageAwait();
+    final params = paramsTemplate.generateParams();
+    final paramsUsage = paramsTemplate.generateParamsUsage();
+    final syncType = syncReturnType(method.returnType);
+
     return '''
-    @override
-    ${method.returnType} ${method.name}(${paramsTemplate.generateParams()}) $asyncModifier {
-      final ${syncReturnType(method.returnType)} toReturn;
+       @override
+       ${method.returnType} ${method.name}($params) $asyncModifier {
+         $storageAwait
+         
+         final $syncType toReturn;
 
-      final result = super.${method.name}(${paramsTemplate.generateParamsUsage()});
-      toReturn = $awaitIfNeeded result;
+         final result = super.${method.name}($paramsUsage);
+         toReturn = $awaitIfNeeded result;
 
-      if(toReturn) {
-        ${_generateClearMaps()}
-      }
+         if(toReturn) {
+           ${_generateClearMaps()}
+         }
 
-      return toReturn;
-    }
+         return toReturn;
+       }
     ''';
   }
 
   String _generateAbstractMethod() {
     return '''
-    @override
-      ${method.returnType} ${method.name}() $asyncModifier {
-      ${_generateClearMaps()}
-    }
+       @override
+       ${method.returnType} ${method.name}() $asyncModifier {
+         ${_generateClearMaps()}
+       }
     ''';
   }
 
+  String _generatePersistentStorageAwait() {
+    return CommonGenerator.generatePersistentStorageAwait(
+      isPersisted: isPersisted,
+      isAsync: method.isAsync,
+      name: method.name,
+    );
+  }
+
   String _generateClearMaps() {
+    final cacheMapName = getCacheMapName(method.methodName);
+    final ttlMapName = getTtlMapName(method.methodName);
+    final shouldClearTtl = method.shouldClearTtl ? '$ttlMapName.clear();' : '';
+    final clearedStreamCache = clearStreamedCache(streamedCacheMethod);
+
     return '''
-${getCacheMapName(method.methodName)}.clear();
-${method.shouldClearTtl ? "${getTtlMapName(method.methodName)}.clear();" : ""}
-${clearStreamedCache(streamedCacheMethod)}
-''';
+       $cacheMapName.clear();
+       $shouldClearTtl
+       $clearedStreamCache
+    ''';
+  }
+
+  String _generateClearPersistentStorage() {
+    if (isPersisted) {
+      final isAsync = method.isAsync;
+      final mapName = getCacheMapName(method.methodName);
+      final body =
+          isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
+
+      return '''
+        if ($isStorageSetText) {
+           $body;
+        }
+      ''';
+    }
+
+    return '';
   }
 }

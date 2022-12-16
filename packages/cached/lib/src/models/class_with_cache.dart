@@ -31,17 +31,6 @@ class ClassWithCache {
     this.clearAllMethod,
   });
 
-  final bool useStaticCache;
-  final String name;
-  final Constructor constructor;
-  final Iterable<CachedMethod> methods;
-  final Iterable<ClearCachedMethod> clearMethods;
-  final Iterable<StreamedCacheMethod> streamedCacheMethods;
-  final Iterable<CachePeekMethod> cachePeekMethods;
-  final Iterable<DeletesCacheMethod> deletesCacheMethods;
-  final ClearAllCachedMethod? clearAllMethod;
-  final Iterable<CachedGetter> getters;
-
   factory ClassWithCache.fromElement(ClassElement element, Config config) {
     assertAbstract(element);
     assertOneConstFactoryConstructor(element);
@@ -65,7 +54,7 @@ class ClassWithCache {
 
     final methods = element.methods
         .where(
-          (element) => CachedFunction.hasCachedAnnotation(element),
+          CachedFunction.hasCachedAnnotation,
         )
         .map((e) => CachedMethod.fromElement(e, config));
 
@@ -76,7 +65,7 @@ class ClassWithCache {
     final getters = element.accessors
         .where((element) => element.isGetter)
         .where(
-          (element) => CachedFunction.hasCachedAnnotation(element),
+          CachedFunction.hasCachedAnnotation,
         )
         .map((e) => CachedGetter.fromElement(e, config));
 
@@ -175,4 +164,15 @@ class ClassWithCache {
       getters: getters,
     );
   }
+
+  final bool useStaticCache;
+  final String name;
+  final Constructor constructor;
+  final Iterable<CachedMethod> methods;
+  final Iterable<ClearCachedMethod> clearMethods;
+  final Iterable<StreamedCacheMethod> streamedCacheMethods;
+  final Iterable<CachePeekMethod> cachePeekMethods;
+  final Iterable<DeletesCacheMethod> deletesCacheMethods;
+  final ClearAllCachedMethod? clearAllMethod;
+  final Iterable<CachedGetter> getters;
 }

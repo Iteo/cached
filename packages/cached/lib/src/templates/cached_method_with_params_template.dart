@@ -20,36 +20,44 @@ class CachedMethodWithParamsTemplate extends CachedMethodTemplate {
   final AllParamsTemplate paramsTemplate;
   final CachedMethod method;
 
-  Param? get ignoreCacheParam => method.params
-      .firstWhereOrNull((element) => element.ignoreCacheAnnotation != null);
+  Param? get ignoreCacheParam => method.params.firstWhereOrNull(
+        (element) => element.ignoreCacheAnnotation != null,
+      );
 
   @override
   String get paramsKey => getParamKey(method.params);
 
   @override
   String generateDefinition() {
-    return "${function.name}(${paramsTemplate.generateParams()})";
+    final params = paramsTemplate.generateParams();
+    return '${function.name}($params)';
   }
 
   @override
   String generateUsage() {
-    return "${function.name}(${paramsTemplate.generateParamsUsage()})";
+    final paramsUsage = paramsTemplate.generateParamsUsage();
+    return '${function.name}($paramsUsage)';
   }
 
   @override
   String generateAdditionalCacheCondition() {
     final ignoreCacheParam = this.ignoreCacheParam;
+    if (ignoreCacheParam != null) {
+      return '|| ${ignoreCacheParam.name}';
+    }
 
-    final ignoreCacheCondition =
-        ignoreCacheParam != null ? '|| ${ignoreCacheParam.name}' : '';
-
-    return ignoreCacheCondition;
+    return '';
   }
 
   @override
   String generateOnCatch() {
-    final useCacheOnError =
-        ignoreCacheParam?.ignoreCacheAnnotation?.useCacheOnError ?? false;
-    return '${useCacheOnError ? "if (cachedValue != null) { return cachedValue;\n }" : ""}rethrow;';
+    final ignoreCacheAnnotation = ignoreCacheParam?.ignoreCacheAnnotation;
+    final useCacheOnError = ignoreCacheAnnotation?.useCacheOnError;
+    final safeUseCacheOnError = useCacheOnError ?? false;
+    final text = safeUseCacheOnError
+        ? 'if (cachedValue != null) { return cachedValue;\n }'
+        : '';
+
+    return '${text}rethrow;';
   }
 }

@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/extensions.dart';
 import 'package:cached/src/models/param.dart';
+import 'package:cached/src/utils/asserts.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 
 import 'package:source_gen/source_gen.dart';
@@ -21,6 +22,45 @@ class ClearCachedMethod {
     required this.shouldClearTtl,
   });
 
+  factory ClearCachedMethod.fromElement(
+    MethodElement element,
+    Config config,
+    Set<String> ttlsToClear,
+  ) {
+    if (PersistentStorageHolder.isStorageSet) {
+      assertPersistentStorageShouldBeAsync(element);
+    }
+
+    final annotation = getAnnotation(element);
+    String? methodName;
+
+    if (annotation != null) {
+      methodName = _getMethodName(annotation);
+    }
+
+    final name = element.name;
+    if (methodName == null || methodName.isEmpty) {
+      methodName = _validateMethodName(name, element, methodName);
+    }
+
+    final returnType = element.returnType;
+    final displayType = returnType.getDisplayString(withNullability: true);
+    final parameters = element.parameters;
+    final mappedParams = parameters.map((e) => Param.fromElement(e, config));
+    final shouldClearTtl = ttlsToClear.contains(methodName);
+
+    return ClearCachedMethod(
+      name: name,
+      methodName: methodName,
+      returnType: displayType,
+      isAsync: element.isAsynchronous,
+      isGenerator: element.isGenerator,
+      isAbstract: element.isAbstract,
+      params: mappedParams,
+      shouldClearTtl: shouldClearTtl,
+    );
+  }
+
   final String name;
   final String methodName;
   final String returnType;
@@ -30,54 +70,36 @@ class ClearCachedMethod {
   final Iterable<Param> params;
   final bool shouldClearTtl;
 
-  factory ClearCachedMethod.fromElement(
-    MethodElement element,
-    Config config,
-    Set<String> ttlsToClear,
-  ) {
-    final annotation = getAnnotation(element);
-
-    String? methodName;
-
-    if (annotation != null) {
-      final reader = ConstantReader(annotation);
-      final methodNameField = reader.read('methodName');
-
-      if (methodNameField.isString) {
-        methodName = methodNameField.stringValue;
-      }
-    }
-
-    if (methodName == null || methodName.isEmpty) {
-      if (!element.name.contains(_clearPrefix)) {
-        throw InvalidGenerationSourceError(
-          '''
-[ERROR] Name of method for which cache should be cleared is not provider.
-Provide it trougth annotation parameter (`@ClearCached('methodName')`)
-or trougth clear function name e.g. `void ${_clearPrefix}MethodName();`
-''',
-          element: element,
-        );
-      }
-
-      methodName =
-          element.name.replaceAll(_clearPrefix, '').startsWithLowerCase();
-    }
-
-    return ClearCachedMethod(
-      name: element.name,
-      methodName: methodName,
-      returnType: element.returnType.getDisplayString(withNullability: true),
-      isAsync: element.isAsynchronous,
-      isGenerator: element.isGenerator,
-      isAbstract: element.isAbstract,
-      params: element.parameters.map((e) => Param.fromElement(e, config)),
-      shouldClearTtl: ttlsToClear.contains(methodName),
-    );
-  }
-
   static DartObject? getAnnotation(MethodElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(ClearCached);
     return methodAnnotationChecker.firstAnnotationOf(element);
+  }
+
+  static String? _getMethodName(DartObject annotation) {
+    final reader = ConstantReader(annotation);
+    final methodNameField = reader.read('methodName');
+
+    if (methodNameField.isString) {
+      return methodNameField.stringValue;
+    }
+
+    return null;
+  }
+
+  static String _validateMethodName(
+    String name,
+    MethodElement element,
+    String? methodName,
+  ) {
+    final prefixNotContained = !name.contains(_clearPrefix);
+
+    if (prefixNotContained) {
+      const message =
+          "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or through clear function name e.g. `void ${_clearPrefix}MethodName();`";
+      throw InvalidGenerationSourceError(message, element: element);
+    }
+
+    final fixedName = name.replaceAll(_clearPrefix, '');
+    return fixedName.startsWithLowerCase();
   }
 }

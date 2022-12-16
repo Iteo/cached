@@ -66,22 +66,22 @@ abstract class SimpleCached implements _$SimpleCached {
     return null;
   }
 
-  @StreamedCache(methodName: "cachedValue")
+  @StreamedCache(methodName: 'cachedValue')
   Stream<int> streamOfCachedValue();
 
-  @StreamedCache(methodName: "cachedTimestamp", emitLastValue: true)
+  @StreamedCache(methodName: 'cachedTimestamp', emitLastValue: true)
   Stream<int> streamOfCachedTimestampLastValue();
 
-  @StreamedCache(methodName: "nullableCachedValue", emitLastValue: true)
+  @StreamedCache(methodName: 'nullableCachedValue', emitLastValue: true)
   Stream<int?> nullableCacheValueStream();
 
-  @CachePeek("cachedValue")
+  @CachePeek('cachedValue')
   int? cachePeekValue();
 
-  @CachePeek("cachedTimestamp")
+  @CachePeek('cachedTimestamp')
   int? timestampCachePeekValue();
 
-  @CachePeek("cachedValueWithCustomKey")
+  @CachePeek('cachedValueWithCustomKey')
   int? peekCachedValueWithCustomKey(
     @CacheKey(_cachedKeyGenerator) String value,
   );
@@ -89,7 +89,7 @@ abstract class SimpleCached implements _$SimpleCached {
   @clearCached
   void clearCachedValue();
 
-  @ClearCached("cachedTimestamp")
+  @ClearCached('cachedTimestamp')
   Future<void> clearTimestamp();
 
   @clearAllCached
@@ -106,18 +106,18 @@ abstract class SimpleCached implements _$SimpleCached {
   }
 
   @StreamedCache(
-    methodName: "nullableCachedValueGetter",
+    methodName: 'nullableCachedValueGetter',
     emitLastValue: true,
   )
   Stream<int?> nullableCacheGetterValueStream();
 
-  @StreamedCache(methodName: "cachedValueGetter")
+  @StreamedCache(methodName: 'cachedValueGetter')
   Stream<int> streamOfCachedGetterValue();
 
-  @CachePeek("nullableCachedValueGetter")
+  @CachePeek('nullableCachedValueGetter')
   int? nullableCacheGetterPeekValue();
 
-  @CachePeek("cachedValueGetter")
+  @CachePeek('cachedValueGetter')
   int? cacheGetterPeekValue();
 
   @clearCached

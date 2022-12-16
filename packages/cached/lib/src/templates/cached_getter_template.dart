@@ -9,11 +9,11 @@ class CachedGetterTemplate extends CachedMethodTemplate {
   });
 
   @override
-  String get paramsKey => "";
+  String get paramsKey => '';
 
   @override
   String generateDefinition() {
-    return "get ${function.name}";
+    return 'get ${function.name}';
   }
 
   @override

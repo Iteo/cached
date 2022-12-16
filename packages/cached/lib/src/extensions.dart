@@ -1,5 +1,8 @@
 extension StringExtension on String {
   String startsWithLowerCase() {
-    return "${this[0].toLowerCase()}${substring(1)}";
+    final lowerCase = this[0].toLowerCase();
+    final textPart = substring(1);
+
+    return '$lowerCase$textPart';
   }
 }

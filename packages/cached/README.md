@@ -22,7 +22,7 @@ and the Flutter guide for
 [![pub package](https://img.shields.io/pub/v/cached.svg)](https://pub.dartlang.org/packages/cached) &nbsp;
 [![GitHub license](https://img.shields.io/badge/licence-MIT-green)](https://github.com/Iteo/cached/blob/master/packages/cached/LICENSE)
 &nbsp;
-
+[![style:linteo](https://img.shields.io/badge/style-linteo-orange)](https://pub.dev/packages/linteo) &nbsp;
 </div>
 
 ---
@@ -67,6 +67,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [StreamedCache](#streamedcache)
   - [CachePeek](#cachepeek)
   - [DeletesCache](#deletescache)
+- [Persistent storage](#persistent-storage)
 - [Contribution](#contribution)
   - [feature request](#feature-request)
   - [Fix](#fix)
@@ -196,6 +197,7 @@ There are 4 possible additional parameters:
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
   means no limit.
 - `where` - function triggered before caching the value. If returns `true`: value will be cached, if returns `false`: value wil be ignored. Useful to signal that a certain result must not be cached, but `@IgnoreCache` is not enough (e.g. condition whether or not to cache known once acquiring data)
+- `persistentStorage` - Defines optional usage of external persistent storage (e.g. shared preferences). If set to `true` in order to work, you have to set `PersistentStorageHolder.storage` in your main.dart file. Check the [Persistent storage section](#persistent-storage) of this README for more information.
 
 #### Example
 
@@ -512,6 +514,74 @@ Throws an [InvalidGenerationSourceError]
 - if no target method names are specified
 - if specified target methods are invalid
 - if annotated method is abstract
+
+## Persistent storage
+Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by passing `persistentStorage: true` parameter into `@Cached()` annotation:
+
+```dart
+  @Cached(persistentStorage: true)
+  Future<double> getDouble() async {
+    return await _source.nextDouble() ;
+  }
+```
+
+You only have to provide a proper interface by extending `CachedStorage` abstraction, e.g.:
+
+```dart
+...
+import 'package:cached_annotation/cached_annotation.dart';
+
+class MyStorageImpl extends CachedStorage {
+  final _storage = MyExternalStorage();
+
+  @override
+  Future<Map<String, dynamic>> read(String key) async {
+    return await _storage.read(key);
+  }
+
+  @override
+  Future<void> write(String key, Map<String, dynamic> data) async {
+    await _storage.write(key, data);
+  }
+
+  @override
+  Future<void> delete(String key) async {
+    await _storage.delete(key);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await _storage.deleteAll();
+  }
+}
+```
+
+Now you have to assign instance of your class (preferably on the top of your `main` method):
+
+```dart
+...
+import 'package:cached_annotation/cached_annotation.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  PersistentStorageHolder.storage = await MyStorageImpl();
+  
+  runApp(const MyApp());
+}
+```
+
+As you can see above, Cached doesn't provide any generic way of error or typing handling. It'll just use `PersistentStorageHolder.storage` to save and read cached data from storage in generated code. You have to take care of it yourself inside your code.  
+
+Data saved to persistent storage can be deleted by using `@ClearCached()`, `@ClearAllCached()` or `@DeletesCache` annotations.
+
+Usage of persistent storage does not change this library caching behaviour in any way. It only adds new capabilities, but it can affect the way in which you implement your app:
+
+> **Important:** 
+> 
+> Please note, that persistent storage usage enforces you to provide async API when using Cached annotations! 
+
+For sample project, please check `persistent_storage_example` inside `cached/example` directory. 
 
 ## Contribution
 

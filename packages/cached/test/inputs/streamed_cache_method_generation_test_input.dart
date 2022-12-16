@@ -165,13 +165,15 @@ class _SimpleMethod with SimpleMethod implements _$SimpleMethod {
 
       _cachedMethodCached[""] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -232,13 +234,15 @@ class _FutureMethod with FutureMethod implements _$FutureMethod {
 
       _cachedMethodCached[""] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -299,13 +303,15 @@ class _EmitLastValue with EmitLastValue implements _$EmitLastValue {
 
       _cachedMethodCached[""] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -373,13 +379,15 @@ class _Parameters with Parameters implements _$Parameters {
 
       _cachedMethodCached["${y.hashCode}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "${y.hashCode}",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "${y.hashCode}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -474,13 +482,15 @@ class _NullableReturnType
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "${x.hashCode}",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "${x.hashCode}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -544,13 +554,15 @@ class _NullableReturnTypeWithLastValue
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "${x.hashCode}",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "${x.hashCode}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -619,13 +631,15 @@ class _StreamCacheWithCacheKey
 
       _cachedMethodCached["${iterableCacheKeyGenerator(x)}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          instance: this,
-          paramsKey: "${iterableCacheKeyGenerator(x)}",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            instance: this,
+            paramsKey: "${iterableCacheKeyGenerator(x)}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {
@@ -693,12 +707,14 @@ class _StaticCache with StaticCache implements _$StaticCache {
 
       _cachedMethodCached["${x.hashCode}"] = toReturn;
 
-      _cachedMethodCacheStreamController.sink.add(MapEntry(
-        StreamEventIdentifier(
-          paramsKey: "${x.hashCode}",
+      _cachedMethodCacheStreamController.sink.add(
+        MapEntry(
+          StreamEventIdentifier(
+            paramsKey: "${x.hashCode}",
+          ),
+          toReturn,
         ),
-        toReturn,
-      ));
+      );
 
       return toReturn;
     } else {

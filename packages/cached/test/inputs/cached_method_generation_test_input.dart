@@ -520,12 +520,13 @@ class _CachedWithTtl with CachedWithTtl implements _$CachedWithTtl {
 
   final _methodCached = <String, int>{};
 
-  final _methodTtl = <String, DateTime>{};
+  final _methodTtl = <String, String>{};
 
   @override
   int method() {
     final now = DateTime.now();
-    final currentTtl = _methodTtl[""];
+    final cachedTtl = _methodTtl[""];
+    final currentTtl = cachedTtl != null ? DateTime.parse(cachedTtl) : null;
 
     if (currentTtl != null && currentTtl.isBefore(now)) {
       _methodTtl.remove("");
@@ -545,7 +546,8 @@ class _CachedWithTtl with CachedWithTtl implements _$CachedWithTtl {
 
       _methodCached[""] = toReturn;
 
-      _methodTtl[""] = DateTime.now().add(const Duration(seconds: 30));
+      const duration = Duration(seconds: 30);
+      _methodTtl[""] = DateTime.now().add(duration).toIso8601String();
 
       return toReturn;
     } else {
@@ -589,7 +591,7 @@ class _AsyncSyncWrite with AsyncSyncWrite implements _$AsyncSyncWrite {
       final int toReturn;
       try {
         final result = super.method();
-        _methodSync[''] = result;
+        _methodSync[""] = result;
         toReturn = await result;
       } catch (_) {
         rethrow;

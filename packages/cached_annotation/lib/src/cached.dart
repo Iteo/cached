@@ -45,6 +45,7 @@ class Cached {
     this.syncWrite,
     this.ttl,
     this.where,
+    this.persistentStorage,
   });
 
   /// limit how many results for different method call
@@ -73,4 +74,15 @@ class Cached {
   /// but @IgnoreCache is not enough
   /// (e.g. condition whether or not to cache known once acquiring data)
   final Function? where;
+
+  /// Defines optional usage of external persistent storage (e.g. shared
+  /// preferences)
+  ///
+  /// If set to `true` in order to work, you have to set
+  /// `PersistentStorageHolder.storage` in your main.dart file
+  ///
+  /// Important:
+  /// If you want to utilize persistent storage, all methods which use
+  /// Cached library's annotations has to be async
+  final bool? persistentStorage;
 }

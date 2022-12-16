@@ -15,6 +15,7 @@ class CachedGetter extends CachedFunction {
     required super.limit,
     required super.ttl,
     required super.checkIfShouldCacheMethod,
+    required super.persistentStorage,
   });
 
   factory CachedGetter.fromElement(
@@ -24,22 +25,25 @@ class CachedGetter extends CachedFunction {
     CachedFunction.assertIsValid(element);
 
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
+    final persistentStorage = localConfig.persistentStorage ?? false;
+    final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
+    final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
+    final limit = localConfig.limit ?? config.limit;
+    final ttl = localConfig.ttl ?? config.ttl;
+    final returnType = element.returnType.getDisplayString(
+      withNullability: true,
+    );
 
-    final returnType =
-        element.returnType.getDisplayString(withNullability: true);
-
-    final method = CachedGetter._(
+    return CachedGetter._(
       name: element.name,
-      syncWrite:
-          localConfig.syncWrite ?? config.syncWrite ?? _defaultSyncWriteValue,
-      limit: localConfig.limit ?? config.limit,
-      ttl: localConfig.ttl ?? config.ttl,
+      syncWrite: syncWrite,
+      limit: limit,
+      ttl: ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
       returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
+      persistentStorage: persistentStorage,
     );
-
-    return method;
   }
 }

@@ -2,6 +2,7 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/param.dart';
+import 'package:cached/src/utils/asserts.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 
 import 'package:source_gen/source_gen.dart';
@@ -16,18 +17,15 @@ class ClearAllCachedMethod {
     required this.ttlsToClear,
   });
 
-  final String name;
-  final String returnType;
-  final bool isAbstract;
-  final bool isAsync;
-  final Iterable<Param> params;
-  final Set<String> ttlsToClear;
-
   factory ClearAllCachedMethod.fromElement(
     MethodElement element,
     Config config,
     Set<String> ttlsToClear,
   ) {
+    if (PersistentStorageHolder.isStorageSet) {
+      assertPersistentStorageShouldBeAsync(element);
+    }
+
     return ClearAllCachedMethod(
       name: element.name,
       returnType: element.returnType.getDisplayString(withNullability: true),
@@ -37,6 +35,13 @@ class ClearAllCachedMethod {
       ttlsToClear: ttlsToClear,
     );
   }
+
+  final String name;
+  final String returnType;
+  final bool isAbstract;
+  final bool isAsync;
+  final Iterable<Param> params;
+  final Set<String> ttlsToClear;
 
   static DartObject? getAnnotation(MethodElement element) {
     const methodAnnotationChecker = TypeChecker.fromRuntime(ClearAllCached);

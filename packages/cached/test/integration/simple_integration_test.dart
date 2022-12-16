@@ -8,14 +8,14 @@ import 'simple/cached_test_simple.dart';
 
 void main() {
   group('SimpleCache', () {
-    late TestDataProvider _dataProvider;
+    late TestDataProvider dataProvider;
 
     setUp(() {
-      _dataProvider = TestDataProvider();
+      dataProvider = TestDataProvider();
     });
 
     test('cached value should be the same on the second method call', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       final secondCachedValue = cachedClass.cachedValue();
 
@@ -23,9 +23,9 @@ void main() {
     });
 
     test('cached values should be stored by generated custom cache key', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
-      for (final exampleValue in ["a", "b", "c"]) {
+      for (final exampleValue in ['a', 'b', 'c']) {
         final cachedValue = cachedClass.cachedValueWithCustomKey(exampleValue);
         final secondCachedValue =
             cachedClass.cachedValueWithCustomKey(exampleValue);
@@ -34,9 +34,9 @@ void main() {
     });
 
     test('iterableCacheKeyGenerator should generate reproducible hashes', () {
-      final exampleValue = ["a", "b"];
+      final exampleValue = ['a', 'b'];
 
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
       final cachedValue = cachedClass.cachedWithIterableCacheKey(exampleValue);
       final secondCachedValue =
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('iterableCacheKeyGenerator should handle null', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
       final cachedValue = cachedClass.cachedWithNullableList(null);
       final secondCachedValue = cachedClass.cachedWithNullableList(null);
@@ -63,7 +63,7 @@ void main() {
     });
 
     test('clear cache method should clear cache', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       cachedClass.clearCachedValue();
       final secondCachedValue = cachedClass.cachedValue();
@@ -74,25 +74,25 @@ void main() {
     test(
         'setting ignoreCache to true should ignore cached value and return new one',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestamp();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValue = cachedClass.cachedTimestamp(refresh: true);
 
       expect(cachedValue != secondCachedValue, true);
     });
 
     test('should ignore the argument as a cache key', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestampWithIgnore(smth: true);
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       final secondCachedValue = cachedClass.cachedTimestampWithIgnore();
 
       expect(cachedValue == secondCachedValue, true);
     });
 
     test('calling other clear cache method, should not clear cache', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestamp();
       cachedClass.clearCachedValue();
       final secondCachedValue = cachedClass.cachedTimestamp();
@@ -101,10 +101,10 @@ void main() {
     });
 
     test('clearing all cache method should clear cache', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       final cachedTimestamp = cachedClass.cachedTimestamp();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       cachedClass.clearAll();
       final secondCachedValue = cachedClass.cachedValue();
@@ -115,11 +115,11 @@ void main() {
     });
 
     test('cached value cache should be streamed', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
       final queue = StreamQueue(cachedClass.streamOfCachedValue());
       final next = Future.microtask(() => queue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = cachedClass.cachedValue();
 
@@ -127,10 +127,11 @@ void main() {
     });
 
     test('last value of stream should be emitted', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestamp(refresh: true);
-      final streamValue =
-          StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
+      final streamValue = StreamQueue(
+        cachedClass.streamOfCachedTimestampLastValue(),
+      );
 
       expect(cachedValue, await streamValue.next);
     });
@@ -138,14 +139,15 @@ void main() {
     test(
         'requesting another stream with last value, should not cause emit on others',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestamp(refresh: true);
 
       final streamValue =
           StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
       expect(cachedValue, await streamValue.next);
-      final firstStreamSub =
-          streamValue.rest.listen((event) => throw "Unexpected event");
+      final firstStreamSub = streamValue.rest.listen(
+        (event) => throw Exception('Unexpected event'),
+      );
 
       final anotherStreamValue =
           StreamQueue(cachedClass.streamOfCachedTimestampLastValue());
@@ -156,7 +158,7 @@ void main() {
 
     test('stream should initial emit initialValue even if it is null',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       cachedClass.nullableCachedValue();
 
       final streamValue = StreamQueue(cachedClass.nullableCacheValueStream());
@@ -165,17 +167,17 @@ void main() {
 
     test('stream should not emit null if there is not initial value available',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
-      final streamSub = cachedClass
-          .nullableCacheValueStream()
-          .listen((event) => throw "Unexpected event");
+      final streamSub = cachedClass.nullableCacheValueStream().listen(
+            (event) => throw Exception('Unexpected event'),
+          );
 
       await streamSub.cancel();
     });
 
     test('peek cache should be the same on cached timestamp method', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedTimestamp();
       final secondCachedValue = cachedClass.timestampCachePeekValue();
 
@@ -183,7 +185,7 @@ void main() {
     });
 
     test('peek cache should be the same on cached value method', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       final secondCachedValue = cachedClass.cachePeekValue();
 
@@ -193,9 +195,9 @@ void main() {
     test(
         'peek cache should be the same on cached method by generated custom cache key',
         () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
-      for (final exampleValue in ["a", "b", "c"]) {
+      for (final exampleValue in ['a', 'b', 'c']) {
         final cachedValue = cachedClass.cachedValueWithCustomKey(exampleValue);
         final secondCachedValue =
             cachedClass.peekCachedValueWithCustomKey(exampleValue);
@@ -204,7 +206,7 @@ void main() {
     });
 
     test('cached value should be the same on the second getter call', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValueGetter;
       final secondCachedValue = cachedClass.cachedValueGetter;
 
@@ -212,7 +214,7 @@ void main() {
     });
 
     test('clear cache method should clear getter cache', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValueGetter;
       cachedClass.clearCachedValueGetter();
       final secondCachedValue = cachedClass.cachedValueGetter;
@@ -221,7 +223,7 @@ void main() {
     });
 
     test('calling other clear cache method, should not clear cache', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValueGetter;
       cachedClass.clearCachedValue();
       final secondCachedValue = cachedClass.cachedValueGetter;
@@ -230,9 +232,9 @@ void main() {
     });
 
     test('clearing all cache method should clear cache', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValueGetter;
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       cachedClass.clearAll();
       final secondCachedValue = cachedClass.cachedValueGetter;
@@ -241,11 +243,11 @@ void main() {
     });
 
     test('cached value cache should be streamed', () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
       final queue = StreamQueue(cachedClass.streamOfCachedGetterValue());
       final next = Future.microtask(() => queue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = cachedClass.cachedValueGetter;
 
@@ -254,7 +256,7 @@ void main() {
 
     test('stream should initial emit initialValue even if it is null',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       cachedClass.nullableCachedValueGetter;
 
       final streamValue =
@@ -264,17 +266,17 @@ void main() {
 
     test('stream should not emit null if there is not initial value available',
         () async {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
 
-      final streamSub = cachedClass
-          .nullableCacheGetterValueStream()
-          .listen((event) => throw "Unexpected event");
+      final streamSub = cachedClass.nullableCacheGetterValueStream().listen(
+            (event) => throw Exception('Unexpected event'),
+          );
 
       await streamSub.cancel();
     });
 
     test('peek cache should be the same on cached value method', () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValueGetter;
       final secondCachedValue = cachedClass.cachedValueGetter;
 
@@ -284,7 +286,7 @@ void main() {
     test(
         'deletes cache method should clear cache if function returns with value',
         () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       cachedClass.deleteCachedValue();
       final secondCachedValue = cachedClass.cachedValue();
@@ -295,7 +297,7 @@ void main() {
     test(
         'deletes cache method should not clear cache if function returns with error',
         () {
-      final cachedClass = SimpleCached(_dataProvider);
+      final cachedClass = SimpleCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       try {
         cachedClass.deleteCachedValueFail();

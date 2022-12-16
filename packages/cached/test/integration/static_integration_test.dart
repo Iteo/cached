@@ -5,17 +5,17 @@ import '../utils/test_utils.dart';
 import 'static/cached_test_static.dart';
 
 void main() {
-  group("Static cache", () {
-    late TestDataProvider _dataProvider;
+  group('Static cache', () {
+    late TestDataProvider dataProvider;
 
     setUp(() {
-      _dataProvider = TestDataProvider();
-      StaticCached(_dataProvider).clearCache();
+      dataProvider = TestDataProvider();
+      StaticCached(dataProvider).clearCache();
     });
 
-    test("cache should be static", () {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+    test('cache should be static', () {
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       final cachedValue = firstCachedClass.cachedValue();
       final cachedValueFromAnotherInstance = secondsCachedClass.cachedValue();
@@ -23,13 +23,13 @@ void main() {
       expect(cachedValue, equals(cachedValueFromAnotherInstance));
     });
 
-    test("stream should emit between instances", () async {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+    test('stream should emit between instances', () async {
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       final queue = StreamQueue(secondsCachedClass.cachedValueCacheStream());
       final next = Future.microtask(() => queue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = firstCachedClass.cachedValue();
 
@@ -37,8 +37,8 @@ void main() {
     });
 
     test('peek cache should be static', () {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       final cachedValue = firstCachedClass.cachedValueCachePeek();
       final cachedValueFromAnotherInstance =
@@ -47,9 +47,9 @@ void main() {
       expect(cachedValue, equals(cachedValueFromAnotherInstance));
     });
 
-    test("cache should be static", () {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+    test('cache should be static', () {
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       final cachedValue = firstCachedClass.cachedValueGetter;
       final cachedValueFromAnotherInstance =
@@ -58,14 +58,14 @@ void main() {
       expect(cachedValue, equals(cachedValueFromAnotherInstance));
     });
 
-    test("stream should emit between instances", () async {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+    test('stream should emit between instances', () async {
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       final queue =
           StreamQueue(secondsCachedClass.cachedValueGetterCacheStream());
       final next = Future.microtask(() => queue.next);
-      await Future.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
 
       final cachedValue = firstCachedClass.cachedValueGetter;
 
@@ -73,8 +73,8 @@ void main() {
     });
 
     test('peek cache should be static', () {
-      final firstCachedClass = StaticCached(_dataProvider);
-      final secondsCachedClass = StaticCached(_dataProvider);
+      final firstCachedClass = StaticCached(dataProvider);
+      final secondsCachedClass = StaticCached(dataProvider);
 
       firstCachedClass.cachedValueGetter;
 
@@ -88,7 +88,7 @@ void main() {
     test(
         'deletes cache method should clear cache if function returns with value',
         () {
-      final cachedClass = StaticCached(_dataProvider);
+      final cachedClass = StaticCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       cachedClass.deleteCachedValue();
       final secondCachedValue = cachedClass.cachedValue();
@@ -99,7 +99,7 @@ void main() {
     test(
         'deletes cache method should not clear cache if function returns with error',
         () {
-      final cachedClass = StaticCached(_dataProvider);
+      final cachedClass = StaticCached(dataProvider);
       final cachedValue = cachedClass.cachedValue();
       try {
         cachedClass.deleteCachedValueFail();
