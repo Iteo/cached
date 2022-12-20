@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/packages/cached"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pub"
+    directory: "/packages/cached_annotation"
+    schedule:
+      interval: "weekly"
