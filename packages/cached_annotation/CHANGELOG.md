@@ -1,3 +1,6 @@
+## 1.6.0
+* Add `@Cached(persistentStorage: )` parameter, which allows you to turn on cache persisting with usage of external storage.
+
 ## 1.5.0 
 * Add `@Cached(where: )` parameter - function triggered before caching the value for conditional caching.
 
