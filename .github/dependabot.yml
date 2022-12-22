@@ -8,3 +8,7 @@ updates:
     directory: "/packages/cached_annotation"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
