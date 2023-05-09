@@ -1,12 +1,4 @@
-.fvm
-.vscode
-.idea
-.DS_Store
-
-*.iml
-
-
-coverage/
+# Miscellaneous
 *.class
 *.log
 *.pyc
@@ -15,7 +7,16 @@ coverage/
 .buildlog/
 .history
 .svn/
+.vscode
+.idea
+.DS_Store
+*.iml
+
+# Flutter/Dart/Pub related
+.dart_tool/
+coverage/
 coverage.lcov
+.fvm
 
 # Melos-generated file
 pubspec_overrides.yaml

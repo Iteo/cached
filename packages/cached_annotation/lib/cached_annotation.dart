@@ -1,3 +1,7 @@
+/// Annotations for [cached].\
+/// This package does nothing without [cached].
+///
+/// [cached]: https://pub.dartlang.org/packages/cached
 library cached_annotation;
 
 export 'dart:async';

@@ -12,7 +12,7 @@ import 'package:cached/src/utils/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 void assertMethodNotVoid(ExecutableElement element) {
-  if (element.returnType.isVoid ||
+  if (element.returnType is VoidType ||
       element.returnType.getDisplayString(withNullability: false) ==
           'Future<void>') {
     throw InvalidGenerationSourceError(
