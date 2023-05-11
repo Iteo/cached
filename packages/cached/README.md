@@ -122,10 +122,11 @@ Run command:
 
 ```shell
 flutter pub add --dev cached
+flutter pub add --dev build_runner
 flutter pub add cached_annotation
 ```
 
-Or manually add the dependency in the `pubspec.yaml`
+Or manually add the dependencies in the `pubspec.yaml`
 
 ```yaml
 dependencies:
@@ -133,6 +134,7 @@ dependencies:
 
 dev_dependencies:
   cached:
+  build_runner:
 ```
 
 That's it! Now, you can write your own cached class :tada:
@@ -141,13 +143,13 @@ That's it! Now, you can write your own cached class :tada:
 
 To run the code generator, execute the following command:
 
-```dart
+```shell
 dart run build_runner build
 ```
 
 For Flutter projects, you can run:
 
-```dart
+```shell
 flutter pub run build_runner build
 ```
 
@@ -373,7 +375,7 @@ returns a bool, and then write our own logic to check if the cache should be cle
 @ClearCached('getUserData')
 Future<bool> clearUserData() {
   return userDataSource.isLoggedOut();
-};
+}
 ```
 
 If the user is logged out, the user cache will be cleared.
