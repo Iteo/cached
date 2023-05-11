@@ -130,6 +130,28 @@ abstract class SimpleCached implements _$SimpleCached {
   void deleteCachedValueFail() {
     throw Exception();
   }
+
+  @Cached(
+    syncWrite: true,
+    limit: 5,
+  )
+  int getCachedValueWithLimitFive(int parameter) {
+    return dataProvider.getRandomValue();
+  }
+
+  @CachePeek('getCachedValueWithLimitFive')
+  int? peekCachedValueWithLimitFive(int parameter);
+
+  @Cached(
+    syncWrite: true,
+    limit: 1,
+  )
+  int getCachedValueWithLimitOne(int parameter) {
+    return dataProvider.getRandomValue();
+  }
+
+  @CachePeek('getCachedValueWithLimitOne')
+  int? peekCachedValueWithLimitOne(int parameter);
 }
 
 String _cachedKeyGenerator(dynamic value) => value.toString();

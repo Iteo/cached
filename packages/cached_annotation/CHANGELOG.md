@@ -1,3 +1,6 @@
+## 1.6.1
+* Fix `@Cached(limit: )` parameter - LRU cache algorithm was not working correctly.
+
 ## 1.6.0
 * Add `@Cached(persistentStorage: )` parameter, which allows you to turn on cache persisting with usage of external storage.
 

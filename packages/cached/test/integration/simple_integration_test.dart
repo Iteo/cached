@@ -309,5 +309,47 @@ void main() {
 
       expect(cachedValue != secondCachedValue, false);
     });
+
+    test(
+      'lru cache algorithm delete oldest cached values first',
+      () {
+        final cachedClass = SimpleCached(dataProvider);
+        final cachedValues = <int>[];
+
+        for (int x = 0; x < 10; x++) {
+          cachedValues.add(cachedClass.getCachedValueWithLimitFive(x));
+        }
+
+        for (var x = 0; x < 10; x++) {
+          if (x <= 4) {
+            expect(cachedClass.peekCachedValueWithLimitFive(x), null);
+          } else {
+            expect(
+              cachedClass.peekCachedValueWithLimitFive(x),
+              cachedValues[x],
+            );
+          }
+        }
+      },
+    );
+
+    test(
+      'cache with limit 1 is being replaced',
+      () {
+        const firstCacheKey = 1;
+        const secondCacheKey = 0;
+
+        final cachedClass = SimpleCached(dataProvider);
+        cachedClass.getCachedValueWithLimitOne(firstCacheKey);
+        final secondCachedValue =
+            cachedClass.getCachedValueWithLimitOne(secondCacheKey);
+
+        expect(cachedClass.peekCachedValueWithLimitOne(firstCacheKey), null);
+        expect(
+          cachedClass.peekCachedValueWithLimitOne(secondCacheKey),
+          secondCachedValue,
+        );
+      },
+    );
   });
 }
