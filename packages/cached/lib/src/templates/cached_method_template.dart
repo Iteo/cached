@@ -255,7 +255,7 @@ abstract class CachedMethodTemplate {
 
     return '''
        if ($_cacheMapName.length > ${function.limit}) {
-          $_cacheMapName.remove($_cacheMapName.entries.last.key);
+          $_cacheMapName.remove($_cacheMapName.entries.first.key);
        }
     ''';
   }

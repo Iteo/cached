@@ -707,7 +707,7 @@ class _NonStaticNestedGenericType
       _getNumbersCached[""] = toReturn;
 
       if (_getNumbersCached.length > 10) {
-        _getNumbersCached.remove(_getNumbersCached.entries.last.key);
+        _getNumbersCached.remove(_getNumbersCached.entries.first.key);
       }
 
       const duration = Duration(seconds: 30);
@@ -836,7 +836,7 @@ class _StaticNestedGenericType
       _getNumbersCached[""] = toReturn;
 
       if (_getNumbersCached.length > 30) {
-        _getNumbersCached.remove(_getNumbersCached.entries.last.key);
+        _getNumbersCached.remove(_getNumbersCached.entries.first.key);
       }
 
       const duration = Duration(seconds: 20);

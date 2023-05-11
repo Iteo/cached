@@ -490,7 +490,7 @@ class _CachedWithLimit with CachedWithLimit implements _$CachedWithLimit {
       _methodCached[""] = toReturn;
 
       if (_methodCached.length > 10) {
-        _methodCached.remove(_methodCached.entries.last.key);
+        _methodCached.remove(_methodCached.entries.first.key);
       }
 
       return toReturn;

@@ -229,7 +229,7 @@ class _CachedWithLimit with CachedWithLimit implements _$CachedWithLimit {
       _getterCached[""] = toReturn;
 
       if (_getterCached.length > 10) {
-        _getterCached.remove(_getterCached.entries.last.key);
+        _getterCached.remove(_getterCached.entries.first.key);
       }
 
       return toReturn;
