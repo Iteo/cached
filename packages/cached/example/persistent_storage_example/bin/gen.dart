@@ -28,7 +28,7 @@ part 'gen.cached.dart';
 const _url = 'https://jsonplaceholder.typicode.com/todos';
 
 @withCache
-abstract class Gen implements _$Gen {
+abstract mixin class Gen implements _$Gen {
   factory Gen() = _Gen;
 
   /// For the sake of readability, we will pass only a [persistentStorage]

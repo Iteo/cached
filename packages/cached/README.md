@@ -51,6 +51,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
 - [Setup](#setup)
   - [Install package](#install-package)
   - [Run the generator](#run-the-generator)
+  - [Dart 3 changes](#dart-3-changes)
 - [Basics](#basics)
   - [WithCache](#withcache)
   - [Cached](#cached)
@@ -104,7 +105,7 @@ So, instead of doing it manually we can use library and write our `RemoteReposit
 
 ```dart
 @WithCache()
-abstract class RemoteRepository implements Repository, _$RemoteRepository {
+abstract mixin class RemoteRepository implements Repository, _$RemoteRepository {
   factory RemoteRepository({required SomeApiDataSource dataSource,}) = _RemoteRepository;
 
   @Cached()
@@ -164,6 +165,31 @@ import 'package:cached_annotation/cached_annotation.dart';
 part 'some_file.cached.dart';
 ```
 
+### Dart 3 changes
+
+Dart 3 introduces a change in the way how mixins work, requiring them to be declared with the mixin keyword.
+If you are migrating from Dart 2 to Dart 3, you need to add the mixin keyword to your `Cached` class declarations.
+
+Dart 3:
+```dart
+@WithCache()
+abstract mixin class Gen implements _$Gen {
+  factory Gen() = _Gen;
+
+  ...
+}
+```
+
+Dart 2:
+```dart
+@WithCache()
+abstract class Gen implements _$Gen {
+  factory Gen() = _Gen;
+
+  ...
+}
+```
+
 ## Basics
 
 ### WithCache
@@ -178,7 +204,7 @@ is set to `false`
 
 ```dart
 @WithCache(useStaticCache: true)
-abstract class Gen implements _$Gen {
+abstract mixin class Gen implements _$Gen {
   factory Gen() = _Gen;
 
   ...

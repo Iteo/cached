@@ -20,7 +20,7 @@ import 'package:meta/meta_meta.dart';
 ///
 /// ```dart
 /// @withCache
-/// abstract class EmitLastValue {
+/// abstract mixin class EmitLastValue {
 ///   factory EmitLastValue() = _EmitLastValue;
 ///
 ///   @cached
