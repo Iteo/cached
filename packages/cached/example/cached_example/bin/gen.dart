@@ -21,7 +21,7 @@ const _url = 'https://jsonplaceholder.typicode.com/todos/94';
 /// cached class with static cache. It means each instance of this class
 /// will have access to the same cache. Default value is set to false
 @WithCache(useStaticCache: true)
-abstract class Gen implements _$Gen {
+abstract mixin class Gen implements _$Gen {
   /// Factory constructor
   factory Gen() = _Gen;
 

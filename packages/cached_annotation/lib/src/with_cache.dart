@@ -26,7 +26,7 @@ const withCache = WithCache();
 ///
 /// ```dart
 /// @withCache
-/// abstract class Gen implements _$Gen {
+/// abstract mixin class Gen implements _$Gen {
 ///   ...
 /// }
 /// ```
@@ -35,7 +35,7 @@ const withCache = WithCache();
 ///
 /// ```
 /// @WithCache(useStaticCache: true)
-/// abstract class Gen implements _$Gen {
+/// abstract mixin class Gen implements _$Gen {
 ///   ...
 /// }
 /// ```
