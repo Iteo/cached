@@ -13,7 +13,7 @@ environment:
   sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
-  analyzer: ^5.2.0
+  analyzer: ^6.2.0
   build: ^2.3.0
   cached_annotation: ^1.6.0
   collection: ^1.16.0
