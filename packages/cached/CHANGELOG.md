@@ -1,3 +1,6 @@
+## 1.6.3
+* Update SDK version `>=2.17.0 <4.0.0`
+
 ## 1.6.2
 * Update analyzer
 
