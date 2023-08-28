@@ -1,3 +1,6 @@
+## 1.6.2
+* Update analyzer
+
 ## 1.6.1
 * Fix `@Cached(limit: )` parameter - LRU cache algorithm was not working correctly.
 

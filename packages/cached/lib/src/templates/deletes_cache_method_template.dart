@@ -52,7 +52,7 @@ class DeletesCacheMethodTemplate {
     return [
       ...method.methodNames.map(_methodToClear),
       ...method.ttlsToClear.map(_methodTtlsToClear),
-      ...streamedCacheMethods?.map(clearStreamedCache) ?? <String>[]
+      ...streamedCacheMethods?.map(clearStreamedCache) ?? <String>[],
     ].join('\n');
   }
 

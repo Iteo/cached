@@ -222,7 +222,7 @@ void main() {
       final results = await Future.wait(
         [
           cachedClass.asyncCachedValueGetter,
-          cachedClass.asyncCachedValueGetter
+          cachedClass.asyncCachedValueGetter,
         ],
       );
 
