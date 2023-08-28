@@ -1,6 +1,6 @@
 name: cached
 description: Dart package with build-in code generation. Simplifies and speedup creation of cache mechanism for dart classes.
-version: 1.6.2
+version: 1.6.3
 repository: https://github.com/Iteo/cached
 issue_tracker: https://github.com/Iteo/cached/issues
 homepage: https://github.com/Iteo/cached
@@ -10,7 +10,7 @@ topics:
   - lru
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
   analyzer: ^6.2.0
