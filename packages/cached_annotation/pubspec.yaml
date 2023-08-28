@@ -1,6 +1,6 @@
 name: cached_annotation
 description: Annotation package for cached lib
-version: 1.6.0
+version: 1.6.2
 repository: https://github.com/Iteo/cached
 issue_tracker: https://github.com/Iteo/cached/issues
 homepage: https://github.com/Iteo/cached
