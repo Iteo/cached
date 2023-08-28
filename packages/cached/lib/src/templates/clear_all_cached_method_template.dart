@@ -16,7 +16,7 @@ class ClearAllCachedMethodTemplate {
     this.isPersisted = false,
   })  : paramsTemplate = AllParamsTemplate(method?.params ?? {}),
         streamedCacheMethodPerName = {
-          for (final m in streamedCacheMethods) m.targetMethodName: m
+          for (final m in streamedCacheMethods) m.targetMethodName: m,
         };
 
   final ClearAllCachedMethod? method;
