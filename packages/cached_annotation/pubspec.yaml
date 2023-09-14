@@ -1,5 +1,7 @@
 name: cached_annotation
-description: Annotation package for cached lib
+description: >
+  Annotations for the Cached code-generator.
+  This package does nothing without Cached.
 version: 1.6.0
 repository: https://github.com/Iteo/cached
 issue_tracker: https://github.com/Iteo/cached/issues
