@@ -2,7 +2,9 @@ name: Build
 
 on:
   pull_request:
-    branches: [master, develop, main]
+    branches:
+      - master
+      - 'rc/*'
 
 jobs:
   build:

@@ -36,14 +36,14 @@ class TypeCastAppender {
   String appendCastIfNeeded(String returnType) {
     final startsWithFuture = returnType.startsWith('Future<');
     if (startsWithFuture) {
-      return _generate(returnType);
+      return _generateFutureType(returnType);
     }
 
     return '';
   }
 
-  String _generate(String returnType) {
-    final type = _getGenericType(returnType);
+  String _generateFutureType(String futureType) {
+    final type = _getGenericType(futureType);
     final isGeneric = type.contains('<') && type.contains('>');
 
     if (isGeneric) {

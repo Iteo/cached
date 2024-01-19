@@ -20,7 +20,13 @@ class _StaticPersistedRepository
     }
 
     try {
-      _getNumberCached = await PersistentStorageHolder.read('_getNumberCached');
+      final cachedMap = await PersistentStorageHolder.read('_getNumberCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! double) throw TypeError();
+      });
+
+      _getNumberCached = cachedMap;
     } catch (e) {
       _getNumberCached = <String, dynamic>{};
     }
@@ -32,7 +38,13 @@ class _StaticPersistedRepository
     }
 
     try {
-      _getBoolCached = await PersistentStorageHolder.read('_getBoolCached');
+      final cachedMap = await PersistentStorageHolder.read('_getBoolCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! bool) throw TypeError();
+      });
+
+      _getBoolCached = cachedMap;
     } catch (e) {
       _getBoolCached = <String, dynamic>{};
     }
@@ -44,7 +56,13 @@ class _StaticPersistedRepository
     }
 
     try {
-      _getTextCached = await PersistentStorageHolder.read('_getTextCached');
+      final cachedMap = await PersistentStorageHolder.read('_getTextCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! String) throw TypeError();
+      });
+
+      _getTextCached = cachedMap;
     } catch (e) {
       _getTextCached = <String, dynamic>{};
     }
@@ -294,7 +312,13 @@ class _NonStaticPersistedRepository
 
   Future<void> _init() async {
     try {
-      _getNumberCached = await PersistentStorageHolder.read('_getNumberCached');
+      final cachedMap = await PersistentStorageHolder.read('_getNumberCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! double) throw TypeError();
+      });
+
+      _getNumberCached = cachedMap;
     } catch (e) {
       _getNumberCached = <String, dynamic>{};
     }
@@ -306,7 +330,13 @@ class _NonStaticPersistedRepository
     }
 
     try {
-      _getBoolCached = await PersistentStorageHolder.read('_getBoolCached');
+      final cachedMap = await PersistentStorageHolder.read('_getBoolCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! bool) throw TypeError();
+      });
+
+      _getBoolCached = cachedMap;
     } catch (e) {
       _getBoolCached = <String, dynamic>{};
     }
@@ -318,7 +348,13 @@ class _NonStaticPersistedRepository
     }
 
     try {
-      _getTextCached = await PersistentStorageHolder.read('_getTextCached');
+      final cachedMap = await PersistentStorageHolder.read('_getTextCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! String) throw TypeError();
+      });
+
+      _getTextCached = cachedMap;
     } catch (e) {
       _getTextCached = <String, dynamic>{};
     }
@@ -648,8 +684,13 @@ class _NonStaticNestedGenericType
 
   Future<void> _init() async {
     try {
-      _getNumbersCached =
-          await PersistentStorageHolder.read('_getNumbersCached');
+      final cachedMap = await PersistentStorageHolder.read('_getNumbersCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! List<int>) throw TypeError();
+      });
+
+      _getNumbersCached = cachedMap;
     } catch (e) {
       _getNumbersCached = <String, dynamic>{};
     }
@@ -775,8 +816,13 @@ class _StaticNestedGenericType
     }
 
     try {
-      _getNumbersCached =
-          await PersistentStorageHolder.read('_getNumbersCached');
+      final cachedMap = await PersistentStorageHolder.read('_getNumbersCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! List<int>) throw TypeError();
+      });
+
+      _getNumbersCached = cachedMap;
     } catch (e) {
       _getNumbersCached = <String, dynamic>{};
     }
