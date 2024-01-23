@@ -166,7 +166,17 @@ abstract class CachedMethodTemplate {
   }
 
   String _getCacheInit() {
-    final init = "$_cacheMapName = $readCodeText('$_cacheMapName');";
+    final init = '''
+      final cachedMap = $readCodeText('$_cacheMapName');
+      
+      cachedMap.forEach((_, value) {
+        if (value is! $_syncReturnType) throw TypeError();
+      });
+      
+      
+      $_cacheMapName = cachedMap;
+    ''';
+
     return _wrapWithTryCatchAndAssignEmptyMap(
       init,
       _cacheMapName,

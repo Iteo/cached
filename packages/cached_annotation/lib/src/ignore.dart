@@ -21,8 +21,6 @@ const ignore = Ignore();
 ///   return Future.value(1);
 /// }
 /// ```
-///
-/// ```
 /// {@endtemplate}
 @Target({TargetKind.parameter})
 class Ignore {
