@@ -8,6 +8,13 @@ documentation: https://github.com/Iteo/cached/blob/master/packages/cached/README
 topics:
   - cache
   - lru
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
