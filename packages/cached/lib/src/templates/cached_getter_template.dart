@@ -3,7 +3,7 @@ import 'package:cached/src/templates/cached_method_template.dart';
 
 class CachedGetterTemplate extends CachedMethodTemplate {
   CachedGetterTemplate(
-    CachedGetter super.getter, {
+    CachedGetter super.function, {
     required super.useStaticCache,
     required super.isCacheStreamed,
   });
