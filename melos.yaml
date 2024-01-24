@@ -12,7 +12,13 @@ scripts:
     run: melos exec dart pub get
 
   generate:
-    run: melos exec --depends-on="build_runner" dart run build_runner build  --delete-conflicting-outputs
+    run: melos run generate:packages && melos run generate:examples
+  
+  generate:packages:
+    run: melos exec --depends-on="build_runner" --no-private dart run build_runner build  --delete-conflicting-outputs
+
+  generate:examples:
+    run: melos exec --depends-on="build_runner" --depends-on="cached" dart run build_runner build  --delete-conflicting-outputs
 
   test:
     run: melos exec --dir-exists="test" dart test
@@ -36,4 +42,10 @@ scripts:
     run: melos exec fvm dart analyze
 
   generate:fvm:
-    run: melos exec --depends-on="build_runner" fvm dart run build_runner build --delete-conflicting-outputs
+    run: melos run generate:packages:fvm && melos run generate:examples:fvm
+  
+  generate:packages:fvm:
+    run: melos exec --depends-on="build_runner" --no-private fvm dart run build_runner build  --delete-conflicting-outputs
+
+  generate:examples:fvm:
+    run: melos exec --depends-on="build_runner" --depends-on="cached" fvm dart run build_runner build  --delete-conflicting-outputs
