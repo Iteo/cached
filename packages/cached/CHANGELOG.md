@@ -1,3 +1,6 @@
+## 1.6.4
+- Fix the `PersistentStorageHolder` which wasn't checking if stored value type matches the method return type (see [#105](https://github.com/Iteo/cached/issues/105))
+
 ## 1.6.3
 * Update SDK version `>=2.17.0 <4.0.0`
 
