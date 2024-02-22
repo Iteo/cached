@@ -16,18 +16,21 @@ class CachedFunctionLocalConfig {
   }
 
   CachedFunctionLocalConfig._({
+    required this.persistentStorage,
+    required this.lazyPersistentStorage,
     required this.syncWrite,
     required this.limit,
     required this.ttl,
     required this.checkIfShouldCacheMethod,
-    required this.persistentStorage,
   });
+
+  bool persistentStorage;
+  bool lazyPersistentStorage;
 
   bool? syncWrite;
   int? limit;
   int? ttl;
   CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
-  bool? persistentStorage;
 
   static CachedFunctionLocalConfig _build(
     DartObject cachedAnnotation,
@@ -35,11 +38,12 @@ class CachedFunctionLocalConfig {
   ) {
     final reader = ConstantReader(cachedAnnotation);
 
+    bool persistentStorage = false;
+    bool lazyPersistentStorage = false;
     bool? syncWrite;
     int? limit;
     int? ttl;
     CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
-    bool? persistentStorage;
 
     final syncWriteField = reader.peek('syncWrite');
     if (syncWriteField != null) {
@@ -69,12 +73,32 @@ class CachedFunctionLocalConfig {
       persistentStorage = shouldUseStorage.boolValue;
     }
 
+    final shouldUseLazyStorage = reader.peek('lazyPersistentStorage');
+    if (shouldUseLazyStorage != null && shouldUseLazyStorage.isBool) {
+      lazyPersistentStorage = shouldUseLazyStorage.boolValue;
+    }
+
+    if (persistentStorage && lazyPersistentStorage) {
+      final name = element.name;
+      final message =
+          "[ERROR] $name: Please choose either 'persistentStorage' or 'lazyPersistentStorage'. Only one at the time of these parameters can be used for persistent storage configuration.";
+      throw InvalidGenerationSourceError(message);
+    }
+
+    if (lazyPersistentStorage && (ttl != null || syncWrite != null || limit != null)) {
+      final name = element.name;
+      final message =
+          "[ERROR] $name: Using 'lazyPersistentStorage' with 'ttl', 'syncWrite' or 'limit' is not supported. Please remove 'ttl', 'syncWrite', and 'limit' or set 'lazyPersistentStorage' to false.";
+      throw InvalidGenerationSourceError(message);
+    }
+
     return CachedFunctionLocalConfig._(
       ttl: ttl,
       limit: limit,
       syncWrite: syncWrite,
       checkIfShouldCacheMethod: checkIfShouldCacheMethod,
       persistentStorage: persistentStorage,
+      lazyPersistentStorage: lazyPersistentStorage,
     );
   }
 

@@ -40,6 +40,7 @@ abstract class CachedMethodTemplate {
   String get _toReturnVariable => 'toReturn';
 
   bool get _shouldUsePersistentStorage => function.persistentStorage ?? false;
+  bool get _shouldUseLazyPersistentStorage => function.lazyPersistentStorage ?? false;
 
   bool get _hasTtl => function.ttl != null;
 
@@ -67,8 +68,8 @@ abstract class CachedMethodTemplate {
                  
           ${_generateRemoveTtlLogic()}
           
-          final cachedValue = $_cacheMapName["$paramsKey"];
-          if (cachedValue == null $generatedCacheCondition) {
+          final cachedValue = ${_shouldUseLazyPersistentStorage ? "$readCodeText('$_cacheMapName')" : '$_cacheMapName["$paramsKey"]'};
+          if (${_shouldUseLazyPersistentStorage ? "cachedValue.isEmpty && cachedValue[''] == null" : "cachedValue == null"} $generatedCacheCondition) {
              ${_generateGetSyncedLogic()}
    
              final $_syncReturnType $_toReturnVariable;
@@ -84,7 +85,7 @@ abstract class CachedMethodTemplate {
    
              ${_generateCheckIfShouldCache()}
    
-             $_cacheMapName["$paramsKey"] = $_toReturnVariable;
+             ${_shouldUseLazyPersistentStorage ? '' : '$_cacheMapName["$paramsKey"] = $_toReturnVariable;'}
    
              ${_generateStreamCall()}
    
@@ -104,13 +105,13 @@ abstract class CachedMethodTemplate {
 
   String _generateCachedValueReturn() {
     final code = '$_returnKeyword cachedValue';
-    if (!_shouldUsePersistentStorage) {
+    if (!_shouldUsePersistentStorage && !_shouldUseLazyPersistentStorage) {
       return '$code;';
     }
 
     final appender = TypeCastAppender();
     return appender.wrapWithTryCatchAndAddGenericCast(
-      codeToWrap: code,
+      codeToWrap: _shouldUseLazyPersistentStorage ? "$code['']" : code,
       returnType: function.returnType,
     );
   }
@@ -126,6 +127,10 @@ abstract class CachedMethodTemplate {
 
   String generateCacheMap() {
     final staticModifier = _getStaticModifier();
+
+    if (function.lazyPersistentStorage ?? false) {
+      return '';
+    }
 
     if (function.persistentStorage ?? false) {
       return '$staticModifier late final Map<String, dynamic> $_cacheMapName;';
@@ -247,6 +252,8 @@ abstract class CachedMethodTemplate {
   String _generateCacheWrite() {
     if (_shouldUsePersistentStorage) {
       return "$writeCodeText('$_cacheMapName', $_cacheMapName);";
+    } else if (_shouldUseLazyPersistentStorage) {
+      return "$writeCodeText('$_cacheMapName', {'': toReturn});";
     }
 
     return '';

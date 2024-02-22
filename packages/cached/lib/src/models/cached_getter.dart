@@ -16,6 +16,7 @@ class CachedGetter extends CachedFunction {
     required super.ttl,
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
+    required super.lazyPersistentStorage,
   });
 
   factory CachedGetter.fromElement(
@@ -25,7 +26,8 @@ class CachedGetter extends CachedFunction {
     CachedFunction.assertIsValid(element);
 
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
-    final persistentStorage = localConfig.persistentStorage ?? false;
+    final persistentStorage = localConfig.persistentStorage;
+    final lazyPersistentStorage = localConfig.lazyPersistentStorage;
     final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
     final limit = localConfig.limit ?? config.limit;
@@ -44,6 +46,7 @@ class CachedGetter extends CachedFunction {
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
+      lazyPersistentStorage: lazyPersistentStorage,
     );
   }
 }

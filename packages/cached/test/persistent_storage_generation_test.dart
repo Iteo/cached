@@ -19,6 +19,7 @@ Future<void> main() async {
     'CachedWithDeletePersistentStorageError',
     'NonStaticNestedGenericType',
     'StaticNestedGenericType',
+    'LazyPersistentStoargeRepository',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

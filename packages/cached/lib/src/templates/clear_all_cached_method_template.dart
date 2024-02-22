@@ -14,6 +14,7 @@ class ClearAllCachedMethodTemplate {
     required Iterable<StreamedCacheMethod> streamedCacheMethods,
     this.method,
     this.isPersisted = false,
+    this.isLazyPersisted = false,
   })  : paramsTemplate = AllParamsTemplate(method?.params ?? {}),
         streamedCacheMethodPerName = {
           for (final m in streamedCacheMethods) m.targetMethodName: m,
@@ -25,6 +26,7 @@ class ClearAllCachedMethodTemplate {
   final Map<String, StreamedCacheMethod> streamedCacheMethodPerName;
   final AllParamsTemplate paramsTemplate;
   final bool isPersisted;
+  final bool isLazyPersisted;
 
   String get asyncModifier => isFuture(method!.returnType) ? 'async' : '';
 
@@ -70,7 +72,7 @@ class ClearAllCachedMethodTemplate {
   }
 
   String _generateClearPersistentStorage() {
-    if (isPersisted) {
+    if (isPersisted || isLazyPersisted) {
       final isAsync = method?.isAsync ?? false;
       final body = isAsync ? 'await $deleteAllText' : deleteAllText;
 
@@ -127,6 +129,10 @@ class ClearAllCachedMethodTemplate {
   }
 
   String _generateClearMapsFromMethod(CachedMethod clearedMethod) {
+    if (clearedMethod.lazyPersistentStorage ?? false) {
+      return '';
+    }
+
     final baseName = clearedMethod.name;
     return _generateClearMaps(
       baseName,

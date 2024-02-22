@@ -16,6 +16,7 @@ abstract class CachedFunction {
     required this.ttl,
     required this.checkIfShouldCacheMethod,
     required this.persistentStorage,
+    required this.lazyPersistentStorage,
   });
 
   final String name;
@@ -27,6 +28,7 @@ abstract class CachedFunction {
   final int? ttl;
   final CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
   final bool? persistentStorage;
+  final bool? lazyPersistentStorage;
 
   static void assertIsValid(ExecutableElement element) {
     assertMethodNotVoid(element);
