@@ -73,14 +73,21 @@ class CachePeekMethod {
       );
     }
 
+    final cachedAnnotation = cachedAnnotationTypeChecker.firstAnnotationOf(targetMethod);
+    final hasLazyPersistenStorage = cachedAnnotation?.getField('lazyPersistentStorage')?.toBoolValue() ?? false;
+    if (hasLazyPersistenStorage) {
+      throw InvalidGenerationSourceError(
+        "[ERROR] Method '$methodName' has 'lazyPersistentStorage' set to true. @CachePeek is unavailable for methods with 'lazyPersistentStorage'.",
+        element: element,
+      );
+    }
+
     const ignoreTypeChecker = TypeChecker.any([
       TypeChecker.fromRuntime(Ignore),
       TypeChecker.fromRuntime(IgnoreCache),
     ]);
 
-    final targetMethodParameters = targetMethod.parameters
-        .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
-        .toList();
+    final targetMethodParameters = targetMethod.parameters.where((p) => !ignoreTypeChecker.hasAnnotationOf(p)).toList();
 
     if (!ListEquality<ParameterElement>(
       EqualityBy(
