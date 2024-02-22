@@ -28,7 +28,7 @@ const cached = Cached();
 /// or with parameters
 ///
 /// ```dart
-/// @Cached(syncWrite: true, ttl: 30, limit: 10, where: _checkIfShouldCache,)
+/// @Cached(syncWrite: true, ttl: 30, limit: 10, where: checkIfShouldCache,)
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
@@ -46,6 +46,7 @@ class Cached {
     this.ttl,
     this.where,
     this.persistentStorage,
+    this.lazyPersistentStorage,
   });
 
   /// limit how many results for different method call
@@ -85,4 +86,16 @@ class Cached {
   /// If you want to utilize persistent storage, all methods which use
   /// Cached library's annotations has to be async
   final bool? persistentStorage;
+
+  /// Defines optional usage of external persistent storage (e.g. shared
+  /// preferences)
+  ///
+  /// If set to `true` in order to work, you have to set
+  /// `PersistentStorageHolder.storage` in your main.dart file
+  ///
+  /// Important:
+  /// If you want to utilize persistent storage, all methods which use
+  /// Cached library's annotations has to be async
+  /// Data from external storage will be recieved every time method is called and not from cache
+  final bool? lazyPersistentStorage;
 }

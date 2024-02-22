@@ -10,12 +10,14 @@ class ClearCachedMethodTemplate {
     this.method, {
     this.streamedCacheMethod,
     this.isPersisted = false,
+    this.isLazyPersisted = false,
   }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
   final StreamedCacheMethod? streamedCacheMethod;
   final bool isPersisted;
+  final bool isLazyPersisted;
 
   String get asyncModifier => isFuture(method.returnType) ? 'async' : '';
 
@@ -93,6 +95,10 @@ class ClearCachedMethodTemplate {
   }
 
   String _generateClearMaps() {
+    if (isLazyPersisted) {
+      return '';
+    }
+
     final cacheMapName = getCacheMapName(method.methodName);
     final ttlMapName = getTtlMapName(method.methodName);
     final shouldClearTtl = method.shouldClearTtl ? '$ttlMapName.clear();' : '';
@@ -106,11 +112,10 @@ class ClearCachedMethodTemplate {
   }
 
   String _generateClearPersistentStorage() {
-    if (isPersisted) {
+    if (isPersisted || isLazyPersisted) {
       final isAsync = method.isAsync;
       final mapName = getCacheMapName(method.methodName);
-      final body =
-          isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
+      final body = isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
 
       return '''
         if ($isStorageSetText) {

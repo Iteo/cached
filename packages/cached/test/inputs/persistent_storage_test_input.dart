@@ -930,3 +930,51 @@ abstract class StaticNestedGenericType {
     return [13, 21, 34];
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$LazyPersistentStoargeRepository {}
+
+class _LazyPersistentStoargeRepository
+    with LazyPersistentStoargeRepository
+    implements _$LazyPersistentStoargeRepository {
+  _LazyPersistentStoargeRepository();
+
+  @override
+  Future<double> getNumber() async {
+    final cachedValue = await PersistentStorageHolder.read('_getNumberCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final double toReturn;
+      try {
+        final result = super.getNumber();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write('_getNumberCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+}
+''',
+)
+@WithCache()
+abstract class LazyPersistentStoargeRepository implements _$LazyPersistentStoargeRepository {
+  factory LazyPersistentStoargeRepository() = _LazyPersistentStoargeRepository;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<double> getNumber() async {
+    await _delay();
+    return _generator.nextDouble() * 257;
+  }
+
+  Future<void> _delay() async {
+    const duration = Duration(seconds: 1);
+    await Future.delayed(duration);
+  }
+}

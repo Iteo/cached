@@ -19,6 +19,7 @@ class CachedMethod extends CachedFunction {
     required super.ttl,
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
+    required super.lazyPersistentStorage,
   });
 
   factory CachedMethod.fromElement(
@@ -28,7 +29,7 @@ class CachedMethod extends CachedFunction {
     CachedFunction.assertIsValid(element);
 
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
-    if (localConfig.persistentStorage == true) {
+    if (localConfig.persistentStorage || localConfig.lazyPersistentStorage) {
       assertPersistentStorageShouldBeAsync(element);
     }
 
@@ -36,7 +37,8 @@ class CachedMethod extends CachedFunction {
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
     final limit = localConfig.limit ?? config.limit;
     final ttl = localConfig.ttl ?? config.ttl;
-    final persistentStorage = localConfig.persistentStorage ?? false;
+    final persistentStorage = localConfig.persistentStorage;
+    final lazyPersistentStorage = localConfig.lazyPersistentStorage;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
@@ -53,6 +55,7 @@ class CachedMethod extends CachedFunction {
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
+      lazyPersistentStorage: lazyPersistentStorage,
       returnType: returnType,
       params: params,
     );

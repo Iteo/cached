@@ -21,12 +21,15 @@ class ClassTemplate {
 
   final ClassWithCache classWithCache;
   bool _isPersisted = false;
+  bool _isLazyPersisted = false;
+  late Iterable<CachedMethodWithParamsTemplate> methodTemplates;
 
   String generate() {
     final classMethods = classWithCache.methods;
 
-    final methodTemplates = _getMethodTemplates(classMethods);
+    methodTemplates = _getMethodTemplates(classMethods);
     _isPersisted = methodTemplates.any(_hasPersistentStorage);
+    _isLazyPersisted = methodTemplates.any(_hasLazyPersistentStorage);
 
     final getterTemplates = _getGetterTemplates();
 
@@ -113,6 +116,16 @@ class ClassTemplate {
     final hasPersistentMethod = method.persistentStorage == true;
 
     return hasPersistentFunction || hasPersistentMethod;
+  }
+
+  bool _hasLazyPersistentStorage(CachedMethodWithParamsTemplate element) {
+    final function = element.function;
+    final method = element.method;
+
+    final hasLazyPersistentFunction = function.lazyPersistentStorage == true;
+    final hasLazyPersistentMethod = method.lazyPersistentStorage == true;
+
+    return hasLazyPersistentFunction || hasLazyPersistentMethod;
   }
 
   String _generateStaticLock(
@@ -213,11 +226,24 @@ class ClassTemplate {
       (m) => m.targetMethodName == method.name,
     );
 
+    final isLazyPersisted =
+        methodTemplates.any((m) => m.method.name == method.methodName && _hasLazyPersistentStorage(m));
+    final isPersisted = methodTemplates.any((m) => m.method.name == method.methodName && _hasPersistentStorage(m));
+
     return ClearCachedMethodTemplate(
       method,
       streamedCacheMethod: streamedCacheMethod,
-      isPersisted: _isPersisted,
+      isPersisted: isPersisted,
+      isLazyPersisted: isLazyPersisted,
     );
+  }
+
+  Iterable<String> _getLazyPersistenStorageMethodNames() sync* {
+    for (final method in methodTemplates) {
+      if (_hasLazyPersistentStorage(method)) {
+        yield method.method.name;
+      }
+    }
   }
 
   ClearAllCachedMethodTemplate _getClearAllMethodTemplates(
@@ -233,6 +259,7 @@ class ClassTemplate {
       cachedGetters: getters,
       streamedCacheMethods: streamedCacheMethods,
       isPersisted: _isPersisted,
+      isLazyPersisted: _isLazyPersisted,
     );
   }
 
@@ -264,10 +291,14 @@ class ClassTemplate {
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
     final methods = _filteredStreamedCacheMethods(streamedCacheMethods, method);
 
+    final lazyPersistedMethods = _getLazyPersistenStorageMethodNames();
+
     return DeletesCacheMethodTemplate(
       method,
       methods,
+      lazyPersistedMethods: lazyPersistedMethods.toList(),
       isPersisted: _isPersisted,
+      isLazyPersisted: _isLazyPersisted,
     );
   }
 

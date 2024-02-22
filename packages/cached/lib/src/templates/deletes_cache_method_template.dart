@@ -9,13 +9,17 @@ class DeletesCacheMethodTemplate {
   DeletesCacheMethodTemplate(
     this.method,
     this.streamedCacheMethods, {
+    this.lazyPersistedMethods = const [],
     this.isPersisted = false,
+    this.isLazyPersisted = false,
   }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final DeletesCacheMethod method;
   final AllParamsTemplate paramsTemplate;
+  final List<String> lazyPersistedMethods;
   final List<StreamedCacheMethod>? streamedCacheMethods;
   final bool isPersisted;
+  final bool isLazyPersisted;
 
   String generateMethod() {
     final asyncModifier = isFuture(method.returnType) ? 'async' : '';
@@ -49,8 +53,11 @@ class DeletesCacheMethodTemplate {
   }
 
   String _generateClearMaps() {
+    final persistemMethodsToClear =
+        method.methodNames.where((method) => !lazyPersistedMethods.contains(method)).toList();
+
     return [
-      ...method.methodNames.map(_methodToClear),
+      ...persistemMethodsToClear.map(_methodToClear),
       ...method.ttlsToClear.map(_methodTtlsToClear),
       ...streamedCacheMethods?.map(clearStreamedCache) ?? <String>[],
     ].join('\n');
@@ -67,7 +74,7 @@ class DeletesCacheMethodTemplate {
   }
 
   String _mapPersistentStorages() {
-    if (isPersisted) {
+    if (isPersisted || isLazyPersisted) {
       final mappedMethods = method.methodNames.map(_generateClearStorage);
       return '''
          if ($isStorageSetText) {
@@ -82,8 +89,7 @@ class DeletesCacheMethodTemplate {
   String _generateClearStorage(String methodName) {
     final isAsync = method.isAsync;
     final mapName = getCacheMapName(methodName);
-    final body =
-        isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
+    final body = isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
 
     return '$body;';
   }
