@@ -544,12 +544,52 @@ Throws an [InvalidGenerationSourceError]
 - if annotated method is abstract
 
 ## Persistent storage
-Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by passing `persistentStorage: true` parameter into `@Cached()` annotation:
+Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by passing right parameter into `@Cached()` annotation:
+
+`persistentStorage: true`
 
 ```dart
   @Cached(persistentStorage: true)
   Future<double> getDouble() async {
     return await _source.nextDouble() ;
+  }
+```
+
+`lazyPersistentStorage: true`
+
+```dart
+  @Cached(lazyPersistentStorage: true)
+  Future<double> getLazyDouble() async {
+    return await _source.nextDouble() ;
+  }
+```
+
+When the `lazyPersistentStorage` parameter is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods annotated with this parameter, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there, as demonstrated in the provided example.
+
+```
+ @override
+  Future<List<Todo>> getLazyTodos() async {
+    final cachedValue = await PersistentStorageHolder.read('_getLazyTodosCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final List<Todo> toReturn;
+      try {
+        final result = super.getLazyTodos();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write('_getLazyTodosCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      try {
+        return cachedValue[''].cast<Todo>();
+      } on NoSuchMethodError {
+        // ...
+      }
+    }
   }
 ```
 

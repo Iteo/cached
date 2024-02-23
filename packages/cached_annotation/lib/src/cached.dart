@@ -28,7 +28,7 @@ const cached = Cached();
 /// or with parameters
 ///
 /// ```dart
-/// @Cached(syncWrite: true, ttl: 30, limit: 10, where: checkIfShouldCache,)
+/// @Cached(syncWrite: true, ttl: 30, limit: 10, where: _checkIfShouldCache,)
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
@@ -96,6 +96,6 @@ class Cached {
   /// Important:
   /// If you want to utilize persistent storage, all methods which use
   /// Cached library's annotations has to be async
-  /// Data from external storage will be recieved every time method is called and not from cache
+  /// Data from external storage will be recieved every time method is called and not from package cache
   final bool? lazyPersistentStorage;
 }

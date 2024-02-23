@@ -449,3 +449,178 @@ abstract class ValidSync {
     return '';
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$DeleteCachedLazyPersistentStorage {}
+
+class _DeleteCachedLazyPersistentStorage
+    with DeleteCachedLazyPersistentStorage
+    implements _$DeleteCachedLazyPersistentStorage {
+  _DeleteCachedLazyPersistentStorage();
+
+  @override
+  Future<int> cachedMethod() async {
+    final cachedValue =
+        await PersistentStorageHolder.read('_cachedMethodCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write(
+          '_cachedMethodCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+
+  @override
+  Future<void> deleteArtists() async {
+    final result = await super.deleteArtists();
+
+    if (PersistentStorageHolder.isStorageSet) {
+      await PersistentStorageHolder.delete('_cachedMethodCached');
+    }
+
+    return result;
+  }
+}
+''',
+)
+@withCache
+abstract class DeleteCachedLazyPersistentStorage {
+  factory DeleteCachedLazyPersistentStorage() = _DeleteCachedLazyPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<int> cachedMethod() async {
+    return Future.value(1);
+  }
+
+  @DeletesCache(['cachedMethod'])
+  Future<void> deleteArtists() async {}
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$DeleteAllCachedPersistentStorage {}
+
+class _DeleteAllCachedPersistentStorage
+    with DeleteAllCachedPersistentStorage
+    implements _$DeleteAllCachedPersistentStorage {
+  _DeleteAllCachedPersistentStorage() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      final cachedMap =
+          await PersistentStorageHolder.read('_notLazyPachedMethodCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! int) throw TypeError();
+      });
+
+      _notLazyPachedMethodCached = cachedMap;
+    } catch (e) {
+      _notLazyPachedMethodCached = <String, dynamic>{};
+    }
+
+    _completer.complete();
+  }
+
+  final _completer = Completer<void>();
+  Future<void> get _completerFuture => _completer.future;
+
+  late final Map<String, dynamic> _notLazyPachedMethodCached;
+
+  @override
+  Future<int> cachedMethod() async {
+    final cachedValue =
+        await PersistentStorageHolder.read('_cachedMethodCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write(
+          '_cachedMethodCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+
+  @override
+  Future<int> notLazyPachedMethod() async {
+    await _completerFuture;
+
+    final cachedValue = _notLazyPachedMethodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.notLazyPachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _notLazyPachedMethodCached[""] = toReturn;
+
+      await PersistentStorageHolder.write(
+          '_notLazyPachedMethodCached', _notLazyPachedMethodCached);
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Future<void> deleteArtists() async {
+    if (PersistentStorageHolder.isStorageSet) {
+      await _completerFuture;
+    }
+
+    final result = await super.deleteArtists();
+
+    if (PersistentStorageHolder.isStorageSet) {
+      await PersistentStorageHolder.delete('_cachedMethodCached');
+    }
+
+    return result;
+  }
+}
+''',
+)
+@withCache
+abstract class DeleteAllCachedPersistentStorage {
+  factory DeleteAllCachedPersistentStorage() = _DeleteAllCachedPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<int> cachedMethod() async {
+    return Future.value(1);
+  }
+
+  @Cached(persistentStorage: true)
+  Future<int> notLazyPachedMethod() async {
+    return Future.value(1);
+  }
+
+  @DeletesCache(['cachedMethod'])
+  Future<void> deleteArtists() async {}
+}
