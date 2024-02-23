@@ -58,7 +58,6 @@ abstract class CachedMethodTemplate {
     final asyncModifier = useAsyncKeyword ? 'async' : '';
 
     final generatedDefinition = generateDefinition();
-    final generatedCacheCondition = generateAdditionalCacheCondition();
     final usage = generateUsage();
 
     return '''
@@ -69,7 +68,7 @@ abstract class CachedMethodTemplate {
           ${_generateRemoveTtlLogic()}
           
           final cachedValue = ${_shouldUseLazyPersistentStorage ? "$readCodeText('$_cacheMapName')" : '$_cacheMapName["$paramsKey"]'};
-          if (${_shouldUseLazyPersistentStorage ? "cachedValue.isEmpty && cachedValue[''] == null" : "cachedValue == null"} $generatedCacheCondition) {
+          if (${_generateConditionForCache()} ${generateAdditionalCacheCondition()}) {
              ${_generateGetSyncedLogic()}
    
              final $_syncReturnType $_toReturnVariable;
@@ -85,7 +84,7 @@ abstract class CachedMethodTemplate {
    
              ${_generateCheckIfShouldCache()}
    
-             ${_shouldUseLazyPersistentStorage ? '' : '$_cacheMapName["$paramsKey"] = $_toReturnVariable;'}
+             ${_generateUpdateCacheMap()}
    
              ${_generateStreamCall()}
    
@@ -213,6 +212,14 @@ abstract class CachedMethodTemplate {
     return useStaticCache ? 'static' : '';
   }
 
+  String _generateConditionForCache() {
+    if (_shouldUseLazyPersistentStorage) {
+      return "cachedValue.isEmpty && cachedValue[''] == null";
+    }
+
+    return 'cachedValue == null';
+  }
+
   String _generateGetSyncedLogic() {
     if (!function.syncWrite || !_returnsFuture) return '';
 
@@ -275,6 +282,14 @@ abstract class CachedMethodTemplate {
           $_cacheMapName.remove($_cacheMapName.entries.first.key);
        }
     ''';
+  }
+
+  String _generateUpdateCacheMap() {
+    if (_shouldUseLazyPersistentStorage) {
+      return '';
+    }
+
+    return '$_cacheMapName["$paramsKey"] = $_toReturnVariable;';
   }
 
   String _generateStreamCall() {

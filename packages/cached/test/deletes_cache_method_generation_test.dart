@@ -15,6 +15,8 @@ Future<void> main() async {
     'ValidStreamed',
     'ValidTwoMethods',
     'ValidSync',
+    'DeleteCachedLazyPersistentStorage',
+    'DeleteAllCachedPersistentStorage',
   };
 
   final reader = await initializeLibraryReaderForDirectory(
