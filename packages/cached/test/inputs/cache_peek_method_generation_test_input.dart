@@ -32,8 +32,7 @@ abstract class MethodShouldExists {
 @ShouldThrow('[ERROR] Method "cachedMethod" do not have @cached annotation')
 @withCache
 abstract class MethodShouldHaveCachedAnnotation {
-  factory MethodShouldHaveCachedAnnotation() =
-      _MethodShouldHaveCachedAnnotation;
+  factory MethodShouldHaveCachedAnnotation() = _MethodShouldHaveCachedAnnotation;
 
   int cachedMethod() {
     return 1;
@@ -62,8 +61,7 @@ abstract class MethodShouldHaveSameParams {
     '[ERROR] Method "cachedMethod" should have same parameters as "cachedPeek", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsNullable {
-  factory MethodShouldHaveSameParamsNullable() =
-      _MethodShouldHaveSameParamsNullable;
+  factory MethodShouldHaveSameParamsNullable() = _MethodShouldHaveSameParamsNullable;
 
   @cached
   Future<int> cachedMethod(int? z) {
@@ -78,8 +76,7 @@ abstract class MethodShouldHaveSameParamsNullable {
     '[ERROR] Method "cachedMethod" should have same parameters as "cachedPeek", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsNoParams {
-  factory MethodShouldHaveSameParamsNoParams() =
-      _MethodShouldHaveSameParamsNoParams;
+  factory MethodShouldHaveSameParamsNoParams() = _MethodShouldHaveSameParamsNoParams;
 
   @cached
   Future<int> cachedMethod() {
@@ -94,8 +91,7 @@ abstract class MethodShouldHaveSameParamsNoParams {
     '[ERROR] Method "cachedMethod" should have same parameters as "cachedPeek", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsWithoutIgnore {
-  factory MethodShouldHaveSameParamsWithoutIgnore() =
-      _MethodShouldHaveSameParamsWithoutIgnore;
+  factory MethodShouldHaveSameParamsWithoutIgnore() = _MethodShouldHaveSameParamsWithoutIgnore;
 
   @cached
   Future<int> cachedMethod(@ignore int x) {
@@ -110,8 +106,7 @@ abstract class MethodShouldHaveSameParamsWithoutIgnore {
     '[ERROR] Method "cachedMethod" should have same parameters as "cachedPeek", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsWithoutIgnoreCache {
-  factory MethodShouldHaveSameParamsWithoutIgnoreCache() =
-      _MethodShouldHaveSameParamsWithoutIgnoreCache;
+  factory MethodShouldHaveSameParamsWithoutIgnoreCache() = _MethodShouldHaveSameParamsWithoutIgnoreCache;
 
   @cached
   Future<int> cachedMethod(int x, @ignoreCache bool ignoreCache) {
@@ -272,8 +267,7 @@ abstract class Parameters {
   int? cachedPeek(String y);
 }
 
-@ShouldThrow(
-    '[ERROR] `cachedMethod` cannot be targeted by multiple @CachePeek methods')
+@ShouldThrow('[ERROR] `cachedMethod` cannot be targeted by multiple @CachePeek methods')
 @withCache
 abstract class DuplicateTarget {
   factory DuplicateTarget() = _DuplicateTarget;
@@ -404,4 +398,19 @@ abstract class StaticCache {
 
   @CachePeek("cachedMethod")
   int? cachedPeek(int x);
+}
+
+@ShouldThrow(
+    "[ERROR] Method 'cachedMethod' has 'lazyPersistentStorage' set to true. @CachePeek is unavailable for methods with 'lazyPersistentStorage'.")
+@withCache
+abstract class NotWorksWithLazyPersistentStorage {
+  factory NotWorksWithLazyPersistentStorage() = _NotWorksWithLazyPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  int cachedMethod() {
+    return 1;
+  }
+
+  @CachePeek("cachedMethod")
+  int? cachedPeek();
 }

@@ -328,8 +328,7 @@ class _ValidAbstractWithTwoCachedMethod
 )
 @withCache
 abstract class ValidAbstractWithTwoCachedMethod {
-  factory ValidAbstractWithTwoCachedMethod() =
-      _ValidAbstractWithTwoCachedMethod;
+  factory ValidAbstractWithTwoCachedMethod() = _ValidAbstractWithTwoCachedMethod;
 
   @cached
   int cachedMethodOne() {
@@ -459,6 +458,62 @@ abstract class ValidReturnFutureVoid {
   @cached
   int cachedMethod() {
     return 1;
+  }
+
+  @ClearCached('cachedMethod')
+  Future<void> something() async {}
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$ClearCachedLazyPersistentStorage {}
+
+class _ClearCachedLazyPersistentStorage
+    with ClearCachedLazyPersistentStorage
+    implements _$ClearCachedLazyPersistentStorage {
+  _ClearCachedLazyPersistentStorage();
+
+  @override
+  Future<int> cachedMethod() async {
+    final cachedValue =
+        await PersistentStorageHolder.read('_cachedMethodCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write(
+          '_cachedMethodCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+
+  @override
+  Future<void> something() async {
+    await super.something();
+
+    if (PersistentStorageHolder.isStorageSet) {
+      await PersistentStorageHolder.delete('_cachedMethodCached');
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class ClearCachedLazyPersistentStorage {
+  factory ClearCachedLazyPersistentStorage() = _ClearCachedLazyPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<int> cachedMethod() async {
+    return Future.value(1);
   }
 
   @ClearCached('cachedMethod')

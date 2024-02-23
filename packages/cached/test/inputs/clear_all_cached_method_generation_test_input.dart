@@ -356,3 +356,175 @@ abstract class ValidReturnFutureVoid {
   @clearAllCached
   Future<void> something() async {}
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$ClearAllCachedLazyPersistentStorage {}
+
+class _ClearAllCachedLazyPersistentStorage
+    with ClearAllCachedLazyPersistentStorage
+    implements _$ClearAllCachedLazyPersistentStorage {
+  _ClearAllCachedLazyPersistentStorage();
+
+  @override
+  Future<int> cachedMethod() async {
+    final cachedValue =
+        await PersistentStorageHolder.read('_cachedMethodCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write(
+          '_cachedMethodCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+
+  @override
+  Future<void> something() async {
+    await super.something();
+
+    if (PersistentStorageHolder.isStorageSet) {
+      await PersistentStorageHolder.deleteAll();
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class ClearAllCachedLazyPersistentStorage {
+  factory ClearAllCachedLazyPersistentStorage() = _ClearAllCachedLazyPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<int> cachedMethod() async {
+    return Future.value(1);
+  }
+
+  @clearAllCached
+  Future<void> something() async {}
+}
+
+@ShouldGenerate(r'''
+abstract class _$ClearAllCachedLazyPersistentStorageAndPersistentStorage {}
+
+class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
+    with ClearAllCachedLazyPersistentStorageAndPersistentStorage
+    implements _$ClearAllCachedLazyPersistentStorageAndPersistentStorage {
+  _ClearAllCachedLazyPersistentStorageAndPersistentStorage() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      final cachedMap =
+          await PersistentStorageHolder.read('_cachedNotLazyMethodCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! int) throw TypeError();
+      });
+
+      _cachedNotLazyMethodCached = cachedMap;
+    } catch (e) {
+      _cachedNotLazyMethodCached = <String, dynamic>{};
+    }
+
+    _completer.complete();
+  }
+
+  final _completer = Completer<void>();
+  Future<void> get _completerFuture => _completer.future;
+
+  late final Map<String, dynamic> _cachedNotLazyMethodCached;
+
+  @override
+  Future<int> cachedMethod() async {
+    final cachedValue =
+        await PersistentStorageHolder.read('_cachedMethodCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write(
+          '_cachedMethodCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+
+  @override
+  Future<int> cachedNotLazyMethod() async {
+    await _completerFuture;
+
+    final cachedValue = _cachedNotLazyMethodCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cachedNotLazyMethod();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedNotLazyMethodCached[""] = toReturn;
+
+      await PersistentStorageHolder.write(
+          '_cachedNotLazyMethodCached', _cachedNotLazyMethodCached);
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+
+  @override
+  Future<void> something() async {
+    if (PersistentStorageHolder.isStorageSet) {
+      await _completerFuture;
+    }
+
+    await super.something();
+
+    _cachedNotLazyMethodCached.clear();
+
+    if (PersistentStorageHolder.isStorageSet) {
+      await PersistentStorageHolder.deleteAll();
+    }
+  }
+}
+''')
+@withCache
+abstract class ClearAllCachedLazyPersistentStorageAndPersistentStorage {
+  factory ClearAllCachedLazyPersistentStorageAndPersistentStorage() =
+      _ClearAllCachedLazyPersistentStorageAndPersistentStorage;
+
+  @Cached(lazyPersistentStorage: true)
+  Future<int> cachedMethod() async {
+    return Future.value(1);
+  }
+
+  @Cached(persistentStorage: true)
+  Future<int> cachedNotLazyMethod() async {
+    return Future.value(1);
+  }
+
+  @clearAllCached
+  Future<void> something() async {}
+}
