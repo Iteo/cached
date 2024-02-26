@@ -39,7 +39,8 @@ abstract class InvalidReturnType {
 }
 
 @ShouldThrow(
-  '[ERROR] `something` return type must be a void, Future<void>, bool, Future<bool>',
+  '[ERROR] `something` return type must be a void, Future<void>, bool, '
+  'Future<bool>',
   element: false,
 )
 @withCache
@@ -402,7 +403,8 @@ class _ClearAllCachedLazyPersistentStorage
 )
 @withCache
 abstract class ClearAllCachedLazyPersistentStorage {
-  factory ClearAllCachedLazyPersistentStorage() = _ClearAllCachedLazyPersistentStorage;
+  factory ClearAllCachedLazyPersistentStorage() =
+      _ClearAllCachedLazyPersistentStorage;
 
   @Cached(lazyPersistentStorage: true)
   Future<int> cachedMethod() async {

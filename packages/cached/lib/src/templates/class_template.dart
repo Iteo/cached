@@ -226,7 +226,8 @@ class ClassTemplate {
       (m) => m.targetMethodName == method.name,
     );
 
-    final isLazyPersisted = _isPersistentStorage(method, _hasLazyPersistentStorage);
+    final isLazyPersisted =
+        _isPersistentStorage(method, _hasLazyPersistentStorage);
     final isPersisted = _isPersistentStorage(method, _hasPersistentStorage);
 
     return ClearCachedMethodTemplate(
@@ -237,9 +238,11 @@ class ClassTemplate {
     );
   }
 
-  bool _isPersistentStorage(ClearCachedMethod method, bool Function(CachedMethodWithParamsTemplate) condition) {
+  bool _isPersistentStorage(ClearCachedMethod method,
+      bool Function(CachedMethodWithParamsTemplate) condition) {
     return methodTemplates.any((methodTemplate) {
-      return methodTemplate.method.name == method.methodName && condition(methodTemplate);
+      return methodTemplate.method.name == method.methodName &&
+          condition(methodTemplate);
     });
   }
 

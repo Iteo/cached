@@ -37,7 +37,8 @@ void main() {
         expect(firstResult, equals(secondResult));
       });
 
-      test('return random data from a storage which does not save data', () async {
+      test('return random data from a storage which does not save data',
+          () async {
         PersistentStorageHolder.storage = TestStorageWithData(
           {
             '_lazyPersistentCachedValueCached': {},

@@ -53,11 +53,12 @@ class DeletesCacheMethodTemplate {
   }
 
   String _generateClearMaps() {
-    final persistemMethodsToClear =
-        method.methodNames.where((method) => !lazyPersistedMethods.contains(method)).toList();
+    final persistedMethodsToClear = method.methodNames
+        .where((method) => !lazyPersistedMethods.contains(method))
+        .toList();
 
     return [
-      ...persistemMethodsToClear.map(_methodToClear),
+      ...persistedMethodsToClear.map(_methodToClear),
       ...method.ttlsToClear.map(_methodTtlsToClear),
       ...streamedCacheMethods?.map(clearStreamedCache) ?? <String>[],
     ].join('\n');
@@ -89,7 +90,8 @@ class DeletesCacheMethodTemplate {
   String _generateClearStorage(String methodName) {
     final isAsync = method.isAsync;
     final mapName = getCacheMapName(methodName);
-    final body = isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
+    final body =
+        isAsync ? "await $deleteText('$mapName')" : "$deleteText('$mapName')";
 
     return '$body;';
   }

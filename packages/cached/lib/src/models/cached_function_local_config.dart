@@ -81,13 +81,18 @@ class CachedFunctionLocalConfig {
     final name = element.name;
     if (persistentStorage && lazyPersistentStorage) {
       final message =
-          "[ERROR] $name: Please choose either 'persistentStorage' or 'lazyPersistentStorage'. Only one at the time of these parameters can be used for persistent storage configuration.";
+          "[ERROR] $name: Please choose either 'persistentStorage' or "
+          "'lazyPersistentStorage'. Only one at the time of these parameters "
+          'can be used for persistent storage configuration.';
       throw InvalidGenerationSourceError(message);
     }
 
-    if (lazyPersistentStorage && (ttl != null || syncWrite != null || limit != null)) {
+    if (lazyPersistentStorage &&
+        (ttl != null || syncWrite != null || limit != null)) {
       final message =
-          "[ERROR] $name: Using 'lazyPersistentStorage' with 'ttl', 'syncWrite' or 'limit' is not supported. Please remove them or set 'lazyPersistentStorage' to false.";
+          "[ERROR] $name: Using 'lazyPersistentStorage' with 'ttl', 'syncWrite'"
+          " or 'limit' is not supported. Please remove them or set "
+          "'lazyPersistentStorage' to false.";
       throw InvalidGenerationSourceError(message);
     }
 

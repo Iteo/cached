@@ -2,7 +2,9 @@ import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
 @ShouldThrow(
-  "[ERROR] Name of method for which cache should be cleared is not provider. Provide it trough annotation parameter (`@ClearCached('methodName')`) or through clear function name e.g. `void clearMethodName();`",
+  "[ERROR] Name of method for which cache should be cleared is not provider. "
+  "Provide it trough annotation parameter (`@ClearCached('methodName')`) or "
+  "through clear function name e.g. `void clearMethodName();`",
 )
 @withCache
 abstract class NoTargetMethod {
@@ -13,7 +15,8 @@ abstract class NoTargetMethod {
 }
 
 @ShouldThrow(
-  '[ERROR] There are multiple targets with ClearCached annotation with the same argument',
+  '[ERROR] There are multiple targets with ClearCached annotation with the '
+  'same argument',
   element: false,
 )
 @withCache
@@ -59,7 +62,8 @@ abstract class InvalidReturnType {
 }
 
 @ShouldThrow(
-  '[ERROR] `something` return type must be a void, Future<void>, bool, Future<bool>',
+  '[ERROR] `something` return type must be a void, Future<void>, bool,'
+  ' Future<bool>',
   element: false,
 )
 @withCache
@@ -328,7 +332,8 @@ class _ValidAbstractWithTwoCachedMethod
 )
 @withCache
 abstract class ValidAbstractWithTwoCachedMethod {
-  factory ValidAbstractWithTwoCachedMethod() = _ValidAbstractWithTwoCachedMethod;
+  factory ValidAbstractWithTwoCachedMethod() =
+      _ValidAbstractWithTwoCachedMethod;
 
   @cached
   int cachedMethodOne() {
@@ -509,7 +514,8 @@ class _ClearCachedLazyPersistentStorage
 )
 @withCache
 abstract class ClearCachedLazyPersistentStorage {
-  factory ClearCachedLazyPersistentStorage() = _ClearCachedLazyPersistentStorage;
+  factory ClearCachedLazyPersistentStorage() =
+      _ClearCachedLazyPersistentStorage;
 
   @Cached(lazyPersistentStorage: true)
   Future<int> cachedMethod() async {

@@ -91,8 +91,8 @@ abstract class MethodShouldHaveSameParamsNullable {
   Stream<int> cachedStream(int z);
 }
 
-@ShouldThrow(
-    '[ERROR] Method "cachedMethod" should have same parameters as "cachedStream", excluding ones marked with @ignore and @ignoreCache')
+@ShouldThrow('[ERROR] Method "cachedMethod" should have same parameters as '
+    '"cachedStream", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsNoParams {
   factory MethodShouldHaveSameParamsNoParams() =
@@ -107,8 +107,8 @@ abstract class MethodShouldHaveSameParamsNoParams {
   Stream<int> cachedStream(int z);
 }
 
-@ShouldThrow(
-    '[ERROR] Method "cachedMethod" should have same parameters as "cachedStream", excluding ones marked with @ignore and @ignoreCache')
+@ShouldThrow('[ERROR] Method "cachedMethod" should have same parameters as '
+    '"cachedStream", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsWithoutIgnore {
   factory MethodShouldHaveSameParamsWithoutIgnore() =
@@ -123,8 +123,8 @@ abstract class MethodShouldHaveSameParamsWithoutIgnore {
   Stream<int> cachedStream(int x);
 }
 
-@ShouldThrow(
-    '[ERROR] Method "cachedMethod" should have same parameters as "cachedStream", excluding ones marked with @ignore and @ignoreCache')
+@ShouldThrow('[ERROR] Method "cachedMethod" should have same parameters as '
+    '"cachedStream", excluding ones marked with @ignore and @ignoreCache')
 @withCache
 abstract class MethodShouldHaveSameParamsWithoutIgnoreCache {
   factory MethodShouldHaveSameParamsWithoutIgnoreCache() =
@@ -423,7 +423,8 @@ abstract class Parameters {
 }
 
 @ShouldThrow(
-    '[ERROR] `cachedMethod` cannot be targeted by multiple @StreamedCache methods')
+    '[ERROR] `cachedMethod` cannot be targeted by multiple @StreamedCache '
+    'methods')
 @withCache
 abstract class DuplicateTarget {
   factory DuplicateTarget() = _DuplicateTarget;
