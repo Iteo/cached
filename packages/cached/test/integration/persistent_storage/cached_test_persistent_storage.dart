@@ -5,16 +5,17 @@ import '../../utils/test_utils.dart';
 part 'cached_test_persistent_storage.cached.dart';
 
 @withCache
-abstract class PersistentCached implements _$PersistentCached {
-  factory PersistentCached(TestDataProvider dataProvider) = _PersistentCached;
+abstract class PersistentCachedStorage implements _$PersistentCachedStorage {
+  factory PersistentCachedStorage(TestDataProvider dataProvider) =
+      _PersistentCachedStorage;
 
-  @Cached(persistentStorage: true)
+  @persistentCached
   Future<int> persistentCachedValue() => dataProvider.fetchRandomValue();
 
-  @Cached(persistentStorage: true)
+  @persistentCached
   Future<int> anotherPersistentCachedValue() => dataProvider.fetchRandomValue();
 
-  @Cached(persistentStorage: true)
+  @persistentCached
   Future<List<int>> persistentCachedList() async =>
       List.filled(5, dataProvider.getRandomValue());
 

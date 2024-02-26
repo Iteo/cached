@@ -2,11 +2,12 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/models/cached_function_local_config.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 
 const _defaultSyncWriteValue = false;
 
-class CachedGetter extends CachedFunction {
-  CachedGetter._({
+class CachedGetter<T extends Cached> extends CachedFunction {
+  CachedGetter({
     required super.name,
     required super.syncWrite,
     required super.returnType,
@@ -36,7 +37,7 @@ class CachedGetter extends CachedFunction {
       withNullability: true,
     );
 
-    return CachedGetter._(
+    return CachedGetter<T>(
       name: element.name,
       syncWrite: syncWrite,
       limit: limit,
