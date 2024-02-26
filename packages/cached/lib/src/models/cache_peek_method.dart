@@ -73,11 +73,15 @@ class CachePeekMethod {
       );
     }
 
-    final cachedAnnotation = cachedAnnotationTypeChecker.firstAnnotationOf(targetMethod);
-    final hasLazyPersistenStorage = cachedAnnotation?.getField('lazyPersistentStorage')?.toBoolValue() ?? false;
+    final cachedAnnotation =
+        cachedAnnotationTypeChecker.firstAnnotationOf(targetMethod);
+    final hasLazyPersistenStorage =
+        cachedAnnotation?.getField('lazyPersistentStorage')?.toBoolValue() ??
+            false;
     if (hasLazyPersistenStorage) {
       throw InvalidGenerationSourceError(
-        "[ERROR] Method '$methodName' has 'lazyPersistentStorage' set to true. @CachePeek is unavailable for methods with 'lazyPersistentStorage'.",
+        "[ERROR] Method '$methodName' has 'lazyPersistentStorage' set to true."
+        "@CachePeek is unavailable for methods with 'lazyPersistentStorage'.",
         element: element,
       );
     }
@@ -87,7 +91,9 @@ class CachePeekMethod {
       TypeChecker.fromRuntime(IgnoreCache),
     ]);
 
-    final targetMethodParameters = targetMethod.parameters.where((p) => !ignoreTypeChecker.hasAnnotationOf(p)).toList();
+    final targetMethodParameters = targetMethod.parameters
+        .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
+        .toList();
 
     if (!ListEquality<ParameterElement>(
       EqualityBy(
@@ -98,7 +104,8 @@ class CachePeekMethod {
       element.parameters,
     )) {
       throw InvalidGenerationSourceError(
-        '[ERROR] Method "${targetMethod.name}" should have same parameters as "${element.name}", excluding ones marked with @ignore and @ignoreCache',
+        '[ERROR] Method "${targetMethod.name}" should have same parameters as '
+        '"${element.name}", excluding ones marked with @ignore and @ignoreCache',
         element: element,
       );
     }

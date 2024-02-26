@@ -1,7 +1,8 @@
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen_test/annotations.dart';
 
-@ShouldThrow('[ERROR] Parameter: candidate (of type String) should match type int.')
+@ShouldThrow(
+    '[ERROR] Parameter: candidate (of type String) should match type int.')
 @withCache
 abstract class ShouldCacheIncompatibleTypes {
   factory ShouldCacheIncompatibleTypes() = _ShouldCacheIncompatibleTypes;
@@ -17,7 +18,8 @@ bool _shouldCacheStringCandidate(String candidate) {
 }
 
 @ShouldThrow(
-    '[ERROR] Asynchronous and synchronous mismatch. Check return types of: cachedMethod and _shouldCacheAsyncAnnotated.')
+    '[ERROR] Asynchronous and synchronous mismatch. Check return types of: '
+    'cachedMethod and _shouldCacheAsyncAnnotated.')
 @withCache
 abstract class ShouldCacheAsyncAnnotated {
   factory ShouldCacheAsyncAnnotated() = _ShouldCacheAsyncAnnotated;
@@ -33,7 +35,8 @@ bool _shouldCacheAsyncAnnotated(int candidate) {
 }
 
 @ShouldThrow(
-    '[ERROR] Asynchronous and synchronous mismatch. Check return types of: cachedMethod and _shouldCacheAsyncCondition.')
+    '[ERROR] Asynchronous and synchronous mismatch. Check return types of: '
+    'cachedMethod and _shouldCacheAsyncCondition.')
 @withCache
 abstract class ShouldCacheAsyncCondition {
   factory ShouldCacheAsyncCondition() = _ShouldCacheAsyncCondition;
@@ -48,7 +51,8 @@ Future<bool> _shouldCacheAsyncCondition(int candidate) {
   return true;
 }
 
-@ShouldThrow('[ERROR] `_shouldCacheReturnsVoid` must be a bool or Future<bool> method')
+@ShouldThrow(
+    '[ERROR] `_shouldCacheReturnsVoid` must be a bool or Future<bool> method')
 @withCache
 abstract class ShouldCacheReturnsVoid {
   factory ShouldCacheReturnsVoid() = _ShouldCacheReturnsVoid;

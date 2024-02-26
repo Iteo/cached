@@ -20,7 +20,8 @@ void main() {
         PersistentStorageHolder.storage = TestStorage();
       });
 
-      test("returns other data then the existing one in storage, when storage's cached value (on init) is null",
+      test(
+          "returns other data then the existing one in storage, when storage's cached value (on init) is null",
           () async {
         PersistentStorageHolder.storage = TestStorageWithData(
           {
@@ -43,7 +44,9 @@ void main() {
         expect(result, isNot(null));
       });
 
-      test('returns the data from itself, when its cached value (on init) is correct', () async {
+      test(
+          'returns the data from itself, when its cached value (on init) is correct',
+          () async {
         const testValue = 1;
         PersistentStorageHolder.storage = TestStorageWithData(
           {
@@ -66,7 +69,9 @@ void main() {
         expect(result, equals(testValue));
       });
 
-      test('returns the data from itself, when its cached list value (on init) is correct', () async {
+      test(
+          'returns the data from itself, when its cached list value (on init) is correct',
+          () async {
         const testValue = [1, 2, 3, 4, 5];
         PersistentStorageHolder.storage = TestStorageWithData(
           {

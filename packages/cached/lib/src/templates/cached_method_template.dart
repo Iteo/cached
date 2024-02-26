@@ -40,7 +40,8 @@ abstract class CachedMethodTemplate {
   String get _toReturnVariable => 'toReturn';
 
   bool get _shouldUsePersistentStorage => function.persistentStorage ?? false;
-  bool get _shouldUseLazyPersistentStorage => function.lazyPersistentStorage ?? false;
+  bool get _shouldUseLazyPersistentStorage =>
+      function.lazyPersistentStorage ?? false;
 
   bool get _hasTtl => function.ttl != null;
 
@@ -127,7 +128,7 @@ abstract class CachedMethodTemplate {
   String generateCacheMap() {
     final staticModifier = _getStaticModifier();
 
-    if (function.lazyPersistentStorage ?? false) {
+    if (_shouldUseLazyPersistentStorage) {
       return '';
     }
 

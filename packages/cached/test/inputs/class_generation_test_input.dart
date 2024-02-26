@@ -13,7 +13,8 @@ abstract class NotFactoryConstructor {
 }
 
 @ShouldThrow(
-  '[ERROR] To many constructors in MultipleConstructors class. Class can have only one constructor',
+  '[ERROR] To many constructors in MultipleConstructors class. Class can have '
+  'only one constructor',
 )
 @withCache
 abstract class MultipleConstructors {

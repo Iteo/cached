@@ -497,7 +497,8 @@ class _DeleteCachedLazyPersistentStorage
 )
 @withCache
 abstract class DeleteCachedLazyPersistentStorage {
-  factory DeleteCachedLazyPersistentStorage() = _DeleteCachedLazyPersistentStorage;
+  factory DeleteCachedLazyPersistentStorage() =
+      _DeleteCachedLazyPersistentStorage;
 
   @Cached(lazyPersistentStorage: true)
   Future<int> cachedMethod() async {
@@ -609,7 +610,8 @@ class _DeleteAllCachedPersistentStorage
 )
 @withCache
 abstract class DeleteAllCachedPersistentStorage {
-  factory DeleteAllCachedPersistentStorage() = _DeleteAllCachedPersistentStorage;
+  factory DeleteAllCachedPersistentStorage() =
+      _DeleteAllCachedPersistentStorage;
 
   @Cached(lazyPersistentStorage: true)
   Future<int> cachedMethod() async {
