@@ -15,7 +15,8 @@ abstract class PersistentCached implements _$PersistentCached {
   Future<int> anotherPersistentCachedValue() => dataProvider.fetchRandomValue();
 
   @Cached(persistentStorage: true)
-  Future<List<int>> persistentCachedList() async => List.filled(5, dataProvider.getRandomValue());
+  Future<List<int>> persistentCachedList() async =>
+      List.filled(5, dataProvider.getRandomValue());
 
   @CachePeek('persistentCachedValue')
   int? peekCachedValue();

@@ -964,7 +964,8 @@ class _LazyPersistentStoargeRepository
 ''',
 )
 @WithCache()
-abstract class LazyPersistentStoargeRepository implements _$LazyPersistentStoargeRepository {
+abstract class LazyPersistentStoargeRepository
+    implements _$LazyPersistentStoargeRepository {
   factory LazyPersistentStoargeRepository() = _LazyPersistentStoargeRepository;
 
   @Cached(lazyPersistentStorage: true)
