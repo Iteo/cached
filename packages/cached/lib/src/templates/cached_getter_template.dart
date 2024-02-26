@@ -1,4 +1,4 @@
-import 'package:cached/src/models/cached_getter.dart';
+import 'package:cached/src/models/getters/cached_getter.dart';
 import 'package:cached/src/templates/cached_method_template.dart';
 
 class CachedGetterTemplate extends CachedMethodTemplate {

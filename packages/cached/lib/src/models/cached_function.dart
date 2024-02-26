@@ -35,12 +35,14 @@ abstract class CachedFunction {
     assertMethodIsNotAbstract(element);
   }
 
-  static DartObject? getAnnotation(ExecutableElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(Cached);
+  static DartObject? getAnnotation<T extends Cached>(
+    ExecutableElement element,
+  ) {
+    final methodAnnotationChecker = TypeChecker.fromRuntime(T);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 
-  static bool hasCachedAnnotation(ExecutableElement element) {
-    return getAnnotation(element) != null;
+  static bool hasCachedAnnotation<T extends Cached>(ExecutableElement element) {
+    return getAnnotation<T>(element) != null;
   }
 }

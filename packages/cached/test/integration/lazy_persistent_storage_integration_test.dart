@@ -29,7 +29,7 @@ void main() {
             '_lazyPersistentCachedListCached': {},
           },
         );
-        final cachedClass = LazyPersistentCached(dataProvider);
+        final cachedClass = LazyPersistentCachedStorage(dataProvider);
 
         final firstResult = await cachedClass.lazyPersistentCachedValue();
         final secondResult = await cachedClass.lazyPersistentCachedValue();
@@ -46,7 +46,7 @@ void main() {
             '_lazyPersistentCachedListCached': {},
           },
         );
-        final cachedClass = LazyPersistentCached(dataProvider);
+        final cachedClass = LazyPersistentCachedStorage(dataProvider);
 
         final firstResult = await cachedClass.lazyPersistentCachedValue();
         final secondResult = await cachedClass.lazyPersistentCachedValue();

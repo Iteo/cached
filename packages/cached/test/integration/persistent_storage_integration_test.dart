@@ -36,7 +36,7 @@ void main() {
             },
           },
         );
-        final cachedClass = PersistentCached(dataProvider);
+        final cachedClass = PersistentCachedStorage(dataProvider);
 
         final result = await cachedClass.persistentCachedValue();
 
@@ -61,7 +61,7 @@ void main() {
             },
           },
         );
-        final cachedClass = PersistentCached(dataProvider);
+        final cachedClass = PersistentCachedStorage(dataProvider);
 
         await cachedClass.anotherPersistentCachedValue();
         final result = cachedClass.peekCachedValue();
@@ -86,7 +86,7 @@ void main() {
             },
           },
         );
-        final cachedClass = PersistentCached(dataProvider);
+        final cachedClass = PersistentCachedStorage(dataProvider);
 
         await cachedClass.anotherPersistentCachedValue();
         final result = await cachedClass.persistentCachedList();
@@ -111,7 +111,7 @@ void main() {
             },
           },
         );
-        final cachedClass = PersistentCached(dataProvider);
+        final cachedClass = PersistentCachedStorage(dataProvider);
 
         await cachedClass.anotherPersistentCachedValue();
         final result = await cachedClass.persistentCachedList();
@@ -137,7 +137,7 @@ void main() {
             },
           },
         );
-        final cachedClass = PersistentCached(dataProvider);
+        final cachedClass = PersistentCachedStorage(dataProvider);
 
         final result = await cachedClass.persistentCachedValue();
 

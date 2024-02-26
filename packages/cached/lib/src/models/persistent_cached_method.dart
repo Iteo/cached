@@ -2,15 +2,16 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/models/cached_function_local_config.dart';
+import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/param.dart';
 import 'package:cached/src/utils/asserts.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 
 const _defaultSyncWriteValue = false;
 
-class CachedMethod<T extends Cached> extends CachedFunction {
-  CachedMethod({
-    required this.params,
+class PersistentCachedMethod extends CachedMethod<PersistentCached> {
+  PersistentCachedMethod({
+    required super.params,
     required super.name,
     required super.syncWrite,
     required super.returnType,
@@ -19,27 +20,24 @@ class CachedMethod<T extends Cached> extends CachedFunction {
     required super.limit,
     required super.ttl,
     required super.checkIfShouldCacheMethod,
-    required super.persistentStorage,
-    required super.lazyPersistentStorage,
-  });
+  }) : super(
+          persistentStorage: true,
+          lazyPersistentStorage: false,
+        );
 
-  factory CachedMethod.fromElement(
+  factory PersistentCachedMethod.fromElement(
     MethodElement element,
     Config config,
   ) {
     CachedFunction.assertIsValid(element);
 
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
-    if (localConfig.persistentStorage || localConfig.lazyPersistentStorage) {
-      assertPersistentStorageShouldBeAsync(element);
-    }
+    assertPersistentStorageShouldBeAsync(element);
 
     final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
     final limit = localConfig.limit ?? config.limit;
     final ttl = localConfig.ttl ?? config.ttl;
-    final persistentStorage = localConfig.persistentStorage;
-    final lazyPersistentStorage = localConfig.lazyPersistentStorage;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
@@ -47,7 +45,7 @@ class CachedMethod<T extends Cached> extends CachedFunction {
       (e) => Param.fromElement(e, config),
     );
 
-    final method = CachedMethod<T>(
+    final method = PersistentCachedMethod(
       name: element.name,
       syncWrite: syncWrite,
       limit: limit,
@@ -55,8 +53,6 @@ class CachedMethod<T extends Cached> extends CachedFunction {
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
-      persistentStorage: persistentStorage,
-      lazyPersistentStorage: lazyPersistentStorage,
       returnType: returnType,
       params: params,
     );
@@ -65,6 +61,4 @@ class CachedMethod<T extends Cached> extends CachedFunction {
 
     return method;
   }
-
-  final Iterable<Param> params;
 }

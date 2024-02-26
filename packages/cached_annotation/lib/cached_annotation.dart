@@ -14,6 +14,8 @@ export 'src/clear_cached.dart';
 export 'src/deletes_cache.dart';
 export 'src/ignore.dart';
 export 'src/ignore_cache.dart';
+export 'src/lazy_persistent_cached.dart';
+export 'src/persistent_cached.dart';
 export 'src/persistent_storage/cached_storage.dart';
 export 'src/persistent_storage/not_implemented_storage.dart';
 export 'src/persistent_storage/persistent_storage_holder.dart';
