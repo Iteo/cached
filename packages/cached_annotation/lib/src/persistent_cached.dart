@@ -52,5 +52,6 @@ class PersistentCached extends Cached {
     super.limit,
     super.ttl,
     super.syncWrite,
+    super.where,
   });
 }

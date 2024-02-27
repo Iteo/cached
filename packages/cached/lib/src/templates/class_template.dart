@@ -226,8 +226,10 @@ class ClassTemplate {
       (m) => m.targetMethodName == method.name,
     );
 
-    final isLazyPersisted =
-        _isPersistentStorage(method, _hasLazyPersistentStorage);
+    final isLazyPersisted = _isPersistentStorage(
+      method,
+      _hasLazyPersistentStorage,
+    );
     final isPersisted = _isPersistentStorage(method, _hasPersistentStorage);
 
     return ClearCachedMethodTemplate(
