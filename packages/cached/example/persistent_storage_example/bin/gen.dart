@@ -33,7 +33,7 @@ abstract mixin class Gen implements _$Gen {
 
   /// For the sake of readability, we will pass only a [persistentStorage]
   /// here, but you can use any params combination
-  @Cached(persistentStorage: true)
+  @PersistentCached()
   Future<List<Todo>> getTodos() async {
     final uri = Uri.parse(_url);
     final response = await http.get(uri);
@@ -44,7 +44,7 @@ abstract mixin class Gen implements _$Gen {
 
   /// We will pass only a [lazyPersistentStorage]
   /// here becouse you can not use any params combination
-  @Cached(lazyPersistentStorage: true)
+  @LazyPersistentCached()
   Future<List<Todo>> getLazyTodos() async {
     final uri = Uri.parse(_url);
     final response = await http.get(uri);
