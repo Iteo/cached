@@ -47,7 +47,7 @@ class Cached {
     this.where,
     @Deprecated(
       'This feature is deprecated and will be removed in the next release. '
-      'Use `@PersistedCached` annotation instead of @Cached.',
+      'Use `@PersistentCached` annotation instead of @Cached.',
     )
     this.persistentStorage,
   });
@@ -90,7 +90,7 @@ class Cached {
   /// Cached library's annotations has to be async
   @Deprecated(
     'This feature is deprecated and will be removed in the next release. '
-    'Use `@PersistedCached` annotation instead of @Cached.',
+    'Use `@PersistentCached` annotation instead of @Cached.',
   )
   final bool? persistentStorage;
 }

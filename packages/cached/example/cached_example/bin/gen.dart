@@ -97,11 +97,11 @@ abstract mixin class Gen implements _$Gen {
   }
 
   /// Method for getting stream of cache updates
-  @StreamedCache(methodName: "getDataWithCached")
+  @StreamedCache(methodName: 'getDataWithCached')
   Stream<Response> getDataCacheStream();
 
   /// Method for getting data of cache method
-  @CachePeek("getDataWithCached")
+  @CachePeek('getDataWithCached')
   Response? peekDataCache();
 
   /// Method annotated with this annotation can be used to clear result
@@ -120,7 +120,7 @@ abstract mixin class Gen implements _$Gen {
   /// IMPORTANT!
   /// Method names passed in annotation must correspond to
   /// valid cached method names
-  @DeletesCache(["getDataWithCached"])
+  @DeletesCache(['getDataWithCached'])
   Future<int> deletesCache() async {
     return 1;
   }

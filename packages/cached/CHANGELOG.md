@@ -1,5 +1,13 @@
+## 1.7.0
+* Fix not working peristent storage with the getters
+* Add `@LazyPersistentCached()` annotation
+* Add `@PersistentCached()` annotation
+* Add `@PersistentCached(initOnCall: )` parameter - initialize cache from external storage only after the first method call
+* Mark `@Cached(persistentStorage: )` as @Deprecated
+* Update documentation
+
 ## 1.6.4
-- Fix the `PersistentStorageHolder` which wasn't checking if stored value type matches the method return type (see [#105](https://github.com/Iteo/cached/issues/105))
+* Fix the `PersistentStorageHolder` which wasn't checking if stored value type matches the method return type (see [#105](https://github.com/Iteo/cached/issues/105))
 
 ## 1.6.3
 * Update SDK version `>=2.17.0 <4.0.0`

@@ -69,6 +69,8 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [CachePeek](#cachepeek)
   - [DeletesCache](#deletescache)
 - [Persistent storage](#persistent-storage)
+  - [Init cache on method call](#init-cache-on-method-call)
+- [Lazy persistent storage](#lazy-persistent-storage)
 - [Contribution](#contribution)
   - [feature request](#feature-request)
   - [Fix](#fix)
@@ -225,6 +227,11 @@ There are 4 possible additional parameters:
 - `limit` - limit how many results for different method call arguments combination will be cached. Default value null,
   means no limit.
 - `where` - function triggered before caching the value. If returns `true`: value will be cached, if returns `false`: value wil be ignored. Useful to signal that a certain result must not be cached, but `@IgnoreCache` is not enough (e.g. condition whether or not to cache known once acquiring data)
+
+> **Important:** 
+> 
+> Please note, that `persistentStorage` is marked as `@Deprecated` and will be removed with next release. We encourage the use of `@PersistentCached` annotation
+
 - `persistentStorage` - Defines optional usage of external persistent storage (e.g. shared preferences). If set to `true` in order to work, you have to set `PersistentStorageHolder.storage` in your main.dart file. Check the [Persistent storage section](#persistent-storage) of this README for more information.
 
 #### Example
@@ -544,9 +551,18 @@ Throws an [InvalidGenerationSourceError]
 - if annotated method is abstract
 
 ## Persistent storage
-Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by passing right parameter into `@Cached()` annotation:
+Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by using `@PersistentCached()` annotation:
 
-`persistentStorage: true`
+> Actual version
+
+```dart
+  @PersistentCached()
+  Future<double> getDouble() async {
+    return await _source.nextDouble() ;
+  }
+```
+
+> @Deprecated version
 
 ```dart
   @Cached(persistentStorage: true)
@@ -555,16 +571,27 @@ Cached library supports usage of any external storage (e.g. Shared Preferences, 
   }
 ```
 
-`lazyPersistentStorage: true`
+### Init cache on method call
+Additional parameter `initOnCall` available only for `@PersistentCached` is for initialize cache from external storage only after method call.
+This solution makes it possible to bypass a heavy initial load for large amounts of data.
 
 ```dart
-  @Cached(lazyPersistentStorage: true)
-  Future<double> getLazyDouble() async {
+  @PersistentCached(initOnCall: true)
+  Future<double> getDouble() async {
     return await _source.nextDouble() ;
   }
 ```
 
-When the `lazyPersistentStorage` parameter is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods annotated with this parameter, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
+## Lazy persistent storage
+
+When the `@LazyPersistedCached` annotation is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods with this annotation, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
+
+```dart
+  @LazyPersistedCached()
+  Future<double> getLazyDouble() async {
+    return await _source.nextDouble() ;
+  }
+```
 
 You only have to provide a proper interface by extending `CachedStorage` abstraction, e.g.:
 
