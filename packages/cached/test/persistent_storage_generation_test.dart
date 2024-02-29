@@ -20,6 +20,8 @@ Future<void> main() async {
     'NonStaticNestedGenericType',
     'StaticNestedGenericType',
     'LazyPersistentStoargeRepository',
+    'InitOnCallPersistentStorage',
+    'AllParamsPersistentStorage',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

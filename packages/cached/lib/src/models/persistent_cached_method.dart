@@ -20,6 +20,7 @@ class PersistentCachedMethod extends CachedMethod<PersistentCached> {
     required super.limit,
     required super.ttl,
     required super.checkIfShouldCacheMethod,
+    required super.initOnCall,
   }) : super(
           persistentStorage: true,
           lazyPersistentStorage: false,
@@ -55,6 +56,7 @@ class PersistentCachedMethod extends CachedMethod<PersistentCached> {
       isGenerator: element.isGenerator,
       returnType: returnType,
       params: params,
+      initOnCall: localConfig.initOnCall ?? false,
     );
 
     assertOneIgnoreCacheParam(method);

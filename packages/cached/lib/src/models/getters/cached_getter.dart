@@ -18,6 +18,7 @@ class CachedGetter<T extends Cached> extends CachedFunction {
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
     required super.lazyPersistentStorage,
+    required super.initOnCall,
   });
 
   factory CachedGetter.fromElement(
@@ -48,6 +49,7 @@ class CachedGetter<T extends Cached> extends CachedFunction {
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
       lazyPersistentStorage: lazyPersistentStorage,
+      initOnCall: localConfig.initOnCall ?? false,
     );
   }
 }

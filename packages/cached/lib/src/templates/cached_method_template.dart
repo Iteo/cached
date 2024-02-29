@@ -39,6 +39,8 @@ abstract class CachedMethodTemplate {
 
   String get _toReturnVariable => 'toReturn';
 
+  bool get _initOnCall => function.initOnCall ?? false;
+
   bool get _shouldUsePersistentStorage => function.persistentStorage ?? false;
   bool get _shouldUseLazyPersistentStorage =>
       function.lazyPersistentStorage ?? false;
@@ -64,11 +66,12 @@ abstract class CachedMethodTemplate {
     return '''
        @override
        ${function.returnType} $generatedDefinition $syncGeneratorModifier$asyncModifier$generatorModifier {
+          ${_generateInitOnCallCache()}
           ${_generateStorageAwait()}
                  
           ${_generateRemoveTtlLogic()}
           
-          final cachedValue = ${_shouldUseLazyPersistentStorage ? "$readCodeText('$_cacheMapName')" : '$_cacheMapName["$paramsKey"]'};
+          final cachedValue = ${_test()};
           if (${_generateConditionForCache()} ${generateAdditionalCacheCondition()}) {
              ${_generateGetSyncedLogic()}
    
@@ -132,8 +135,12 @@ abstract class CachedMethodTemplate {
       return '';
     }
 
-    if (function.persistentStorage ?? false) {
+    if (_shouldUsePersistentStorage && !_initOnCall) {
       return '$staticModifier late final Map<String, dynamic> $_cacheMapName;';
+    }
+
+    if (_shouldUsePersistentStorage && _initOnCall) {
+      return '$staticModifier Map<String, dynamic>? $_cacheMapName = null;';
     }
 
     return '$staticModifier final $_cacheMapName = <String, $_syncReturnType>{};';
@@ -146,7 +153,7 @@ abstract class CachedMethodTemplate {
       return '';
     }
 
-    if (function.persistentStorage ?? false) {
+    if (_shouldUsePersistentStorage) {
       return '$staticModifier late final $_ttlMapName;';
     }
 
@@ -168,6 +175,14 @@ abstract class CachedMethodTemplate {
     }
 
     return buffer.toString();
+  }
+
+  String _getCacheInitOnCall() {
+    return '''
+      if($_cacheMapName == null) {
+        ${_getCacheInit()}
+        }
+    ''';
   }
 
   String _getCacheInit() {
@@ -233,6 +248,22 @@ abstract class CachedMethodTemplate {
    ''';
   }
 
+  String _generateInitOnCallCache() {
+    if (_shouldUsePersistentStorage && _initOnCall) {
+      return _getCacheInitOnCall();
+    }
+
+    return '';
+  }
+
+  String _generateStorageAwait() {
+    if (_shouldUsePersistentStorage && function.initOnCall == false) {
+      return CommonGenerator.awaitCompleterFutureText;
+    }
+
+    return '';
+  }
+
   String _generateRemoveTtlLogic() {
     if (!_hasTtl) return '';
 
@@ -248,6 +279,16 @@ abstract class CachedMethodTemplate {
     ''';
   }
 
+  String _test() {
+    if (_shouldUseLazyPersistentStorage) {
+      return "$readCodeText('$_cacheMapName')";
+    } else if (_initOnCall) {
+      return '$_cacheMapName!["$paramsKey"]';
+    }
+
+    return '$_cacheMapName["$paramsKey"]';
+  }
+
   String _generateAddTtlLogic() {
     if (!_hasTtl) return '';
 
@@ -258,10 +299,12 @@ abstract class CachedMethodTemplate {
   }
 
   String _generateCacheWrite() {
-    if (_shouldUsePersistentStorage) {
+    if (_shouldUsePersistentStorage && !_initOnCall) {
       return "$writeCodeText('$_cacheMapName', $_cacheMapName);";
     } else if (_shouldUseLazyPersistentStorage) {
       return "$writeCodeText('$_cacheMapName', {'': toReturn});";
+    } else if (_shouldUseLazyPersistentStorage && _initOnCall) {
+      return "$writeCodeText('$_cacheMapName', $_cacheMapName!);";
     }
 
     return '';
@@ -290,6 +333,9 @@ abstract class CachedMethodTemplate {
       return '';
     }
 
+    if (_initOnCall) {
+      return '$_cacheMapName!["$paramsKey"] = $_toReturnVariable;';
+    }
     return '$_cacheMapName["$paramsKey"] = $_toReturnVariable;';
   }
 
@@ -321,13 +367,5 @@ abstract class CachedMethodTemplate {
          $_returnKeyword $_toReturnVariable;
       }
     ''';
-  }
-
-  String _generateStorageAwait() {
-    if (_shouldUsePersistentStorage) {
-      return CommonGenerator.awaitCompleterFutureText;
-    }
-
-    return '';
   }
 }

@@ -40,7 +40,17 @@ const cached = Cached();
 @Target({TargetKind.method, TargetKind.getter})
 class Cached {
   /// {@macro cached.cached}
-  const Cached({this.limit, this.syncWrite, this.ttl, this.where});
+  const Cached({
+    this.limit,
+    this.syncWrite,
+    this.ttl,
+    this.where,
+    @Deprecated(
+      'This feature is deprecated and will be removed in the next release. '
+      'Use `@PersistedCached` annotation instead of @Cached.',
+    )
+    this.persistentStorage,
+  });
 
   /// limit how many results for different method call
   /// arguments combination will be cached.
@@ -68,4 +78,19 @@ class Cached {
   /// but @IgnoreCache is not enough
   /// (e.g. condition whether or not to cache known once acquiring data)
   final Function? where;
+
+  /// Defines optional usage of external persistent storage (e.g. shared
+  /// preferences)
+  ///
+  /// If set to `true` in order to work, you have to set
+  /// `PersistentStorageHolder.storage` in your main.dart file
+  ///
+  /// Important:
+  /// If you want to utilize persistent storage, all methods which use
+  /// Cached library's annotations has to be async
+  @Deprecated(
+    'This feature is deprecated and will be removed in the next release. '
+    'Use `@PersistedCached` annotation instead of @Cached.',
+  )
+  final bool? persistentStorage;
 }

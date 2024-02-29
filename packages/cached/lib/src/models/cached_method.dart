@@ -21,6 +21,7 @@ class CachedMethod<T extends Cached> extends CachedFunction {
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
     required super.lazyPersistentStorage,
+    required super.initOnCall,
   });
 
   factory CachedMethod.fromElement(
@@ -59,6 +60,7 @@ class CachedMethod<T extends Cached> extends CachedFunction {
       lazyPersistentStorage: lazyPersistentStorage,
       returnType: returnType,
       params: params,
+      initOnCall: localConfig.initOnCall ?? false,
     );
 
     assertOneIgnoreCacheParam(method);

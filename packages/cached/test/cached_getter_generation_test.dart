@@ -17,6 +17,9 @@ Future<void> main() async {
     'CachedWithTtl',
     'AsyncSyncWrite',
     'SyncSyncWrite',
+    'PersistentCachedGetter',
+    'LazyPersistentCachedGetter',
+    'InitOnCallPersistentCachedGetter',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

@@ -408,20 +408,3 @@ abstract class StaticCache {
   @CachePeek("cachedMethod")
   int? cachedPeek(int x);
 }
-
-@ShouldThrow(
-    "[ERROR] Method 'cachedMethod' has 'lazyPersistentStorage' set to true."
-    "@CachePeek is unavailable for methods with 'lazyPersistentStorage'.")
-@withCache
-abstract class NotWorksWithLazyPersistentStorage {
-  factory NotWorksWithLazyPersistentStorage() =
-      _NotWorksWithLazyPersistentStorage;
-
-  @Cached(lazyPersistentStorage: true)
-  int cachedMethod() {
-    return 1;
-  }
-
-  @CachePeek("cachedMethod")
-  int? cachedPeek();
-}

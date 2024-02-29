@@ -23,6 +23,7 @@ class LazyPersistentCachedMethod extends CachedMethod<LazyPersistentCached> {
           lazyPersistentStorage: true,
           limit: null,
           ttl: null,
+          initOnCall: false,
         );
 
   factory LazyPersistentCachedMethod.fromElement(
