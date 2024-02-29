@@ -111,14 +111,13 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "1.6.4"
+    version: "1.7.0"
   cached_annotation:
     dependency: "direct main"
     description:
-      name: cached_annotation
-      sha256: b8638a59a80d9413929829cd5051220d247fbd37b58abfa2bb08ed7f68111f09
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../../cached_annotation"
+      relative: true
+    source: path
     version: "1.6.0"
   checked_yaml:
     dependency: transitive
