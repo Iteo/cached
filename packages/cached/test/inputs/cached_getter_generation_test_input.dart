@@ -401,3 +401,173 @@ abstract class SyncSyncWrite {
     return 1;
   }
 }
+
+@ShouldGenerate(
+  r'''
+abstract class _$PersistentCachedGetter {}
+
+class _PersistentCachedGetter
+    with PersistentCachedGetter
+    implements _$PersistentCachedGetter {
+  _PersistentCachedGetter() {
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      final cachedMap = await PersistentStorageHolder.read('_cachedCached');
+
+      cachedMap.forEach((_, value) {
+        if (value is! int) throw TypeError();
+      });
+
+      _cachedCached = cachedMap;
+    } catch (e) {
+      _cachedCached = <String, dynamic>{};
+    }
+
+    _completer.complete();
+  }
+
+  final _completer = Completer<void>();
+  Future<void> get _completerFuture => _completer.future;
+
+  late final Map<String, dynamic> _cachedCached;
+
+  @override
+  Future<int> get cached async {
+    await _completerFuture;
+
+    final cachedValue = _cachedCached[""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cached;
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedCached[""] = toReturn;
+
+      await PersistentStorageHolder.write('_cachedCached', _cachedCached);
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class PersistentCachedGetter {
+  factory PersistentCachedGetter() = _PersistentCachedGetter;
+
+  @PersistentCached()
+  Future<int> get cached async {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$LazyPersistentCachedGetter {}
+
+class _LazyPersistentCachedGetter
+    with LazyPersistentCachedGetter
+    implements _$LazyPersistentCachedGetter {
+  _LazyPersistentCachedGetter();
+
+  @override
+  Future<int> get cached async {
+    final cachedValue = await PersistentStorageHolder.read('_cachedCached');
+    if (cachedValue.isEmpty && cachedValue[''] == null) {
+      final int toReturn;
+      try {
+        final result = super.cached;
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      await PersistentStorageHolder.write('_cachedCached', {'': toReturn});
+
+      return toReturn;
+    } else {
+      return cachedValue[''];
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class LazyPersistentCachedGetter {
+  factory LazyPersistentCachedGetter() = _LazyPersistentCachedGetter;
+
+  @LazyPersistentCached()
+  Future<int> get cached async {
+    return 1;
+  }
+}
+
+@ShouldGenerate(
+  r'''
+abstract class _$InitOnCallPersistentCachedGetter {}
+
+class _InitOnCallPersistentCachedGetter
+    with InitOnCallPersistentCachedGetter
+    implements _$InitOnCallPersistentCachedGetter {
+  _InitOnCallPersistentCachedGetter();
+
+  Map<String, dynamic>? _cachedCached = null;
+
+  @override
+  Future<int> get cached async {
+    if (_cachedCached == null) {
+      try {
+        final cachedMap = await PersistentStorageHolder.read('_cachedCached');
+
+        cachedMap.forEach((_, value) {
+          if (value is! int) throw TypeError();
+        });
+
+        _cachedCached = cachedMap;
+      } catch (e) {
+        _cachedCached = <String, dynamic>{};
+      }
+    }
+
+    final cachedValue = _cachedCached![""];
+    if (cachedValue == null) {
+      final int toReturn;
+      try {
+        final result = super.cached;
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      _cachedCached![""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''',
+)
+@withCache
+abstract class InitOnCallPersistentCachedGetter {
+  factory InitOnCallPersistentCachedGetter() =
+      _InitOnCallPersistentCachedGetter;
+
+  @PersistentCached(initOnCall: true)
+  Future<int> get cached async {
+    return 1;
+  }
+}

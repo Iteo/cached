@@ -20,6 +20,7 @@ class LazyPersistentCachedGetter extends CachedGetter<LazyPersistentCached> {
           lazyPersistentStorage: true,
           limit: null,
           ttl: null,
+          initOnCall: false,
         );
 
   factory LazyPersistentCachedGetter.fromElement(

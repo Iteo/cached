@@ -17,6 +17,7 @@ class PersistentCachedGetter extends CachedGetter<PersistentCached> {
     required super.limit,
     required super.ttl,
     required super.checkIfShouldCacheMethod,
+    required super.initOnCall,
   }) : super(
           persistentStorage: true,
           lazyPersistentStorage: false,
@@ -46,6 +47,7 @@ class PersistentCachedGetter extends CachedGetter<PersistentCached> {
       returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
+      initOnCall: localConfig.initOnCall ?? false,
     );
   }
 }
