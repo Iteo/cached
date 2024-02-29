@@ -21,7 +21,6 @@ Future<void> main() async {
     'ShouldBeAbstract',
     'CachePeekWithCacheKey',
     'StaticCache',
-    'NotWorksWithLazyPersistentStorage',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

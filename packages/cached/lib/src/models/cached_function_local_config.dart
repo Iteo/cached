@@ -22,12 +22,14 @@ class CachedFunctionLocalConfig {
     required this.limit,
     required this.ttl,
     required this.checkIfShouldCacheMethod,
+    required this.initOnCall,
   });
 
   bool persistentStorage;
   bool lazyPersistentStorage;
 
   bool? syncWrite;
+  bool? initOnCall;
   int? limit;
   int? ttl;
   CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
@@ -41,6 +43,7 @@ class CachedFunctionLocalConfig {
     bool persistentStorage = false;
     bool lazyPersistentStorage = false;
     bool? syncWrite;
+    bool? initOnCall;
     int? limit;
     int? ttl;
     CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
@@ -48,6 +51,11 @@ class CachedFunctionLocalConfig {
     final syncWriteField = reader.peek('syncWrite');
     if (syncWriteField != null) {
       syncWrite = syncWriteField.boolValue;
+    }
+
+    final initOnCallField = reader.peek('initOnCall');
+    if (initOnCallField != null) {
+      initOnCall = initOnCallField.boolValue;
     }
 
     final limitField = reader.peek('limit');
@@ -78,24 +86,6 @@ class CachedFunctionLocalConfig {
       lazyPersistentStorage = shouldUseLazyStorage.boolValue;
     }
 
-    final name = element.name;
-    if (persistentStorage && lazyPersistentStorage) {
-      final message =
-          "[ERROR] $name: Please choose either 'persistentStorage' or "
-          "'lazyPersistentStorage'. Only one at the time of these parameters "
-          'can be used for persistent storage configuration.';
-      throw InvalidGenerationSourceError(message);
-    }
-
-    if (lazyPersistentStorage &&
-        (ttl != null || syncWrite != null || limit != null)) {
-      final message =
-          "[ERROR] $name: Using 'lazyPersistentStorage' with 'ttl', 'syncWrite'"
-          " or 'limit' is not supported. Please remove them or set "
-          "'lazyPersistentStorage' to false.";
-      throw InvalidGenerationSourceError(message);
-    }
-
     return CachedFunctionLocalConfig._(
       ttl: ttl,
       limit: limit,
@@ -103,6 +93,7 @@ class CachedFunctionLocalConfig {
       checkIfShouldCacheMethod: checkIfShouldCacheMethod,
       persistentStorage: persistentStorage,
       lazyPersistentStorage: lazyPersistentStorage,
+      initOnCall: initOnCall,
     );
   }
 

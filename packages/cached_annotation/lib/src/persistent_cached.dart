@@ -36,7 +36,7 @@ const persistentCached = PersistentCached();
 /// or with parameters
 ///
 /// ```dart
-/// @PersistentCached(lazy: true)
+/// @PersistentCached(initOnCall: true)
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
@@ -53,5 +53,9 @@ class PersistentCached extends Cached {
     super.ttl,
     super.syncWrite,
     super.where,
+    this.initOnCall,
   });
+
+  /// if true, cache will be initialized on method call
+  final bool? initOnCall;
 }

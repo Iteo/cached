@@ -406,7 +406,7 @@ abstract class ClearAllCachedLazyPersistentStorage {
   factory ClearAllCachedLazyPersistentStorage() =
       _ClearAllCachedLazyPersistentStorage;
 
-  @Cached(lazyPersistentStorage: true)
+  @LazyPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
@@ -517,12 +517,12 @@ abstract class ClearAllCachedLazyPersistentStorageAndPersistentStorage {
   factory ClearAllCachedLazyPersistentStorageAndPersistentStorage() =
       _ClearAllCachedLazyPersistentStorageAndPersistentStorage;
 
-  @Cached(lazyPersistentStorage: true)
+  @LazyPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
 
-  @Cached(persistentStorage: true)
+  @PersistentCached()
   Future<int> cachedNotLazyMethod() async {
     return Future.value(1);
   }

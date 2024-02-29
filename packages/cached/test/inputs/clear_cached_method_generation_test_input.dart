@@ -517,7 +517,7 @@ abstract class ClearCachedLazyPersistentStorage {
   factory ClearCachedLazyPersistentStorage() =
       _ClearCachedLazyPersistentStorage;
 
-  @Cached(lazyPersistentStorage: true)
+  @LazyPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }

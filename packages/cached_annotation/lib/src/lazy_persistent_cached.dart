@@ -4,8 +4,8 @@ import 'package:meta/meta_meta.dart';
 /// const instance of [LazyPersistentCached]
 const lazyPersistentCached = LazyPersistentCached();
 
-/// {@template cached.cached}
-/// ### PersistentCached
+/// {@template cached.lazy_cached}
+/// ### LazyPersistentCached
 ///
 /// Annotation for `Cached` package.
 ///
@@ -24,19 +24,10 @@ const lazyPersistentCached = LazyPersistentCached();
 /// Cached library's annotations has to be async
 /// ### Example
 ///
-/// Use @persistentCached annotation
+/// Use @lazyPersistentCached annotation
 ///
 /// ```dart
-/// @persistentCached
-/// Future<SomeResponseType> getSthData() {
-///   return dataSource.getData();
-/// }
-/// ```
-///
-/// or with parameters
-///
-/// ```dart
-/// @PersistentCached(lazy: true)
+/// @LazyPersistentCached()
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
