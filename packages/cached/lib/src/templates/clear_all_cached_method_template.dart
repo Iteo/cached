@@ -1,6 +1,6 @@
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
-import 'package:cached/src/models/getters/cached_getter.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/utils/common_generator.dart';

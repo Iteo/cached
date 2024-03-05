@@ -1,9 +1,9 @@
 import 'package:cached/src/models/cache_peek_method.dart';
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/class_with_cache.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/deletes_cache_method.dart';
-import 'package:cached/src/models/getters/cached_getter.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/templates/all_params_template.dart';
 import 'package:cached/src/templates/cache_peek_method_template.dart';
@@ -21,9 +21,11 @@ class ClassTemplate {
   ClassTemplate(this.classWithCache);
 
   final ClassWithCache classWithCache;
+
   bool _isPersisted = false;
   bool _allPersistedHasInitOnCall = false;
   bool _isLazyPersisted = false;
+
   late Iterable<CachedMethodWithParamsTemplate> methodTemplates;
   late Iterable<CachedGetterTemplate> getterTemplates;
 
