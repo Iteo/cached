@@ -6,7 +6,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 
 const _defaultSyncWriteValue = false;
 
-class CachedGetter<T extends Cached> extends CachedFunction {
+class CachedGetter extends CachedFunction {
   CachedGetter({
     required super.name,
     required super.syncWrite,
@@ -27,29 +27,38 @@ class CachedGetter<T extends Cached> extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
+    var isLazy = false;
+    var isPersistent = false;
+
+    if (CachedFunction.hasCachedAnnotation<LazyPersistentCached>(element)) {
+      isLazy = true;
+    } else if (CachedFunction.hasCachedAnnotation<PersistentCached>(element)) {
+      isPersistent = true;
+    }
+
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
-    final persistentStorage = localConfig.persistentStorage;
-    final lazyPersistentStorage = localConfig.lazyPersistentStorage;
     final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
-    final limit = localConfig.limit ?? config.limit;
-    final ttl = localConfig.ttl ?? config.ttl;
+    final limit = isLazy ? null : localConfig.limit ?? config.limit;
+    final ttl = isLazy ? null : localConfig.ttl ?? config.ttl;
+    final persistentStorage = isPersistent || localConfig.persistentStorage;
+    final initOnCall = !isLazy && isPersistent && localConfig.initOnCall;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
 
-    return CachedGetter<T>(
+    return CachedGetter(
       name: element.name,
       syncWrite: syncWrite,
       limit: limit,
       ttl: ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      returnType: returnType,
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
-      lazyPersistentStorage: lazyPersistentStorage,
-      initOnCall: localConfig.initOnCall ?? false,
+      lazyPersistentStorage: isLazy,
+      returnType: returnType,
+      initOnCall: initOnCall,
     );
   }
 }

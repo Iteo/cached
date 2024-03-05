@@ -1,15 +1,15 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/config.dart';
 import 'package:cached/src/models/cache_peek_method.dart';
+import 'package:cached/src/models/cached_function.dart';
+import 'package:cached/src/models/cached_getter.dart';
 import 'package:cached/src/models/cached_method.dart';
 import 'package:cached/src/models/clear_all_cached_method.dart';
 import 'package:cached/src/models/clear_cached_method.dart';
 import 'package:cached/src/models/constructor.dart';
 import 'package:cached/src/models/deletes_cache_method.dart';
-import 'package:cached/src/models/getters/cached_getter.dart';
 import 'package:cached/src/models/streamed_cache_method.dart';
 import 'package:cached/src/utils/asserts.dart';
-import 'package:cached/src/utils/cached_functions_generator.dart';
 import 'package:cached/src/utils/utils.dart';
 import 'package:cached_annotation/cached_annotation.dart';
 import 'package:collection/collection.dart';
@@ -52,19 +52,18 @@ class ClassWithCache {
         .map((element) => Constructor.fromElement(element, config))
         .first;
 
-    final methods = CachedFunctionsGenerator.generateMethods(
-      element.methods,
-      config,
-    );
+    final methods = element.methods
+        .where(CachedFunction.hasCachedAnnotation<Cached>)
+        .map((e) => CachedMethod.fromElement(e, config));
 
     final methodsWithTtls = methods
         .where((method) => method.ttl != null)
         .map((method) => method.name);
 
-    final getters = CachedFunctionsGenerator.generateGetters(
-      element.accessors,
-      config,
-    );
+    final getters = element.accessors
+        .where((element) => element.isGetter)
+        .where(CachedFunction.hasCachedAnnotation<Cached>)
+        .map((e) => CachedGetter.fromElement(e, config));
 
     final gettersWithTtls = getters
         .where((getter) => getter.ttl != null)
