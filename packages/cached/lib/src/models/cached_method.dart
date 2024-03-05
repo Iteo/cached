@@ -8,7 +8,7 @@ import 'package:cached_annotation/cached_annotation.dart';
 
 const _defaultSyncWriteValue = false;
 
-class CachedMethod<T extends Cached> extends CachedFunction {
+class CachedMethod extends CachedFunction {
   CachedMethod({
     required this.params,
     required super.name,
@@ -30,17 +30,22 @@ class CachedMethod<T extends Cached> extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    final localConfig = CachedFunctionLocalConfig.fromElement(element);
-    if (localConfig.persistentStorage || localConfig.lazyPersistentStorage) {
-      assertPersistentStorageShouldBeAsync(element);
+    var isLazy = false;
+    var isPersistent = false;
+
+    if (CachedFunction.hasCachedAnnotation<LazyPersistentCached>(element)) {
+      isLazy = true;
+    } else if (CachedFunction.hasCachedAnnotation<PersistentCached>(element)) {
+      isPersistent = true;
     }
 
+    final localConfig = CachedFunctionLocalConfig.fromElement(element);
     final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
-    final limit = localConfig.limit ?? config.limit;
-    final ttl = localConfig.ttl ?? config.ttl;
-    final persistentStorage = localConfig.persistentStorage;
-    final lazyPersistentStorage = localConfig.lazyPersistentStorage;
+    final limit = isLazy ? null : localConfig.limit ?? config.limit;
+    final ttl = isLazy ? null : localConfig.ttl ?? config.ttl;
+    final persistentStorage = isPersistent || localConfig.persistentStorage;
+    final initOnCall = !isLazy && isPersistent && localConfig.initOnCall;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
@@ -48,7 +53,7 @@ class CachedMethod<T extends Cached> extends CachedFunction {
       (e) => Param.fromElement(e, config),
     );
 
-    final method = CachedMethod<T>(
+    final method = CachedMethod(
       name: element.name,
       syncWrite: syncWrite,
       limit: limit,
@@ -57,10 +62,10 @@ class CachedMethod<T extends Cached> extends CachedFunction {
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
-      lazyPersistentStorage: lazyPersistentStorage,
-      returnType: returnType,
+      lazyPersistentStorage: isLazy,
       params: params,
-      initOnCall: localConfig.initOnCall ?? false,
+      initOnCall: initOnCall,
+      returnType: returnType,
     );
 
     assertOneIgnoreCacheParam(method);
