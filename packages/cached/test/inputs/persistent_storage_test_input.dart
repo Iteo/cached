@@ -983,12 +983,12 @@ abstract class DirectPersistentStoargeRepository
 
 @ShouldGenerate(
   r'''
-abstract class _$InitOnCallPersistentStorage {}
+abstract class _$LazyPersistentStorage {}
 
-class _InitOnCallPersistentStorage
-    with InitOnCallPersistentStorage
-    implements _$InitOnCallPersistentStorage {
-  _InitOnCallPersistentStorage();
+class _LazyPersistentStorage
+    with LazyPersistentStorage
+    implements _$LazyPersistentStorage {
+  _LazyPersistentStorage();
 
   Map<String, dynamic>? _methodCached = null;
 
@@ -1030,10 +1030,10 @@ class _InitOnCallPersistentStorage
 ''',
 )
 @withCache
-abstract class InitOnCallPersistentStorage {
-  factory InitOnCallPersistentStorage() = _InitOnCallPersistentStorage;
+abstract class LazyPersistentStorage {
+  factory LazyPersistentStorage() = _LazyPersistentStorage;
 
-  @PersistentCached(initOnCall: true)
+  @LazyPersistentCached()
   Future<int> method() async {
     return Future.value(1);
   }

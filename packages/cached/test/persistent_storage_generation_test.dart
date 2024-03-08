@@ -20,7 +20,7 @@ Future<void> main() async {
     'NonStaticNestedGenericType',
     'StaticNestedGenericType',
     'DirectPersistentStoargeRepository',
-    'InitOnCallPersistentStorage',
+    'LazyPersistentStorage',
     'AllParamsPersistentStorage',
   };
 

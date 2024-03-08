@@ -1,8 +1,7 @@
 ## 1.7.0
 * Fix not working peristent storage with the getters
-* Add `@DirectPersistentCached()` annotation
-* Add `@PersistentCached()` annotation
-* Add `@PersistentCached(initOnCall: )` parameter - initialize cache from external storage only after the first method call
+* Add `@DirectPersistentCached()` annotation - avoid store 
+* Add `@LazyPersistentCached()` annotation - initialize cache from external storage only after the first method call
 * Mark `@Cached(persistentStorage: )` as @Deprecated
 * Update documentation
 
