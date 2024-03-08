@@ -18,7 +18,7 @@ class CachedFunctionLocalConfig {
 
   CachedFunctionLocalConfig._({
     required this.persistentStorage,
-    required this.lazyPersistentStorage,
+    required this.directPersistentStorage,
     required this.syncWrite,
     required this.limit,
     required this.ttl,
@@ -27,7 +27,7 @@ class CachedFunctionLocalConfig {
   });
 
   bool persistentStorage;
-  bool lazyPersistentStorage;
+  bool directPersistentStorage;
   bool initOnCall;
 
   bool? syncWrite;
@@ -42,7 +42,7 @@ class CachedFunctionLocalConfig {
     final reader = ConstantReader(cachedAnnotation);
 
     bool persistentStorage = false;
-    bool lazyPersistentStorage = false;
+    bool directPersistentStorage = false;
     bool? syncWrite;
     bool? initOnCall;
     int? limit;
@@ -82,12 +82,12 @@ class CachedFunctionLocalConfig {
       persistentStorage = shouldUseStorage.boolValue;
     }
 
-    final shouldUseLazyStorage = reader.peek('lazyPersistentStorage');
-    if (shouldUseLazyStorage != null && shouldUseLazyStorage.isBool) {
-      lazyPersistentStorage = shouldUseLazyStorage.boolValue;
+    final shouldUseDirectStorage = reader.peek('directPersistentStorage');
+    if (shouldUseDirectStorage != null && shouldUseDirectStorage.isBool) {
+      directPersistentStorage = shouldUseDirectStorage.boolValue;
     }
 
-    if (persistentStorage || lazyPersistentStorage) {
+    if (persistentStorage || directPersistentStorage) {
       assertPersistentStorageShouldBeAsync(element);
     }
 
@@ -97,7 +97,7 @@ class CachedFunctionLocalConfig {
       syncWrite: syncWrite,
       checkIfShouldCacheMethod: checkIfShouldCacheMethod,
       persistentStorage: persistentStorage,
-      lazyPersistentStorage: lazyPersistentStorage,
+      directPersistentStorage: directPersistentStorage,
       initOnCall: initOnCall ?? false,
     );
   }

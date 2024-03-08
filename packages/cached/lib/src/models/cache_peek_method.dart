@@ -75,13 +75,13 @@ class CachePeekMethod {
 
     final cachedAnnotation =
         cachedAnnotationTypeChecker.firstAnnotationOf(targetMethod);
-    final hasLazyPersistenStorage =
-        cachedAnnotation?.getField('lazyPersistentStorage')?.toBoolValue() ??
+    final hasDirectPersistenStorage =
+        cachedAnnotation?.getField('directPersistentStorage')?.toBoolValue() ??
             false;
-    if (hasLazyPersistenStorage) {
+    if (hasDirectPersistenStorage) {
       throw InvalidGenerationSourceError(
-        "[ERROR] Method '$methodName' has 'lazyPersistentStorage' set to true."
-        "@CachePeek is unavailable for methods with 'lazyPersistentStorage'.",
+        "[ERROR] Method '$methodName' has 'directPersistentStorage' set to true."
+        "@CachePeek is unavailable for methods with 'directPersistentStorage'.",
         element: element,
       );
     }

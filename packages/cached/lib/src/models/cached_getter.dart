@@ -17,7 +17,7 @@ class CachedGetter extends CachedFunction {
     required super.ttl,
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
-    required super.lazyPersistentStorage,
+    required super.directPersistentStorage,
     required super.initOnCall,
   });
 
@@ -27,11 +27,11 @@ class CachedGetter extends CachedFunction {
   ) {
     CachedFunction.assertIsValid(element);
 
-    var isLazy = false;
+    var isDirect = false;
     var isPersistent = false;
 
-    if (CachedFunction.hasCachedAnnotation<LazyPersistentCached>(element)) {
-      isLazy = true;
+    if (CachedFunction.hasCachedAnnotation<DirectPersistentCached>(element)) {
+      isDirect = true;
     } else if (CachedFunction.hasCachedAnnotation<PersistentCached>(element)) {
       isPersistent = true;
     }
@@ -39,10 +39,10 @@ class CachedGetter extends CachedFunction {
     final localConfig = CachedFunctionLocalConfig.fromElement(element);
     final unsafeSyncWrite = localConfig.syncWrite ?? config.syncWrite;
     final syncWrite = unsafeSyncWrite ?? _defaultSyncWriteValue;
-    final limit = isLazy ? null : localConfig.limit ?? config.limit;
-    final ttl = isLazy ? null : localConfig.ttl ?? config.ttl;
+    final limit = isDirect ? null : localConfig.limit ?? config.limit;
+    final ttl = isDirect ? null : localConfig.ttl ?? config.ttl;
     final persistentStorage = isPersistent || localConfig.persistentStorage;
-    final initOnCall = !isLazy && isPersistent && localConfig.initOnCall;
+    final initOnCall = !isDirect && isPersistent && localConfig.initOnCall;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
@@ -56,7 +56,7 @@ class CachedGetter extends CachedFunction {
       isAsync: element.isAsynchronous,
       isGenerator: element.isGenerator,
       persistentStorage: persistentStorage,
-      lazyPersistentStorage: isLazy,
+      directPersistentStorage: isDirect,
       returnType: returnType,
       initOnCall: initOnCall,
     );

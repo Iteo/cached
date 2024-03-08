@@ -452,12 +452,12 @@ abstract class ValidSync {
 
 @ShouldGenerate(
   r'''
-abstract class _$DeleteCachedLazyPersistentStorage {}
+abstract class _$DeleteCachedDirectPersistentStorage {}
 
-class _DeleteCachedLazyPersistentStorage
-    with DeleteCachedLazyPersistentStorage
-    implements _$DeleteCachedLazyPersistentStorage {
-  _DeleteCachedLazyPersistentStorage();
+class _DeleteCachedDirectPersistentStorage
+    with DeleteCachedDirectPersistentStorage
+    implements _$DeleteCachedDirectPersistentStorage {
+  _DeleteCachedDirectPersistentStorage();
 
   @override
   Future<int> cachedMethod() async {
@@ -496,11 +496,11 @@ class _DeleteCachedLazyPersistentStorage
 ''',
 )
 @withCache
-abstract class DeleteCachedLazyPersistentStorage {
-  factory DeleteCachedLazyPersistentStorage() =
-      _DeleteCachedLazyPersistentStorage;
+abstract class DeleteCachedDirectPersistentStorage {
+  factory DeleteCachedDirectPersistentStorage() =
+      _DeleteCachedDirectPersistentStorage;
 
-  @lazyPersistentCached
+  @directPersistentCached
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
@@ -523,15 +523,15 @@ class _DeleteAllCachedPersistentStorage
   Future<void> _init() async {
     try {
       final cachedMap =
-          await PersistentStorageHolder.read('_notLazyPachedMethodCached');
+          await PersistentStorageHolder.read('_notDirectPachedMethodCached');
 
       cachedMap.forEach((_, value) {
         if (value is! int) throw TypeError();
       });
 
-      _notLazyPachedMethodCached = cachedMap;
+      _notDirectPachedMethodCached = cachedMap;
     } catch (e) {
-      _notLazyPachedMethodCached = <String, dynamic>{};
+      _notDirectPachedMethodCached = <String, dynamic>{};
     }
 
     _completer.complete();
@@ -540,7 +540,7 @@ class _DeleteAllCachedPersistentStorage
   final _completer = Completer<void>();
   Future<void> get _completerFuture => _completer.future;
 
-  late final Map<String, dynamic> _notLazyPachedMethodCached;
+  late final Map<String, dynamic> _notDirectPachedMethodCached;
 
   @override
   Future<int> cachedMethod() async {
@@ -566,24 +566,24 @@ class _DeleteAllCachedPersistentStorage
   }
 
   @override
-  Future<int> notLazyPachedMethod() async {
+  Future<int> notDirectPachedMethod() async {
     await _completerFuture;
 
-    final cachedValue = _notLazyPachedMethodCached[""];
+    final cachedValue = _notDirectPachedMethodCached[""];
     if (cachedValue == null) {
       final int toReturn;
       try {
-        final result = super.notLazyPachedMethod();
+        final result = super.notDirectPachedMethod();
 
         toReturn = await result;
       } catch (_) {
         rethrow;
       } finally {}
 
-      _notLazyPachedMethodCached[""] = toReturn;
+      _notDirectPachedMethodCached[""] = toReturn;
 
       await PersistentStorageHolder.write(
-          '_notLazyPachedMethodCached', _notLazyPachedMethodCached);
+          '_notDirectPachedMethodCached', _notDirectPachedMethodCached);
 
       return toReturn;
     } else {
@@ -613,13 +613,13 @@ abstract class DeleteAllCachedPersistentStorage {
   factory DeleteAllCachedPersistentStorage() =
       _DeleteAllCachedPersistentStorage;
 
-  @lazyPersistentCached
+  @directPersistentCached
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
 
   @PersistentCached()
-  Future<int> notLazyPachedMethod() async {
+  Future<int> notDirectPachedMethod() async {
     return Future.value(1);
   }
 

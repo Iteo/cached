@@ -24,7 +24,7 @@ class ClassTemplate {
 
   bool _isPersisted = false;
   bool _allPersistedHasInitOnCall = false;
-  bool _isLazyPersisted = false;
+  bool _isDirectPersistentStorage = false;
 
   late Iterable<CachedMethodWithParamsTemplate> methodTemplates;
   late Iterable<CachedGetterTemplate> getterTemplates;
@@ -48,8 +48,9 @@ class ClassTemplate {
     _allPersistedHasInitOnCall = everyPersistentMethodWithInitOnCall &&
         everyPersistentGetterWithInitOnCall;
 
-    _isLazyPersisted = methodTemplates.any(_hasLazyPersistentStorage) ||
-        getterTemplates.any(_hasLazyPersistentStorageOnGetter);
+    _isDirectPersistentStorage =
+        methodTemplates.any(_hasDirectPersistentStorage) ||
+            getterTemplates.any(_hasDirectPersistentStorageOnGetter);
 
     final streamedCacheMethodTemplates = _getStreamedCacheMethodTemplates();
 
@@ -145,19 +146,20 @@ class ClassTemplate {
     return function.initOnCall == true;
   }
 
-  bool _hasLazyPersistentStorage(CachedMethodWithParamsTemplate element) {
+  bool _hasDirectPersistentStorage(CachedMethodWithParamsTemplate element) {
     final function = element.function;
     final method = element.method;
 
-    final hasLazyPersistentFunction = function.lazyPersistentStorage == true;
-    final hasLazyPersistentMethod = method.lazyPersistentStorage == true;
+    final hasDirectPersistentFunction =
+        function.directPersistentStorage == true;
+    final hasDirectPersistentMethod = method.directPersistentStorage == true;
 
-    return hasLazyPersistentFunction || hasLazyPersistentMethod;
+    return hasDirectPersistentFunction || hasDirectPersistentMethod;
   }
 
-  bool _hasLazyPersistentStorageOnGetter(CachedGetterTemplate element) {
+  bool _hasDirectPersistentStorageOnGetter(CachedGetterTemplate element) {
     final function = element.function;
-    return function.lazyPersistentStorage == true;
+    return function.directPersistentStorage == true;
   }
 
   String _generateStaticLock() {
@@ -270,9 +272,9 @@ class ClassTemplate {
       (m) => m.targetMethodName == method.name,
     );
 
-    final isLazyPersisted = _isPersistentStorage(
+    final isDirectPersisted = _isPersistentStorage(
       method,
-      _hasLazyPersistentStorage,
+      _hasDirectPersistentStorage,
     );
     final isPersisted = _isPersistentStorage(method, _hasPersistentStorage);
 
@@ -280,7 +282,7 @@ class ClassTemplate {
       method,
       streamedCacheMethod: streamedCacheMethod,
       isPersisted: isPersisted,
-      isLazyPersisted: isLazyPersisted,
+      isDirectPersisted: isDirectPersisted,
     );
   }
 
@@ -294,9 +296,9 @@ class ClassTemplate {
     });
   }
 
-  Iterable<String> _getLazyPersistenStorageMethodNames() sync* {
+  Iterable<String> _getDirectPersistenStorageMethodNames() sync* {
     for (final method in methodTemplates) {
-      if (_hasLazyPersistentStorage(method)) {
+      if (_hasDirectPersistentStorage(method)) {
         yield method.method.name;
       }
     }
@@ -315,7 +317,7 @@ class ClassTemplate {
       cachedGetters: getters,
       streamedCacheMethods: streamedCacheMethods,
       isPersisted: _isPersisted,
-      isLazyPersisted: _isLazyPersisted,
+      isDirectPersisted: _isDirectPersistentStorage,
     );
   }
 
@@ -347,14 +349,14 @@ class ClassTemplate {
     final streamedCacheMethods = classWithCache.streamedCacheMethods;
     final methods = _filteredStreamedCacheMethods(streamedCacheMethods, method);
 
-    final lazyPersistedMethods = _getLazyPersistenStorageMethodNames();
+    final directPersistedMethods = _getDirectPersistenStorageMethodNames();
 
     return DeletesCacheMethodTemplate(
       method,
       methods,
-      lazyPersistedMethods: lazyPersistedMethods.toList(),
+      directPersistedMethods: directPersistedMethods.toList(),
       isPersisted: _isPersisted,
-      isLazyPersisted: _isLazyPersisted,
+      isDirectPersisted: _isDirectPersistentStorage,
     );
   }
 
