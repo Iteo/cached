@@ -572,11 +572,11 @@ Cached library supports usage of any external storage (e.g. Shared Preferences, 
 ```
 
 ### Init cache on method call
-Additional parameter `initOnCall` available only for `@PersistentCached` is for initialize cache from external storage only after method call.
+Additional feature available only for `@@LazyPersistentCached()` is initialize cache from external storage only after method call.
 This solution makes it possible to bypass a heavy initial load for large amounts of data.
 
 ```dart
-  @PersistentCached(initOnCall: true)
+  @LazyPersistentCached()
   Future<double> getDouble() async {
     return await _source.nextDouble() ;
   }

@@ -23,7 +23,7 @@ class ClassTemplate {
   final ClassWithCache classWithCache;
 
   bool _isPersisted = false;
-  bool _allPersistedHasInitOnCall = false;
+  bool _allPersistedIsLazy = false;
   bool _isDirectPersistentStorage = false;
 
   late Iterable<CachedMethodWithParamsTemplate> methodTemplates;
@@ -38,15 +38,16 @@ class ClassTemplate {
     _isPersisted = methodTemplates.any(_hasPersistentStorage) ||
         getterTemplates.any(_hasPersistentStorageOnGetter);
 
-    final everyPersistentMethodWithInitOnCall =
-        methodTemplates.where(_hasPersistentStorage).every(_hasInitOnCall);
+    final everyPersistentMethodWithLazy = methodTemplates
+        .where(_hasPersistentStorage)
+        .every(_hasLazyPersistentStorage);
 
-    final everyPersistentGetterWithInitOnCall = getterTemplates
+    final everyPersistentGetterWithLazy = getterTemplates
         .where(_hasPersistentStorageOnGetter)
-        .every(_hasInitOnCall);
+        .every(_hasLazyPersistentStorage);
 
-    _allPersistedHasInitOnCall = everyPersistentMethodWithInitOnCall &&
-        everyPersistentGetterWithInitOnCall;
+    _allPersistedIsLazy =
+        everyPersistentMethodWithLazy && everyPersistentGetterWithLazy;
 
     _isDirectPersistentStorage =
         methodTemplates.any(_hasDirectPersistentStorage) ||
@@ -98,15 +99,15 @@ class ClassTemplate {
   }
 
   String _initAsyncStorage() {
-    if (_isPersisted && !_allPersistedHasInitOnCall) {
+    if (_isPersisted && !_allPersistedIsLazy) {
       return '''
          { _init(); }
               
          Future<void> _init() async {
             ${_generateStaticReturn()}   
                     
-            ${_generateAsyncPersistentStorageInitForInitOnCall(methodTemplates)}
-            ${_generateAsyncPersistentStorageInitForInitOnCall(getterTemplates)}
+            ${_generateAsyncPersistentStorageInitForLazy(methodTemplates)}
+            ${_generateAsyncPersistentStorageInitForLazy(getterTemplates)}
             ${CommonGenerator.completerCompleteText}            
          }
      ''';
@@ -116,7 +117,7 @@ class ClassTemplate {
   }
 
   String _generateCompleterFields() {
-    if (_isPersisted && !_allPersistedHasInitOnCall) {
+    if (_isPersisted && !_allPersistedIsLazy) {
       return '''
          final _completer = Completer<void>();
          Future<void> get _completerFuture => _completer.future;         
@@ -141,9 +142,9 @@ class ClassTemplate {
     return function.persistentStorage == true;
   }
 
-  bool _hasInitOnCall(CachedMethodTemplate element) {
+  bool _hasLazyPersistentStorage(CachedMethodTemplate element) {
     final function = element.function;
-    return function.initOnCall == true;
+    return function.lazyPersistentStorage == true;
   }
 
   bool _hasDirectPersistentStorage(CachedMethodWithParamsTemplate element) {
@@ -186,18 +187,18 @@ class ClassTemplate {
     return '';
   }
 
-  String _generateAsyncPersistentStorageInitForInitOnCall(
+  String _generateAsyncPersistentStorageInitForLazy(
     Iterable<CachedMethodTemplate> templates,
   ) {
     return templates
-        .where(_notInitOnCallFunction)
+        .where(_notLazyPersistentStorageFunction)
         .map((e) => e.generateAsyncPersistentStorageInit())
         .join('\n');
   }
 
-  bool _notInitOnCallFunction(CachedMethodTemplate e) {
+  bool _notLazyPersistentStorageFunction(CachedMethodTemplate e) {
     final function = e.function;
-    return !(function.initOnCall ?? false);
+    return !(function.lazyPersistentStorage ?? false);
   }
 
   Iterable<CachedMethodWithParamsTemplate> _getMethodTemplates(
