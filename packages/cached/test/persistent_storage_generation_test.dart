@@ -19,7 +19,7 @@ Future<void> main() async {
     'CachedWithDeletePersistentStorageError',
     'NonStaticNestedGenericType',
     'StaticNestedGenericType',
-    'LazyPersistentStoargeRepository',
+    'DirectPersistentStoargeRepository',
     'InitOnCallPersistentStorage',
     'AllParamsPersistentStorage',
   };

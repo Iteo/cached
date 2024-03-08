@@ -10,14 +10,14 @@ class ClearCachedMethodTemplate {
     this.method, {
     this.streamedCacheMethod,
     this.isPersisted = false,
-    this.isLazyPersisted = false,
+    this.isDirectPersisted = false,
   }) : paramsTemplate = AllParamsTemplate(method.params);
 
   final ClearCachedMethod method;
   final AllParamsTemplate paramsTemplate;
   final StreamedCacheMethod? streamedCacheMethod;
   final bool isPersisted;
-  final bool isLazyPersisted;
+  final bool isDirectPersisted;
 
   String get asyncModifier => isFuture(method.returnType) ? 'async' : '';
 
@@ -95,7 +95,7 @@ class ClearCachedMethodTemplate {
   }
 
   String _generateClearMaps() {
-    if (isLazyPersisted) {
+    if (isDirectPersisted) {
       return '';
     }
 
@@ -112,7 +112,7 @@ class ClearCachedMethodTemplate {
   }
 
   String _generateClearPersistentStorage() {
-    if (isPersisted || isLazyPersisted) {
+    if (isPersisted || isDirectPersisted) {
       final isAsync = method.isAsync;
       final mapName = getCacheMapName(method.methodName);
       final body =

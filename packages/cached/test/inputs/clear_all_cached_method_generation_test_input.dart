@@ -360,12 +360,12 @@ abstract class ValidReturnFutureVoid {
 
 @ShouldGenerate(
   r'''
-abstract class _$ClearAllCachedLazyPersistentStorage {}
+abstract class _$ClearAllCachedDirectPersistentStorage {}
 
-class _ClearAllCachedLazyPersistentStorage
-    with ClearAllCachedLazyPersistentStorage
-    implements _$ClearAllCachedLazyPersistentStorage {
-  _ClearAllCachedLazyPersistentStorage();
+class _ClearAllCachedDirectPersistentStorage
+    with ClearAllCachedDirectPersistentStorage
+    implements _$ClearAllCachedDirectPersistentStorage {
+  _ClearAllCachedDirectPersistentStorage();
 
   @override
   Future<int> cachedMethod() async {
@@ -402,11 +402,11 @@ class _ClearAllCachedLazyPersistentStorage
 ''',
 )
 @withCache
-abstract class ClearAllCachedLazyPersistentStorage {
-  factory ClearAllCachedLazyPersistentStorage() =
-      _ClearAllCachedLazyPersistentStorage;
+abstract class ClearAllCachedDirectPersistentStorage {
+  factory ClearAllCachedDirectPersistentStorage() =
+      _ClearAllCachedDirectPersistentStorage;
 
-  @LazyPersistentCached()
+  @DirectPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
@@ -416,27 +416,27 @@ abstract class ClearAllCachedLazyPersistentStorage {
 }
 
 @ShouldGenerate(r'''
-abstract class _$ClearAllCachedLazyPersistentStorageAndPersistentStorage {}
+abstract class _$ClearAllCachedDirectPersistentStorageAndPersistentStorage {}
 
-class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
-    with ClearAllCachedLazyPersistentStorageAndPersistentStorage
-    implements _$ClearAllCachedLazyPersistentStorageAndPersistentStorage {
-  _ClearAllCachedLazyPersistentStorageAndPersistentStorage() {
+class _ClearAllCachedDirectPersistentStorageAndPersistentStorage
+    with ClearAllCachedDirectPersistentStorageAndPersistentStorage
+    implements _$ClearAllCachedDirectPersistentStorageAndPersistentStorage {
+  _ClearAllCachedDirectPersistentStorageAndPersistentStorage() {
     _init();
   }
 
   Future<void> _init() async {
     try {
       final cachedMap =
-          await PersistentStorageHolder.read('_cachedNotLazyMethodCached');
+          await PersistentStorageHolder.read('_cachedNotDirectMethodCached');
 
       cachedMap.forEach((_, value) {
         if (value is! int) throw TypeError();
       });
 
-      _cachedNotLazyMethodCached = cachedMap;
+      _cachedNotDirectMethodCached = cachedMap;
     } catch (e) {
-      _cachedNotLazyMethodCached = <String, dynamic>{};
+      _cachedNotDirectMethodCached = <String, dynamic>{};
     }
 
     _completer.complete();
@@ -445,7 +445,7 @@ class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
   final _completer = Completer<void>();
   Future<void> get _completerFuture => _completer.future;
 
-  late final Map<String, dynamic> _cachedNotLazyMethodCached;
+  late final Map<String, dynamic> _cachedNotDirectMethodCached;
 
   @override
   Future<int> cachedMethod() async {
@@ -471,24 +471,24 @@ class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
   }
 
   @override
-  Future<int> cachedNotLazyMethod() async {
+  Future<int> cachedNotDirectMethod() async {
     await _completerFuture;
 
-    final cachedValue = _cachedNotLazyMethodCached[""];
+    final cachedValue = _cachedNotDirectMethodCached[""];
     if (cachedValue == null) {
       final int toReturn;
       try {
-        final result = super.cachedNotLazyMethod();
+        final result = super.cachedNotDirectMethod();
 
         toReturn = await result;
       } catch (_) {
         rethrow;
       } finally {}
 
-      _cachedNotLazyMethodCached[""] = toReturn;
+      _cachedNotDirectMethodCached[""] = toReturn;
 
       await PersistentStorageHolder.write(
-          '_cachedNotLazyMethodCached', _cachedNotLazyMethodCached);
+          '_cachedNotDirectMethodCached', _cachedNotDirectMethodCached);
 
       return toReturn;
     } else {
@@ -504,7 +504,7 @@ class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
 
     await super.something();
 
-    _cachedNotLazyMethodCached.clear();
+    _cachedNotDirectMethodCached.clear();
 
     if (PersistentStorageHolder.isStorageSet) {
       await PersistentStorageHolder.deleteAll();
@@ -513,17 +513,17 @@ class _ClearAllCachedLazyPersistentStorageAndPersistentStorage
 }
 ''')
 @withCache
-abstract class ClearAllCachedLazyPersistentStorageAndPersistentStorage {
-  factory ClearAllCachedLazyPersistentStorageAndPersistentStorage() =
-      _ClearAllCachedLazyPersistentStorageAndPersistentStorage;
+abstract class ClearAllCachedDirectPersistentStorageAndPersistentStorage {
+  factory ClearAllCachedDirectPersistentStorageAndPersistentStorage() =
+      _ClearAllCachedDirectPersistentStorageAndPersistentStorage;
 
-  @LazyPersistentCached()
+  @DirectPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }
 
   @PersistentCached()
-  Future<int> cachedNotLazyMethod() async {
+  Future<int> cachedNotDirectMethod() async {
     return Future.value(1);
   }
 

@@ -471,12 +471,12 @@ abstract class ValidReturnFutureVoid {
 
 @ShouldGenerate(
   r'''
-abstract class _$ClearCachedLazyPersistentStorage {}
+abstract class _$ClearCachedDirectPersistentStorage {}
 
-class _ClearCachedLazyPersistentStorage
-    with ClearCachedLazyPersistentStorage
-    implements _$ClearCachedLazyPersistentStorage {
-  _ClearCachedLazyPersistentStorage();
+class _ClearCachedDirectPersistentStorage
+    with ClearCachedDirectPersistentStorage
+    implements _$ClearCachedDirectPersistentStorage {
+  _ClearCachedDirectPersistentStorage();
 
   @override
   Future<int> cachedMethod() async {
@@ -513,11 +513,11 @@ class _ClearCachedLazyPersistentStorage
 ''',
 )
 @withCache
-abstract class ClearCachedLazyPersistentStorage {
-  factory ClearCachedLazyPersistentStorage() =
-      _ClearCachedLazyPersistentStorage;
+abstract class ClearCachedDirectPersistentStorage {
+  factory ClearCachedDirectPersistentStorage() =
+      _ClearCachedDirectPersistentStorage;
 
-  @LazyPersistentCached()
+  @DirectPersistentCached()
   Future<int> cachedMethod() async {
     return Future.value(1);
   }

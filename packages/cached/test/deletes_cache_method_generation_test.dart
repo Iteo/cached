@@ -15,7 +15,7 @@ Future<void> main() async {
     'ValidStreamed',
     'ValidTwoMethods',
     'ValidSync',
-    'DeleteCachedLazyPersistentStorage',
+    'DeleteCachedDirectPersistentStorage',
     'DeleteAllCachedPersistentStorage',
   };
 

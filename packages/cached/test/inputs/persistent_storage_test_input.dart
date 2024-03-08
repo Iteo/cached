@@ -933,12 +933,12 @@ abstract class StaticNestedGenericType {
 
 @ShouldGenerate(
   r'''
-abstract class _$LazyPersistentStoargeRepository {}
+abstract class _$DirectPersistentStoargeRepository {}
 
-class _LazyPersistentStoargeRepository
-    with LazyPersistentStoargeRepository
-    implements _$LazyPersistentStoargeRepository {
-  _LazyPersistentStoargeRepository();
+class _DirectPersistentStoargeRepository
+    with DirectPersistentStoargeRepository
+    implements _$DirectPersistentStoargeRepository {
+  _DirectPersistentStoargeRepository();
 
   @override
   Future<double> getNumber() async {
@@ -964,11 +964,12 @@ class _LazyPersistentStoargeRepository
 ''',
 )
 @WithCache()
-abstract class LazyPersistentStoargeRepository
-    implements _$LazyPersistentStoargeRepository {
-  factory LazyPersistentStoargeRepository() = _LazyPersistentStoargeRepository;
+abstract class DirectPersistentStoargeRepository
+    implements _$DirectPersistentStoargeRepository {
+  factory DirectPersistentStoargeRepository() =
+      _DirectPersistentStoargeRepository;
 
-  @lazyPersistentCached
+  @directPersistentCached
   Future<double> getNumber() async {
     await _delay();
     return _generator.nextDouble() * 257;

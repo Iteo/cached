@@ -42,8 +42,8 @@ abstract class CachedMethodTemplate {
   bool get _initOnCall => function.initOnCall ?? false;
 
   bool get _shouldUsePersistentStorage => function.persistentStorage ?? false;
-  bool get _shouldUseLazyPersistentStorage =>
-      function.lazyPersistentStorage ?? false;
+  bool get _shouldUseDirectPersistentStorage =>
+      function.directPersistentStorage ?? false;
 
   bool get _hasTtl => function.ttl != null;
 
@@ -108,13 +108,13 @@ abstract class CachedMethodTemplate {
 
   String _generateCachedValueReturn() {
     final code = '$_returnKeyword cachedValue';
-    if (!_shouldUsePersistentStorage && !_shouldUseLazyPersistentStorage) {
+    if (!_shouldUsePersistentStorage && !_shouldUseDirectPersistentStorage) {
       return '$code;';
     }
 
     final appender = TypeCastAppender();
     return appender.wrapWithTryCatchAndAddGenericCast(
-      codeToWrap: _shouldUseLazyPersistentStorage ? "$code['']" : code,
+      codeToWrap: _shouldUseDirectPersistentStorage ? "$code['']" : code,
       returnType: function.returnType,
     );
   }
@@ -131,7 +131,7 @@ abstract class CachedMethodTemplate {
   String generateCacheMap() {
     final staticModifier = _getStaticModifier();
 
-    if (_shouldUseLazyPersistentStorage) {
+    if (_shouldUseDirectPersistentStorage) {
       return '';
     }
 
@@ -229,7 +229,7 @@ abstract class CachedMethodTemplate {
   }
 
   String _generateConditionForCache() {
-    if (_shouldUseLazyPersistentStorage) {
+    if (_shouldUseDirectPersistentStorage) {
       return "cachedValue.isEmpty && cachedValue[''] == null";
     }
 
@@ -280,7 +280,7 @@ abstract class CachedMethodTemplate {
   }
 
   String _test() {
-    if (_shouldUseLazyPersistentStorage) {
+    if (_shouldUseDirectPersistentStorage) {
       return "$readCodeText('$_cacheMapName')";
     } else if (_initOnCall) {
       return '$_cacheMapName!["$paramsKey"]';
@@ -301,9 +301,9 @@ abstract class CachedMethodTemplate {
   String _generateCacheWrite() {
     if (_shouldUsePersistentStorage && !_initOnCall) {
       return "$writeCodeText('$_cacheMapName', $_cacheMapName);";
-    } else if (_shouldUseLazyPersistentStorage) {
+    } else if (_shouldUseDirectPersistentStorage) {
       return "$writeCodeText('$_cacheMapName', {'': toReturn});";
-    } else if (_shouldUseLazyPersistentStorage && _initOnCall) {
+    } else if (_shouldUseDirectPersistentStorage && _initOnCall) {
       return "$writeCodeText('$_cacheMapName', $_cacheMapName!);";
     }
 
@@ -329,7 +329,7 @@ abstract class CachedMethodTemplate {
   }
 
   String _generateUpdateCacheMap() {
-    if (_shouldUseLazyPersistentStorage) {
+    if (_shouldUseDirectPersistentStorage) {
       return '';
     }
 
