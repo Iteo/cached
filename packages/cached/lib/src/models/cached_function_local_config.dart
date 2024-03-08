@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:cached/src/models/cached_function.dart';
 import 'package:cached/src/models/check_if_should_cache_method.dart';
 import 'package:cached/src/utils/asserts.dart';
+import 'package:cached_annotation/cached_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 
 class CachedFunctionLocalConfig {
@@ -23,12 +24,12 @@ class CachedFunctionLocalConfig {
     required this.limit,
     required this.ttl,
     required this.checkIfShouldCacheMethod,
-    required this.initOnCall,
+    required this.lazyPersistentStorage,
   });
 
   bool persistentStorage;
   bool directPersistentStorage;
-  bool initOnCall;
+  bool lazyPersistentStorage;
 
   bool? syncWrite;
   int? limit;
@@ -43,8 +44,9 @@ class CachedFunctionLocalConfig {
 
     bool persistentStorage = false;
     bool directPersistentStorage = false;
+    bool lazyPersistentStorage = false;
+
     bool? syncWrite;
-    bool? initOnCall;
     int? limit;
     int? ttl;
     CheckIfShouldCacheMethod? checkIfShouldCacheMethod;
@@ -54,9 +56,15 @@ class CachedFunctionLocalConfig {
       syncWrite = syncWriteField.boolValue;
     }
 
-    final initOnCallField = reader.peek('initOnCall');
-    if (initOnCallField != null) {
-      initOnCall = initOnCallField.boolValue;
+    if (reader
+        .instanceOf(const TypeChecker.fromRuntime(LazyPersistentCached))) {
+      lazyPersistentStorage = true;
+    } else if (reader
+        .instanceOf(const TypeChecker.fromRuntime(DirectPersistentCached))) {
+      directPersistentStorage = true;
+    } else if (reader
+        .instanceOf(const TypeChecker.fromRuntime(PersistentCached))) {
+      persistentStorage = true;
     }
 
     final limitField = reader.peek('limit');
@@ -82,12 +90,7 @@ class CachedFunctionLocalConfig {
       persistentStorage = shouldUseStorage.boolValue;
     }
 
-    final shouldUseDirectStorage = reader.peek('directPersistentStorage');
-    if (shouldUseDirectStorage != null && shouldUseDirectStorage.isBool) {
-      directPersistentStorage = shouldUseDirectStorage.boolValue;
-    }
-
-    if (persistentStorage || directPersistentStorage) {
+    if (persistentStorage || directPersistentStorage || lazyPersistentStorage) {
       assertPersistentStorageShouldBeAsync(element);
     }
 
@@ -98,7 +101,7 @@ class CachedFunctionLocalConfig {
       checkIfShouldCacheMethod: checkIfShouldCacheMethod,
       persistentStorage: persistentStorage,
       directPersistentStorage: directPersistentStorage,
-      initOnCall: initOnCall ?? false,
+      lazyPersistentStorage: lazyPersistentStorage,
     );
   }
 

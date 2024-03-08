@@ -515,12 +515,12 @@ abstract class DirectPersistentCachedGetter {
 
 @ShouldGenerate(
   r'''
-abstract class _$InitOnCallPersistentCachedGetter {}
+abstract class _$LazyPersistentCachedGetter {}
 
-class _InitOnCallPersistentCachedGetter
-    with InitOnCallPersistentCachedGetter
-    implements _$InitOnCallPersistentCachedGetter {
-  _InitOnCallPersistentCachedGetter();
+class _LazyPersistentCachedGetter
+    with LazyPersistentCachedGetter
+    implements _$LazyPersistentCachedGetter {
+  _LazyPersistentCachedGetter();
 
   Map<String, dynamic>? _cachedCached = null;
 
@@ -562,11 +562,10 @@ class _InitOnCallPersistentCachedGetter
 ''',
 )
 @withCache
-abstract class InitOnCallPersistentCachedGetter {
-  factory InitOnCallPersistentCachedGetter() =
-      _InitOnCallPersistentCachedGetter;
+abstract class LazyPersistentCachedGetter {
+  factory LazyPersistentCachedGetter() = _LazyPersistentCachedGetter;
 
-  @PersistentCached(initOnCall: true)
+  @LazyPersistentCached()
   Future<int> get cached async {
     return 1;
   }

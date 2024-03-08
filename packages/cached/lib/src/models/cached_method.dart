@@ -21,7 +21,7 @@ class CachedMethod extends CachedFunction {
     required super.checkIfShouldCacheMethod,
     required super.persistentStorage,
     required super.directPersistentStorage,
-    required super.initOnCall,
+    required super.lazyPersistentStorage,
   });
 
   factory CachedMethod.fromElement(
@@ -32,9 +32,15 @@ class CachedMethod extends CachedFunction {
 
     var isDirect = false;
     var isPersistent = false;
+    var isLazy = false;
 
     if (CachedFunction.hasCachedAnnotation<DirectPersistentCached>(element)) {
       isDirect = true;
+    } else if (CachedFunction.hasCachedAnnotation<LazyPersistentCached>(
+      element,
+    )) {
+      isPersistent = true;
+      isLazy = true;
     } else if (CachedFunction.hasCachedAnnotation<PersistentCached>(element)) {
       isPersistent = true;
     }
@@ -45,7 +51,7 @@ class CachedMethod extends CachedFunction {
     final limit = isDirect ? null : localConfig.limit ?? config.limit;
     final ttl = isDirect ? null : localConfig.ttl ?? config.ttl;
     final persistentStorage = isPersistent || localConfig.persistentStorage;
-    final initOnCall = !isDirect && isPersistent && localConfig.initOnCall;
+    final lazyPersistentStorage = !isDirect && isLazy;
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
@@ -64,7 +70,7 @@ class CachedMethod extends CachedFunction {
       persistentStorage: persistentStorage,
       directPersistentStorage: isDirect,
       params: params,
-      initOnCall: initOnCall,
+      lazyPersistentStorage: lazyPersistentStorage,
       returnType: returnType,
     );
 

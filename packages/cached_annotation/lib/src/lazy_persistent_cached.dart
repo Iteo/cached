@@ -1,11 +1,11 @@
-import 'package:cached_annotation/cached_annotation.dart';
+import 'package:cached_annotation/src/persistent_cached.dart';
 import 'package:meta/meta_meta.dart';
 
-/// const instance of [PersistentCached]
-const persistentCached = PersistentCached();
+/// const instance of [LazyPersistentCached]
+const lazyPersistentCached = LazyPersistentCached();
 
-/// {@template cached.cached}
-/// ### PersistentCached
+/// {@template cached.lazy_cached}
+/// ### LazyPersistentCached
 ///
 /// Annotation for `Cached` package.
 ///
@@ -24,19 +24,10 @@ const persistentCached = PersistentCached();
 /// Cached library's annotations has to be async
 /// ### Example
 ///
-/// Use @persistentCached annotation
+/// Use @lazyPersistentCached annotation
 ///
 /// ```dart
-/// @persistentCached
-/// Future<SomeResponseType> getSthData() {
-///   return dataSource.getData();
-/// }
-/// ```
-///
-/// or with parameters
-///
-/// ```dart
-/// @PersistentCached()
+/// @LazyPersistentCached()
 /// Future<SomeResponseType> getSthData() {
 ///   return dataSource.getData();
 /// }
@@ -46,9 +37,9 @@ const persistentCached = PersistentCached();
 /// or [ClearAllCached] annotation
 /// {@endtemplate}
 @Target({TargetKind.method, TargetKind.getter})
-class PersistentCached extends Cached {
+class LazyPersistentCached extends PersistentCached {
   /// {@macro cached.persistentCached}
-  const PersistentCached({
+  const LazyPersistentCached({
     super.limit,
     super.ttl,
     super.syncWrite,
