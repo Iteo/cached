@@ -70,7 +70,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [DeletesCache](#deletescache)
 - [Persistent storage](#persistent-storage)
   - [Init cache on method call](#init-cache-on-method-call)
-- [Lazy persistent storage](#lazy-persistent-storage)
+- [Direct persistent storage](#direct-persistent-storage)
 - [Contribution](#contribution)
   - [feature request](#feature-request)
   - [Fix](#fix)
@@ -582,13 +582,13 @@ This solution makes it possible to bypass a heavy initial load for large amounts
   }
 ```
 
-## Lazy persistent storage
+## Direct persistent storage
 
-When the `@LazyPersistedCached` annotation is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods with this annotation, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
+When the `@DirectPersistedCached` annotation is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods with this annotation, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
 
 ```dart
-  @LazyPersistedCached()
-  Future<double> getLazyDouble() async {
+  @DirectPersistedCached()
+  Future<double> getDirectDouble() async {
     return await _source.nextDouble() ;
   }
 ```

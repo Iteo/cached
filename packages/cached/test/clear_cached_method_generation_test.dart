@@ -19,7 +19,7 @@ Future<void> main() async {
     'ValidAbstractWithTwoCachedMethod',
     'ValidReturnFutureBool',
     'ValidReturnFutureVoid',
-    'ClearCachedLazyPersistentStorage',
+    'ClearCachedDirectPersistentStorage',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

@@ -18,7 +18,7 @@ Future<void> main() async {
     'AsyncSyncWrite',
     'SyncSyncWrite',
     'PersistentCachedGetter',
-    'LazyPersistentCachedGetter',
+    'DirectPersistentCachedGetter',
     'InitOnCallPersistentCachedGetter',
   };
 

@@ -42,10 +42,10 @@ abstract mixin class Gen implements _$Gen {
     return decodedBody.map<Todo>((e) => Todo.fromJson(e)).toList();
   }
 
-  /// We will pass only a [lazyPersistentStorage]
+  /// We will pass only a [directPersistentStorage]
   /// here becouse you can not use any params combination
-  @LazyPersistentCached()
-  Future<List<Todo>> getLazyTodos() async {
+  @DirectPersistentCached()
+  Future<List<Todo>> getDirectTodos() async {
     final uri = Uri.parse(_url);
     final response = await http.get(uri);
     final decodedBody = jsonDecode(response.body);

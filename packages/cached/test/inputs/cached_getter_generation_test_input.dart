@@ -473,12 +473,12 @@ abstract class PersistentCachedGetter {
 
 @ShouldGenerate(
   r'''
-abstract class _$LazyPersistentCachedGetter {}
+abstract class _$DirectPersistentCachedGetter {}
 
-class _LazyPersistentCachedGetter
-    with LazyPersistentCachedGetter
-    implements _$LazyPersistentCachedGetter {
-  _LazyPersistentCachedGetter();
+class _DirectPersistentCachedGetter
+    with DirectPersistentCachedGetter
+    implements _$DirectPersistentCachedGetter {
+  _DirectPersistentCachedGetter();
 
   @override
   Future<int> get cached async {
@@ -504,10 +504,10 @@ class _LazyPersistentCachedGetter
 ''',
 )
 @withCache
-abstract class LazyPersistentCachedGetter {
-  factory LazyPersistentCachedGetter() = _LazyPersistentCachedGetter;
+abstract class DirectPersistentCachedGetter {
+  factory DirectPersistentCachedGetter() = _DirectPersistentCachedGetter;
 
-  @LazyPersistentCached()
+  @DirectPersistentCached()
   Future<int> get cached async {
     return 1;
   }
