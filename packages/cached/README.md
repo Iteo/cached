@@ -632,7 +632,7 @@ This solution makes it possible to bypass a heavy initial load for large amounts
 
 ## Direct persistent storage
 
-When the `@DirectPersistedCached` annotation is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods with this annotation, the library's generator does not create a map for storing data fetched from the storage, nor does it initialize such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
+When the `@DirectPersistedCached` annotation is used, it prevents the automatic loading of data from external storage into the cache managed by the caching library. For methods with this annotation, the library's generator neither creates a map for storing data fetched from the storage nor initializes such a map before the method's invocation. Consequently, setting this parameter ensures that data is always fetched directly from externalStorage upon method call. If the data is not already present in externalStorage, it is retrieved and then stored there.
 
 ```dart
   @DirectPersistedCached()
