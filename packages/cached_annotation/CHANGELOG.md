@@ -1,3 +1,10 @@
+## 1.7.0
+* Fix not working peristent storage with the getters
+* Add `@DirectPersistentCached()` annotation - avoid store cached data in generated classes by cached, data will be stored only in external storage
+* Add `@LazyPersistentCached()` annotation - initialize cache from external storage only after the first method call
+* Mark `@Cached(persistentStorage: )` parameter as @Deprecated
+* Update documentation
+
 ## 1.6.0
 * Add `@Cached(persistentStorage: )` parameter, which allows you to turn on cache persisting with usage of external storage.
 
