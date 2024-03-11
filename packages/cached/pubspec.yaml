@@ -22,7 +22,8 @@ environment:
 dependencies:
   analyzer: ^6.2.0
   build: ^2.3.0
-  cached_annotation: ^1.7.0
+  cached_annotation:
+    path: '../cached_annotation'
   collection: ^1.16.0
   meta: ^1.7.0
   source_gen: ^1.2.2
