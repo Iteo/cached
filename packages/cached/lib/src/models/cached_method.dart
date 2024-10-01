@@ -49,9 +49,7 @@ class CachedMethod extends CachedFunction {
     final ttl = isDirect ? null : localConfig.ttl ?? config.ttl;
     final persistentStorage = isPersistent || localConfig.persistentStorage;
     final lazyPersistentStorage = !isDirect && isLazy;
-    final returnType = element.returnType.getDisplayString(
-      withNullability: true,
-    );
+    final returnType = element.returnType.getDisplayString();
     final params = element.formalParameters.map(
       (e) => Param.fromElement(e, config),
     );

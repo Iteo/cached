@@ -28,7 +28,7 @@ class ClearAllCachedMethod {
 
     return ClearAllCachedMethod(
       name: element.displayName,
-      returnType: element.returnType.getDisplayString(withNullability: true),
+      returnType: element.returnType.getDisplayString(),
       isAsync: element.firstFragment.isAsynchronous,
       isAbstract: element.isAbstract,
       params: element.formalParameters.map((e) => Param.fromElement(e, config)),
