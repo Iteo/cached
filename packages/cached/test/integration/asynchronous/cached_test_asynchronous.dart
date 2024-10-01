@@ -8,9 +8,8 @@ const int ttlDurationSeconds = 1;
 
 @withCache
 abstract mixin class AsynchronousCached implements _$AsynchronousCached {
-  factory AsynchronousCached(
-    TestDataProvider dataProvider,
-  ) = _AsynchronousCached;
+  factory AsynchronousCached(TestDataProvider dataProvider) =
+      _AsynchronousCached;
 
   int _counter = 0;
 

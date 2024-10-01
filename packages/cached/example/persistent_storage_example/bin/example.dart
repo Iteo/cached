@@ -41,6 +41,12 @@ Future<void> main(List<String> arguments) async {
   final todosPeekAfterTtl = gen.peekMethodWithTtl();
   final maybeFirst5TodosAfterTtl = todosPeekAfterTtl?.sublist(0, 5);
   print('Peeked todos after TTL: $maybeFirst5TodosAfterTtl');
+  final number = await gen.getNumber();
+  print('Number: $number');
+  final updatedNumber = await gen.updateNumber(43);
+  print('Updated number: $updatedNumber');
+  final numberAfterUpdate = await gen.getNumber();
+  print('Number after update: $numberAfterUpdate');
 }
 
 Future<void> _fetchTodos(Gen gen) async {
