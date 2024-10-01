@@ -33,7 +33,7 @@ class CachePeekMethodTemplate {
 
     return '''
       @override
-      ${method.returnType}? ${method.name}($params)  {
+      ${method.returnType} ${method.name}($params)  {
         final paramsKey = "$paramKey";
 
         $returnNullIfExpired
