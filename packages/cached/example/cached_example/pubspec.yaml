@@ -4,17 +4,19 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
 
 dependencies:
   cached_annotation:
-    path: '../../../cached_annotation'
+    path: "../../../cached_annotation"
   http: ^0.13.4
 
+dependency_overrides:
+  cached_annotation:
+    path: "../../../cached_annotation"
+
 dev_dependencies:
-  build_runner: ^2.4.6
+  build_runner: ^2.4.14
   cached:
-    path: '../../'
+    path: "../../"
   linteo: ^1.0.1
-
-

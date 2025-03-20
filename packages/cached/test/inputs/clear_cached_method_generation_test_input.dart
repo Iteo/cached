@@ -480,8 +480,9 @@ class _ClearCachedDirectPersistentStorage
 
   @override
   Future<int> cachedMethod() async {
-    final cachedValue =
-        await PersistentStorageHolder.read('_cachedMethodCached');
+    final cachedValue = await PersistentStorageHolder.read(
+      '_cachedMethodCached',
+    );
     if (cachedValue.isEmpty && cachedValue[''] == null) {
       final int toReturn;
       try {
@@ -492,8 +493,9 @@ class _ClearCachedDirectPersistentStorage
         rethrow;
       } finally {}
 
-      await PersistentStorageHolder.write(
-          '_cachedMethodCached', {'': toReturn});
+      await PersistentStorageHolder.write('_cachedMethodCached', {
+        '': toReturn,
+      });
 
       return toReturn;
     } else {

@@ -755,7 +755,9 @@ class _NonStaticNestedGenericType
       _getNumbersTtl[""] = DateTime.now().add(duration).toIso8601String();
 
       await PersistentStorageHolder.write(
-          '_getNumbersCached', _getNumbersCached);
+        '_getNumbersCached',
+        _getNumbersCached,
+      );
       await PersistentStorageHolder.write('_getNumbersTtl', _getNumbersTtl);
 
       return toReturn;
@@ -889,7 +891,9 @@ class _StaticNestedGenericType
       _getNumbersTtl[""] = DateTime.now().add(duration).toIso8601String();
 
       await PersistentStorageHolder.write(
-          '_getNumbersCached', _getNumbersCached);
+        '_getNumbersCached',
+        _getNumbersCached,
+      );
       await PersistentStorageHolder.write('_getNumbersTtl', _getNumbersTtl);
 
       return toReturn;
@@ -1130,7 +1134,9 @@ class _AllParamsPersistentStorage
       _getNumbersTtl[""] = DateTime.now().add(duration).toIso8601String();
 
       await PersistentStorageHolder.write(
-          '_getNumbersCached', _getNumbersCached);
+        '_getNumbersCached',
+        _getNumbersCached,
+      );
       await PersistentStorageHolder.write('_getNumbersTtl', _getNumbersTtl);
 
       return toReturn;

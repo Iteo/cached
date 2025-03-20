@@ -5,7 +5,7 @@ import '../../utils/test_utils.dart';
 part 'cached_test_simple.cached.dart';
 
 @withCache
-abstract class SimpleCached implements _$SimpleCached {
+abstract mixin class SimpleCached implements _$SimpleCached {
   factory SimpleCached(
     TestDataProvider dataProvider,
   ) = _SimpleCached;

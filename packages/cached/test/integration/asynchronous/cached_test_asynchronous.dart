@@ -7,7 +7,7 @@ part 'cached_test_asynchronous.cached.dart';
 const int ttlDurationSeconds = 1;
 
 @withCache
-abstract class AsynchronousCached implements _$AsynchronousCached {
+abstract mixin class AsynchronousCached implements _$AsynchronousCached {
   factory AsynchronousCached(
     TestDataProvider dataProvider,
   ) = _AsynchronousCached;

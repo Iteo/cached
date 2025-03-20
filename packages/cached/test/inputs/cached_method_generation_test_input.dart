@@ -311,11 +311,12 @@ class _MethodWithNamedArgs
   final _methodCached = <String, int>{};
 
   @override
-  int method(
-      {required int a,
-      required String? b,
-      Stream<double>? c,
-      double? d = 0.2}) {
+  int method({
+    required int a,
+    required String? b,
+    Stream<double>? c,
+    double? d = 0.2,
+  }) {
     final cachedValue =
         _methodCached["${a.hashCode}${b.hashCode}${c.hashCode}${d.hashCode}"];
     if (cachedValue == null) {
@@ -418,13 +419,16 @@ class _MethodWithPositionalAndNamedArgs
   final _methodCached = <String, int>{};
 
   @override
-  int method(int a, String? b,
-      {required Stream<double>? c,
-      double? d = 0.2,
-      required String e,
-      int f = 1}) {
-    final cachedValue = _methodCached[
-        "${a.hashCode}${b.hashCode}${c.hashCode}${d.hashCode}${e.hashCode}${f.hashCode}"];
+  int method(
+    int a,
+    String? b, {
+    required Stream<double>? c,
+    double? d = 0.2,
+    required String e,
+    int f = 1,
+  }) {
+    final cachedValue =
+        _methodCached["${a.hashCode}${b.hashCode}${c.hashCode}${d.hashCode}${e.hashCode}${f.hashCode}"];
     if (cachedValue == null) {
       final int toReturn;
       try {
@@ -435,8 +439,7 @@ class _MethodWithPositionalAndNamedArgs
         rethrow;
       } finally {}
 
-      _methodCached[
-              "${a.hashCode}${b.hashCode}${c.hashCode}${d.hashCode}${e.hashCode}${f.hashCode}"] =
+      _methodCached["${a.hashCode}${b.hashCode}${c.hashCode}${d.hashCode}${e.hashCode}${f.hashCode}"] =
           toReturn;
 
       return toReturn;
@@ -882,8 +885,8 @@ class _IterableCacheKeyOnIterable
 
   @override
   int method({Iterable<int> iterable, List<int> list, Set<int> set}) {
-    final cachedValue = _methodCached[
-        "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"];
+    final cachedValue =
+        _methodCached["${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"];
     if (cachedValue == null) {
       final int toReturn;
       try {
@@ -894,8 +897,7 @@ class _IterableCacheKeyOnIterable
         rethrow;
       } finally {}
 
-      _methodCached[
-              "${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"] =
+      _methodCached["${iterableCacheKeyGenerator(iterable)}${iterableCacheKeyGenerator(list)}${iterableCacheKeyGenerator(set)}"] =
           toReturn;
 
       return toReturn;

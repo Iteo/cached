@@ -1,5 +1,5 @@
 import 'package:cached_annotation/cached_annotation.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive.dart';
 
 import 'todo.dart';
 

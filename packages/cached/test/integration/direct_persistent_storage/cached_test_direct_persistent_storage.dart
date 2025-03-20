@@ -5,7 +5,7 @@ import '../../utils/test_utils.dart';
 part 'cached_test_direct_persistent_storage.cached.dart';
 
 @withCache
-abstract class DirectPersistentCachedStorage
+abstract mixin class DirectPersistentCachedStorage
     implements _$DirectPersistentCachedStorage {
   factory DirectPersistentCachedStorage(TestDataProvider dataProvider) =
       _DirectPersistentCachedStorage;

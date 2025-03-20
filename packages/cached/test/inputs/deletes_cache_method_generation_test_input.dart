@@ -209,8 +209,10 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
 
   final _getSthDataCached = <String, String?>{};
 
-  static final _getSthDataCacheStreamController = StreamController<
-      MapEntry<StreamEventIdentifier<_ValidStreamed>, String?>>.broadcast();
+  static final _getSthDataCacheStreamController =
+      StreamController<
+        MapEntry<StreamEventIdentifier<_ValidStreamed>, String?>
+      >.broadcast();
 
   @override
   Future<String?> getSthData(String id) async {
@@ -229,10 +231,7 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
 
       _getSthDataCacheStreamController.sink.add(
         MapEntry(
-          StreamEventIdentifier(
-            instance: this,
-            paramsKey: "${id.hashCode}",
-          ),
+          StreamEventIdentifier(instance: this, paramsKey: "${id.hashCode}"),
           toReturn,
         ),
       );
@@ -249,8 +248,10 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
     final streamController = _getSthDataCacheStreamController;
     final stream = streamController.stream
         .where((event) => event.key.instance == this)
-        .where((event) =>
-            event.key.paramsKey == null || event.key.paramsKey == paramsKey)
+        .where(
+          (event) =>
+              event.key.paramsKey == null || event.key.paramsKey == paramsKey,
+        )
         .map((event) => event.value);
 
     yield* stream;
@@ -261,12 +262,9 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
     final result = await super.addToData(value);
 
     _getSthDataCached.clear();
-    _getSthDataCacheStreamController.sink.add(MapEntry(
-      StreamEventIdentifier(
-        instance: this,
-      ),
-      null,
-    ));
+    _getSthDataCacheStreamController.sink.add(
+      MapEntry(StreamEventIdentifier(instance: this), null),
+    );
 
     return result;
   }
@@ -461,8 +459,9 @@ class _DeleteCachedDirectPersistentStorage
 
   @override
   Future<int> cachedMethod() async {
-    final cachedValue =
-        await PersistentStorageHolder.read('_cachedMethodCached');
+    final cachedValue = await PersistentStorageHolder.read(
+      '_cachedMethodCached',
+    );
     if (cachedValue.isEmpty && cachedValue[''] == null) {
       final int toReturn;
       try {
@@ -473,8 +472,9 @@ class _DeleteCachedDirectPersistentStorage
         rethrow;
       } finally {}
 
-      await PersistentStorageHolder.write(
-          '_cachedMethodCached', {'': toReturn});
+      await PersistentStorageHolder.write('_cachedMethodCached', {
+        '': toReturn,
+      });
 
       return toReturn;
     } else {
@@ -522,8 +522,9 @@ class _DeleteAllCachedPersistentStorage
 
   Future<void> _init() async {
     try {
-      final cachedMap =
-          await PersistentStorageHolder.read('_notDirectPachedMethodCached');
+      final cachedMap = await PersistentStorageHolder.read(
+        '_notDirectPachedMethodCached',
+      );
 
       cachedMap.forEach((_, value) {
         if (value is! int) throw TypeError();
@@ -544,8 +545,9 @@ class _DeleteAllCachedPersistentStorage
 
   @override
   Future<int> cachedMethod() async {
-    final cachedValue =
-        await PersistentStorageHolder.read('_cachedMethodCached');
+    final cachedValue = await PersistentStorageHolder.read(
+      '_cachedMethodCached',
+    );
     if (cachedValue.isEmpty && cachedValue[''] == null) {
       final int toReturn;
       try {
@@ -556,8 +558,9 @@ class _DeleteAllCachedPersistentStorage
         rethrow;
       } finally {}
 
-      await PersistentStorageHolder.write(
-          '_cachedMethodCached', {'': toReturn});
+      await PersistentStorageHolder.write('_cachedMethodCached', {
+        '': toReturn,
+      });
 
       return toReturn;
     } else {
@@ -583,7 +586,9 @@ class _DeleteAllCachedPersistentStorage
       _notDirectPachedMethodCached[""] = toReturn;
 
       await PersistentStorageHolder.write(
-          '_notDirectPachedMethodCached', _notDirectPachedMethodCached);
+        '_notDirectPachedMethodCached',
+        _notDirectPachedMethodCached,
+      );
 
       return toReturn;
     } else {

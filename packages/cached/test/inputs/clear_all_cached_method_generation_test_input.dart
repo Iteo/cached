@@ -369,8 +369,9 @@ class _ClearAllCachedDirectPersistentStorage
 
   @override
   Future<int> cachedMethod() async {
-    final cachedValue =
-        await PersistentStorageHolder.read('_cachedMethodCached');
+    final cachedValue = await PersistentStorageHolder.read(
+      '_cachedMethodCached',
+    );
     if (cachedValue.isEmpty && cachedValue[''] == null) {
       final int toReturn;
       try {
@@ -381,8 +382,9 @@ class _ClearAllCachedDirectPersistentStorage
         rethrow;
       } finally {}
 
-      await PersistentStorageHolder.write(
-          '_cachedMethodCached', {'': toReturn});
+      await PersistentStorageHolder.write('_cachedMethodCached', {
+        '': toReturn,
+      });
 
       return toReturn;
     } else {
@@ -427,8 +429,9 @@ class _ClearAllCachedDirectPersistentStorageAndPersistentStorage
 
   Future<void> _init() async {
     try {
-      final cachedMap =
-          await PersistentStorageHolder.read('_cachedNotDirectMethodCached');
+      final cachedMap = await PersistentStorageHolder.read(
+        '_cachedNotDirectMethodCached',
+      );
 
       cachedMap.forEach((_, value) {
         if (value is! int) throw TypeError();
@@ -449,8 +452,9 @@ class _ClearAllCachedDirectPersistentStorageAndPersistentStorage
 
   @override
   Future<int> cachedMethod() async {
-    final cachedValue =
-        await PersistentStorageHolder.read('_cachedMethodCached');
+    final cachedValue = await PersistentStorageHolder.read(
+      '_cachedMethodCached',
+    );
     if (cachedValue.isEmpty && cachedValue[''] == null) {
       final int toReturn;
       try {
@@ -461,8 +465,9 @@ class _ClearAllCachedDirectPersistentStorageAndPersistentStorage
         rethrow;
       } finally {}
 
-      await PersistentStorageHolder.write(
-          '_cachedMethodCached', {'': toReturn});
+      await PersistentStorageHolder.write('_cachedMethodCached', {
+        '': toReturn,
+      });
 
       return toReturn;
     } else {
@@ -488,7 +493,9 @@ class _ClearAllCachedDirectPersistentStorageAndPersistentStorage
       _cachedNotDirectMethodCached[""] = toReturn;
 
       await PersistentStorageHolder.write(
-          '_cachedNotDirectMethodCached', _cachedNotDirectMethodCached);
+        '_cachedNotDirectMethodCached',
+        _cachedNotDirectMethodCached,
+      );
 
       return toReturn;
     } else {
