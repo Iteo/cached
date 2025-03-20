@@ -16,7 +16,9 @@
 .dart_tool/
 coverage/
 coverage.lcov
-.fvm
 
 # Melos-generated file
 pubspec_overrides.yaml
+
+# FVM Version Cache
+.fvm/

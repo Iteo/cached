@@ -5,7 +5,7 @@ import '../../utils/test_utils.dart';
 part 'cached_test_conditional.cached.dart';
 
 @withCache
-abstract class ConditionalCached implements _$ConditionalCached {
+abstract mixin class ConditionalCached implements _$ConditionalCached {
   factory ConditionalCached(
     TestDataProvider dataProvider,
   ) = _ConditionalCached;

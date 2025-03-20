@@ -5,7 +5,7 @@ import '../../utils/test_utils.dart';
 part 'cached_test_static.cached.dart';
 
 @WithCache(useStaticCache: true)
-abstract class StaticCached implements _$StaticCached {
+abstract mixin class StaticCached implements _$StaticCached {
   factory StaticCached(TestDataProvider dataProvider) = _StaticCached;
 
   @cached
