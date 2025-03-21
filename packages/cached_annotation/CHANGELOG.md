@@ -1,3 +1,6 @@
+## 1.7.1
+* Bump min sdk version to 3.6.0
+
 ## 1.7.0
 * Fix not working peristent storage with the getters
 * Add `@DirectPersistentCached()` annotation - avoid store cached data in generated classes by cached, data will be stored only in external storage
