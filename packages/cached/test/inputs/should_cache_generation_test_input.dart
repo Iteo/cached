@@ -311,3 +311,52 @@ abstract class StaticCache {
 Future<bool> _useStaticCache(int? candidate) {
   return true;
 }
+
+@ShouldGenerate(r'''
+abstract class _$GenericCache {}
+
+class _GenericCache with GenericCache implements _$GenericCache {
+  _GenericCache();
+
+  final _getListCached = <String, List<int>>{};
+
+  @override
+  Future<List<int>> getList() async {
+    final cachedValue = _getListCached[""];
+    if (cachedValue == null) {
+      final List<int> toReturn;
+      try {
+        final result = super.getList();
+
+        toReturn = await result;
+      } catch (_) {
+        rethrow;
+      } finally {}
+
+      final shouldCache = await _shouldCacheGeneric(toReturn);
+      if (!shouldCache) {
+        return toReturn;
+      }
+
+      _getListCached[""] = toReturn;
+
+      return toReturn;
+    } else {
+      return cachedValue;
+    }
+  }
+}
+''')
+@WithCache()
+abstract class GenericCache {
+  factory GenericCache() = _GenericCache;
+
+  @Cached(where: _shouldCacheGeneric)
+  Future<List<int>> getList() async {
+    return [1, 2, 3];
+  }
+}
+
+Future<bool> _shouldCacheGeneric<T>(List<T> result) async {
+  return result.isNotEmpty;
+}
