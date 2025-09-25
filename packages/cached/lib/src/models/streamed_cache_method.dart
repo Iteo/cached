@@ -34,8 +34,9 @@ class StreamedCacheMethod {
       methodName = reader.read('methodName').stringValue;
     }
 
-    final targetMethod =
-        classMethods.where((m) => m.name == methodName).firstOrNull;
+    final targetMethod = classMethods
+        .where((m) => m.name == methodName)
+        .firstOrNull;
 
     if (targetMethod == null) {
       throw InvalidGenerationSourceError(
@@ -43,19 +44,20 @@ class StreamedCacheMethod {
         element: element,
       );
     }
-    const streamTypeChecker = TypeChecker.fromRuntime(Stream);
-    final coreCacheStreamMethodType =
-        element.returnType.typeArgumentsOf(streamTypeChecker)?.single;
-    final coreCacheSteamMethodTypeStr =
-        coreCacheStreamMethodType?.getDisplayString(withNullability: true);
+    const streamTypeChecker = TypeChecker.typeNamed(Stream);
+    final coreCacheStreamMethodType = element.returnType
+        .typeArgumentsOf(streamTypeChecker)
+        ?.single;
+    final coreCacheSteamMethodTypeStr = coreCacheStreamMethodType
+        ?.getDisplayString(withNullability: true);
 
-    const futureTypeChecker = TypeChecker.fromRuntime(Future);
+    const futureTypeChecker = TypeChecker.typeNamed(Future);
     final targetMethodSyncReturnType = targetMethod.returnType.isDartAsyncFuture
         ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
         : targetMethod.returnType;
 
-    final targetMethodSyncTypeStr =
-        targetMethodSyncReturnType?.getDisplayString(withNullability: true);
+    final targetMethodSyncTypeStr = targetMethodSyncReturnType
+        ?.getDisplayString(withNullability: true);
 
     if (coreCacheSteamMethodTypeStr != targetMethodSyncTypeStr) {
       throw InvalidGenerationSourceError(
@@ -64,7 +66,7 @@ class StreamedCacheMethod {
       );
     }
 
-    const cachedAnnotationTypeChecker = TypeChecker.fromRuntime(Cached);
+    const cachedAnnotationTypeChecker = TypeChecker.typeNamed(Cached);
 
     if (!cachedAnnotationTypeChecker.hasAnnotationOf(targetMethod)) {
       throw InvalidGenerationSourceError(
@@ -74,19 +76,17 @@ class StreamedCacheMethod {
     }
 
     const ignoreTypeChecker = TypeChecker.any([
-      TypeChecker.fromRuntime(Ignore),
-      TypeChecker.fromRuntime(IgnoreCache),
+      TypeChecker.typeNamed(Ignore),
+      TypeChecker.typeNamed(IgnoreCache),
     ]);
 
-    final targetMethodParameters = targetMethod.parameters
+    final targetMethodParameters = targetMethod.formalParameters
         .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
         .toList();
 
-    if (!ListEquality<ParameterElement>(
-      EqualityBy(
-        (p) => Param.fromElement(p, config),
-      ),
-    ).equals(targetMethodParameters, element.parameters)) {
+    if (!ListEquality<FormalParameterElement>(
+      EqualityBy((p) => Param.fromElement(p, config)),
+    ).equals(targetMethodParameters, element.formalParameters)) {
       throw InvalidGenerationSourceError(
         '[ERROR] Method "${targetMethod.name}" should have same parameters as "${element.name}", excluding ones marked with @ignore and @ignoreCache',
         element: element,
@@ -94,12 +94,13 @@ class StreamedCacheMethod {
     }
 
     return StreamedCacheMethod(
-      name: element.name,
+      name: element.displayName,
       coreReturnType: coreCacheSteamMethodTypeStr ?? 'dynamic',
       emitLastValue: emitLastValue,
       params: targetMethodParameters.map((p) => Param.fromElement(p, config)),
       targetMethodName: methodName,
-      coreReturnTypeNullable: coreCacheStreamMethodType?.nullabilitySuffix ==
+      coreReturnTypeNullable:
+          coreCacheStreamMethodType?.nullabilitySuffix ==
           NullabilitySuffix.question,
     );
   }
@@ -112,7 +113,7 @@ class StreamedCacheMethod {
   final bool coreReturnTypeNullable;
 
   static DartObject? getAnnotation(ExecutableElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(StreamedCache);
+    const methodAnnotationChecker = TypeChecker.typeNamed(StreamedCache);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }

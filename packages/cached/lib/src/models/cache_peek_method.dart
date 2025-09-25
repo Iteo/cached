@@ -31,9 +31,7 @@ class CachePeekMethod {
     }
 
     final targetMethod = classMethods
-        .where(
-          (m) => m.name == methodName,
-        )
+        .where((m) => m.name == methodName)
         .firstOrNull;
 
     if (targetMethod == null) {
@@ -48,7 +46,7 @@ class CachePeekMethod {
       withNullability: false,
     );
 
-    const futureTypeChecker = TypeChecker.fromRuntime(Future);
+    const futureTypeChecker = TypeChecker.typeNamed(Future);
     final targetMethodReturnType = targetMethod.returnType.isDartAsyncFuture
         ? targetMethod.returnType.typeArgumentsOf(futureTypeChecker)?.single
         : targetMethod.returnType;
@@ -64,7 +62,7 @@ class CachePeekMethod {
       );
     }
 
-    const cachedAnnotationTypeChecker = TypeChecker.fromRuntime(Cached);
+    const cachedAnnotationTypeChecker = TypeChecker.typeNamed(Cached);
 
     if (!cachedAnnotationTypeChecker.hasAnnotationOf(targetMethod)) {
       throw InvalidGenerationSourceError(
@@ -73,11 +71,12 @@ class CachePeekMethod {
       );
     }
 
-    final cachedAnnotation =
-        cachedAnnotationTypeChecker.firstAnnotationOf(targetMethod);
+    final cachedAnnotation = cachedAnnotationTypeChecker.firstAnnotationOf(
+      targetMethod,
+    );
     final hasDirectPersistenStorage =
         cachedAnnotation?.getField('directPersistentStorage')?.toBoolValue() ??
-            false;
+        false;
     if (hasDirectPersistenStorage) {
       throw InvalidGenerationSourceError(
         "[ERROR] Method '$methodName' has 'directPersistentStorage' set to true."
@@ -87,22 +86,17 @@ class CachePeekMethod {
     }
 
     const ignoreTypeChecker = TypeChecker.any([
-      TypeChecker.fromRuntime(Ignore),
-      TypeChecker.fromRuntime(IgnoreCache),
+      TypeChecker.typeNamed(Ignore),
+      TypeChecker.typeNamed(IgnoreCache),
     ]);
 
-    final targetMethodParameters = targetMethod.parameters
+    final targetMethodParameters = targetMethod.formalParameters
         .where((p) => !ignoreTypeChecker.hasAnnotationOf(p))
         .toList();
 
-    if (!ListEquality<ParameterElement>(
-      EqualityBy(
-        (p) => Param.fromElement(p, config),
-      ),
-    ).equals(
-      targetMethodParameters,
-      element.parameters,
-    )) {
+    if (!ListEquality<FormalParameterElement>(
+      EqualityBy((p) => Param.fromElement(p, config)),
+    ).equals(targetMethodParameters, element.formalParameters)) {
       throw InvalidGenerationSourceError(
         '[ERROR] Method "${targetMethod.name}" should have same parameters as '
         '"${element.name}", excluding ones marked with @ignore and @ignoreCache',
@@ -111,7 +105,7 @@ class CachePeekMethod {
     }
 
     return CachePeekMethod(
-      name: element.name,
+      name: element.displayName,
       returnType: peekCacheMethodTypeStr,
       params: targetMethodParameters.map((p) => Param.fromElement(p, config)),
       targetMethodName: methodName,
@@ -124,7 +118,7 @@ class CachePeekMethod {
   final String returnType;
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(CachePeek);
+    const methodAnnotationChecker = TypeChecker.typeNamed(CachePeek);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }

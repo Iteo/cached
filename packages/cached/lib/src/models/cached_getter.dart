@@ -54,13 +54,13 @@ class CachedGetter extends CachedFunction {
     );
 
     return CachedGetter(
-      name: element.name,
+      name: element.displayName,
       syncWrite: syncWrite,
       limit: limit,
       ttl: ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      isAsync: element.isAsynchronous,
-      isGenerator: element.isGenerator,
+      isAsync: element.firstFragment.isAsynchronous,
+      isGenerator: element.firstFragment.isGenerator,
       persistentStorage: persistentStorage,
       directPersistentStorage: isDirect,
       returnType: returnType,

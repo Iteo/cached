@@ -35,7 +35,7 @@ class ClassWithCache {
     assertAbstract(element);
     assertOneConstFactoryConstructor(element);
 
-    const classAnnotationChecker = TypeChecker.fromRuntime(WithCache);
+    const classAnnotationChecker = TypeChecker.typeNamed(WithCache);
     final annotation = classAnnotationChecker.firstAnnotationOf(element);
 
     bool? useStaticCache;
@@ -60,8 +60,7 @@ class ClassWithCache {
         .where((method) => method.ttl != null)
         .map((method) => method.name);
 
-    final getters = element.accessors
-        .where((element) => element.isGetter)
+    final getters = element.getters
         .where(CachedFunction.hasCachedAnnotation<Cached>)
         .map((e) => CachedGetter.fromElement(e, config));
 
@@ -73,11 +72,10 @@ class ClassWithCache {
         .where((element) => ClearCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
         .map(
-          (e) => ClearCachedMethod.fromElement(
-            e,
-            config,
-            <String>{...methodsWithTtls, ...gettersWithTtls},
-          ),
+          (e) => ClearCachedMethod.fromElement(e, config, <String>{
+            ...methodsWithTtls,
+            ...gettersWithTtls,
+          }),
         );
 
     assertValidateClearCachedMethods(clearMethods, methods, getters);
@@ -86,11 +84,10 @@ class ClassWithCache {
         .where((element) => ClearAllCachedMethod.getAnnotation(element) != null)
         .inspect(assertCorrectClearMethodType)
         .map(
-          (e) => ClearAllCachedMethod.fromElement(
-            e,
-            config,
-            <String>{...methodsWithTtls, ...gettersWithTtls},
-          ),
+          (e) => ClearAllCachedMethod.fromElement(e, config, <String>{
+            ...methodsWithTtls,
+            ...gettersWithTtls,
+          }),
         );
 
     assertOneClearAllCachedAnnotation(clearAllMethod);
@@ -99,55 +96,53 @@ class ClassWithCache {
         .where((element) => StreamedCacheMethod.getAnnotation(element) != null)
         .inspect(assertCorrectStreamMethodType)
         .map(
-          (e) => StreamedCacheMethod.fromElement(
-            e,
-            [...element.methods, ...element.accessors],
-            config,
-          ),
+          (e) => StreamedCacheMethod.fromElement(e, [
+            ...element.methods,
+            ...element.getters,
+          ], config),
         )
         .toList();
 
-    assertOneCacheStreamPerCachedMethod(
-      [...element.methods, ...element.accessors],
-      streamedCacheMethods,
-    );
+    assertOneCacheStreamPerCachedMethod([
+      ...element.methods,
+      ...element.getters,
+      ...element.setters,
+    ], streamedCacheMethods);
 
     final cachePeekMethods = element.methods
         .where((element) => CachePeekMethod.getAnnotation(element) != null)
         .inspect(assertCorrectCachePeekMethodType)
         .map(
-          (e) => CachePeekMethod.fromElement(
-            e,
-            [...element.methods, ...element.accessors],
-            config,
-          ),
+          (e) => CachePeekMethod.fromElement(e, [
+            ...element.methods,
+            ...element.getters,
+          ], config),
         )
         .toList();
 
-    assertOneCachePeekPerCachedMethod(
-      [...element.methods, ...element.accessors],
-      cachePeekMethods,
-    );
+    assertOneCachePeekPerCachedMethod([
+      ...element.methods,
+      ...element.getters,
+    ], cachePeekMethods);
 
     final deletesCacheMethods = element.methods
         .where((element) => DeletesCacheMethod.getAnnotation(element) != null)
         .inspect(assertCorrectDeletesCacheMethodType)
         .map(
-          (e) => DeletesCacheMethod.fromElement(
-            e,
-            config,
-            <String>{...methodsWithTtls, ...gettersWithTtls},
-          ),
+          (e) => DeletesCacheMethod.fromElement(e, config, <String>{
+            ...methodsWithTtls,
+            ...gettersWithTtls,
+          }),
         )
         .toList();
 
-    assertValidateDeletesCacheMethods(
-      deletesCacheMethods,
-      [...methods, ...getters],
-    );
+    assertValidateDeletesCacheMethods(deletesCacheMethods, [
+      ...methods,
+      ...getters,
+    ]);
 
     return ClassWithCache(
-      name: element.name,
+      name: element.displayName,
       useStaticCache:
           useStaticCache ?? config.useStaticCache ?? _defaultUseStaticCache,
       methods: methods,

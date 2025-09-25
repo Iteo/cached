@@ -41,8 +41,9 @@ void assertAbstract(ClassElement element) {
 }
 
 void assertOneIgnoreCacheParam(CachedMethod method) {
-  final ignoraCacheParams =
-      method.params.where((element) => element.ignoreCacheAnnotation != null);
+  final ignoraCacheParams = method.params.where(
+    (element) => element.ignoreCacheAnnotation != null,
+  );
 
   if (ignoraCacheParams.length > 1) {
     throw InvalidGenerationSourceError(
@@ -113,7 +114,7 @@ void assertCorrectClearMethodType(MethodElement element) {
   final returnType = element.returnType.getDisplayString(withNullability: true);
 
   if (element.isAbstract) {
-    if (element.isAsynchronous) {
+    if (element.firstFragment.isAsynchronous) {
       throw InvalidGenerationSourceError(
         '[ERROR] `${element.name}` must be not async method',
         element: element,
@@ -127,7 +128,7 @@ void assertCorrectClearMethodType(MethodElement element) {
       );
     }
 
-    if (element.parameters.isNotEmpty) {
+    if (element.formalParameters.isNotEmpty) {
       throw InvalidGenerationSourceError(
         '[ERROR] `${element.name}` method cant have arguments',
         element: element,
@@ -152,8 +153,9 @@ void assertOneCacheStreamPerCachedMethod(
 ) {
   for (final method in methods) {
     final methodName = method.name;
-    final referencingStreamedCacheMethods =
-        streamedCacheMethods.where((s) => s.targetMethodName == methodName);
+    final referencingStreamedCacheMethods = streamedCacheMethods.where(
+      (s) => s.targetMethodName == methodName,
+    );
 
     if (referencingStreamedCacheMethods
             .where((s) => s.targetMethodName == methodName)
@@ -173,8 +175,9 @@ void assertOneCachePeekPerCachedMethod(
 ) {
   for (final method in methods) {
     final methodName = method.name;
-    final referencingCachePeekMethods =
-        cachePeekMethods.where((s) => s.targetMethodName == methodName);
+    final referencingCachePeekMethods = cachePeekMethods.where(
+      (s) => s.targetMethodName == methodName,
+    );
 
     if (referencingCachePeekMethods
             .where((s) => s.targetMethodName == methodName)
@@ -243,8 +246,9 @@ void assertValidateDeletesCacheMethods(
 }
 
 void assertMethodReturnsBool(ExecutableElement element) {
-  final returnType =
-      element.returnType.getDisplayString(withNullability: false);
+  final returnType = element.returnType.getDisplayString(
+    withNullability: false,
+  );
   if (!(isFutureBool(returnType) || isBool(returnType))) {
     throw InvalidGenerationSourceError(
       '[ERROR] `${element.name}` must be a bool or Future<bool> method',
@@ -257,7 +261,7 @@ void assertHasSingleParameterWithGivenType(
   ExecutableElement element,
   DartType expectedType,
 ) {
-  final params = element.parameters;
+  final params = element.formalParameters;
   if (params.length != 1) {
     throw InvalidGenerationSourceError(
       '[ERROR] `${element.name}` should have exactly one parameter',
@@ -265,7 +269,7 @@ void assertHasSingleParameterWithGivenType(
     );
   }
 
-  final firstParameter = element.parameters[0];
+  final firstParameter = element.formalParameters[0];
   final syncParamType = syncReturnType(
     firstParameter.type.getDisplayString(withNullability: false),
   );
@@ -285,12 +289,14 @@ void assertNotSyncAsyncMismatch(
   ExecutableElement first,
   ExecutableElement second,
 ) {
-  final firstReturnType =
-      first.returnType.getDisplayString(withNullability: false);
+  final firstReturnType = first.returnType.getDisplayString(
+    withNullability: false,
+  );
   final firstReturnTypeIsFuture = isFuture(firstReturnType);
 
-  final secondReturnType =
-      second.returnType.getDisplayString(withNullability: false);
+  final secondReturnType = second.returnType.getDisplayString(
+    withNullability: false,
+  );
   final secondReturnTypeIsFuture = isFuture(secondReturnType);
 
   final hasSyncAndAsyncMismatch =
@@ -307,11 +313,12 @@ void assertNotSyncAsyncMismatch(
 void assertPersistentStorageShouldBeAsync(ExecutableElement element) {
   final returnType = element.returnType;
   final returnTypeIsNotFuture = !returnType.isDartAsyncFuture;
-  final isNotAsync = !element.isAsynchronous;
+  final isNotAsync = !element.firstFragment.isAsynchronous;
 
   if (returnTypeIsNotFuture && isNotAsync) {
     final name = element.name;
-    final message = '[ERROR] $name has to be async and return Future, '
+    final message =
+        '[ERROR] $name has to be async and return Future, '
         'if you want to use persistent storage.';
     throw InvalidGenerationSourceError(message);
   }
