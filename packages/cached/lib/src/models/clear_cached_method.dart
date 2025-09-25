@@ -38,14 +38,14 @@ class ClearCachedMethod {
       methodName = _getMethodName(annotation);
     }
 
-    final name = element.name;
+    final name = element.displayName;
     if (methodName == null || methodName.isEmpty) {
       methodName = _validateMethodName(name, element, methodName);
     }
 
     final returnType = element.returnType;
     final displayType = returnType.getDisplayString(withNullability: true);
-    final parameters = element.parameters;
+    final parameters = element.formalParameters;
     final mappedParams = parameters.map((e) => Param.fromElement(e, config));
     final shouldClearTtl = ttlsToClear.contains(methodName);
 
@@ -53,8 +53,8 @@ class ClearCachedMethod {
       name: name,
       methodName: methodName,
       returnType: displayType,
-      isAsync: element.isAsynchronous,
-      isGenerator: element.isGenerator,
+      isAsync: element.firstFragment.isAsynchronous,
+      isGenerator: element.firstFragment.isGenerator,
       isAbstract: element.isAbstract,
       params: mappedParams,
       shouldClearTtl: shouldClearTtl,
@@ -71,7 +71,7 @@ class ClearCachedMethod {
   final bool shouldClearTtl;
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(ClearCached);
+    const methodAnnotationChecker = TypeChecker.typeNamed(ClearCached);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 

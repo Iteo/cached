@@ -40,7 +40,7 @@ abstract class CachedFunction {
   static DartObject? getAnnotation<T extends Cached>(
     ExecutableElement element,
   ) {
-    final methodAnnotationChecker = TypeChecker.fromRuntime(T);
+    final methodAnnotationChecker = TypeChecker.typeNamed(T);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 

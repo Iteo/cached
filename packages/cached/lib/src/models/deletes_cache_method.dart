@@ -35,24 +35,22 @@ class DeletesCacheMethod {
             (value) => value.toStringValue() == null,
           )) {
         methodNames = methodNameField.listValue
-            .map(
-              (e) => e.toStringValue()!,
-            )
+            .map((e) => e.toStringValue()!)
             .toList();
       }
     }
 
     return DeletesCacheMethod(
-      name: element.name,
+      name: element.displayName,
       methodNames: methodNames ?? [],
       returnType: element.returnType.getDisplayString(withNullability: true),
-      isAsync: element.isAsynchronous,
-      isGenerator: element.isGenerator,
-      params: element.parameters.map((e) => Param.fromElement(e, config)),
+      isAsync: element.firstFragment.isAsynchronous,
+      isGenerator: element.firstFragment.isGenerator,
+      params: element.formalParameters.map((e) => Param.fromElement(e, config)),
       ttlsToClear: methodNames != null
           ? ttlsToClear
-              .where((element) => methodNames!.contains(element))
-              .toList()
+                .where((element) => methodNames!.contains(element))
+                .toList()
           : [],
     );
   }
@@ -66,7 +64,7 @@ class DeletesCacheMethod {
   final List<String> ttlsToClear;
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(DeletesCache);
+    const methodAnnotationChecker = TypeChecker.typeNamed(DeletesCache);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }

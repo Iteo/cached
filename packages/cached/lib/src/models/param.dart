@@ -6,17 +6,13 @@ import 'package:source_gen/source_gen.dart';
 const _defaultOnCacheOnError = false;
 
 class IgnoreCacheAnnotation {
-  const IgnoreCacheAnnotation({
-    required this.useCacheOnError,
-  });
+  const IgnoreCacheAnnotation({required this.useCacheOnError});
 
   final bool useCacheOnError;
 }
 
 class CacheKeyAnnotation {
-  const CacheKeyAnnotation(
-    this.cacheFunctionCall,
-  );
+  const CacheKeyAnnotation(this.cacheFunctionCall);
 
   final String cacheFunctionCall;
 
@@ -43,14 +39,15 @@ class Param {
     this.defaultValue,
   });
 
-  factory Param.fromElement(ParameterElement element, Config config) {
+  factory Param.fromElement(FormalParameterElement element, Config config) {
     // Ignore cache annotation data
-    const paramAnnotationChecker = TypeChecker.fromRuntime(IgnoreCache);
-    const cacheKeyAnnotationChecker = TypeChecker.fromRuntime(CacheKey);
+    const paramAnnotationChecker = TypeChecker.typeNamed(IgnoreCache);
+    const cacheKeyAnnotationChecker = TypeChecker.typeNamed(CacheKey);
 
     final annotation = paramAnnotationChecker.firstAnnotationOf(element);
-    final cacheKeyAnnotation =
-        cacheKeyAnnotationChecker.firstAnnotationOf(element);
+    final cacheKeyAnnotation = cacheKeyAnnotationChecker.firstAnnotationOf(
+      element,
+    );
 
     IgnoreCacheAnnotation? annotationData;
     CacheKeyAnnotation? cacheKeyAnnotationData;
@@ -89,8 +86,9 @@ class Param {
       final elementType = element.type;
 
       if (cacheKeyFunc != null) {
-        if (cacheKeyFunc.librarySource.fullName
-                .startsWith('/cached_annotation/') &&
+        if (cacheKeyFunc.library.firstFragment.source.fullName.startsWith(
+              '/cached_annotation/',
+            ) &&
             cacheKeyFunc.name == 'iterableCacheKeyGenerator' &&
             !(elementType.isDartCoreList ||
                 elementType.isDartCoreIterable ||
@@ -101,18 +99,17 @@ class Param {
           );
         }
 
-        cacheKeyAnnotationData = CacheKeyAnnotation(
-          cacheKeyFunc.name,
-        );
+        cacheKeyAnnotationData = CacheKeyAnnotation(cacheKeyFunc.displayName);
       }
     }
 
-    const ignoreParamAnnotationChecker = TypeChecker.fromRuntime(Ignore);
-    final ignoreAnnotation =
-        ignoreParamAnnotationChecker.firstAnnotationOf(element);
+    const ignoreParamAnnotationChecker = TypeChecker.typeNamed(Ignore);
+    final ignoreAnnotation = ignoreParamAnnotationChecker.firstAnnotationOf(
+      element,
+    );
 
     return Param(
-      name: element.name,
+      name: element.displayName,
       type: element.type.getDisplayString(withNullability: true),
       ignoreCacheAnnotation: annotationData,
       defaultValue: element.defaultValueCode,
@@ -162,13 +159,13 @@ class Param {
 
   @override
   int get hashCode => Object.hash(
-        name,
-        type,
-        isNamed,
-        isOptional,
-        defaultValue,
-        ignoreCacheAnnotation,
-        ignoreCacheKey,
-        cacheKeyAnnotation,
-      );
+    name,
+    type,
+    isNamed,
+    isOptional,
+    defaultValue,
+    ignoreCacheAnnotation,
+    ignoreCacheKey,
+    cacheKeyAnnotation,
+  );
 }

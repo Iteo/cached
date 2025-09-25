@@ -4,17 +4,17 @@ on:
   pull_request:
     branches:
       - master
-      - 'rc/*'
+      - "rc/*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install dart
-        uses: dart-lang/setup-dart@v1.4
+        uses: dart-lang/setup-dart@v1.7.1
         with:
           sdk: stable
 

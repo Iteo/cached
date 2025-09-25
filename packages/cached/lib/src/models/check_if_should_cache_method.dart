@@ -18,16 +18,14 @@ class CheckIfShouldCacheMethod {
       shouldCacheFunction,
       annotatedMethod.returnType,
     );
-    assertNotSyncAsyncMismatch(
-      annotatedMethod,
-      shouldCacheFunction,
-    );
+    assertNotSyncAsyncMismatch(annotatedMethod, shouldCacheFunction);
 
-    final name = shouldCacheFunction.name;
+    final name = shouldCacheFunction.displayName;
     final returnType = shouldCacheFunction.returnType;
     final returnTypeStr = returnType.getDisplayString(withNullability: false);
     final isAsync =
-        shouldCacheFunction.isAsynchronous || isFuture(returnTypeStr);
+        shouldCacheFunction.firstFragment.isAsynchronous ||
+        isFuture(returnTypeStr);
 
     return CheckIfShouldCacheMethod(
       name: name,

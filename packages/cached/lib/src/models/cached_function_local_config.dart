@@ -56,14 +56,15 @@ class CachedFunctionLocalConfig {
       syncWrite = syncWriteField.boolValue;
     }
 
-    if (reader
-        .instanceOf(const TypeChecker.fromRuntime(LazyPersistentCached))) {
+    if (reader.instanceOf(const TypeChecker.typeNamed(LazyPersistentCached))) {
       lazyPersistentStorage = true;
-    } else if (reader
-        .instanceOf(const TypeChecker.fromRuntime(DirectPersistentCached))) {
+    } else if (reader.instanceOf(
+      const TypeChecker.typeNamed(DirectPersistentCached),
+    )) {
       directPersistentStorage = true;
-    } else if (reader
-        .instanceOf(const TypeChecker.fromRuntime(PersistentCached))) {
+    } else if (reader.instanceOf(
+      const TypeChecker.typeNamed(PersistentCached),
+    )) {
       persistentStorage = true;
     }
 

@@ -3,13 +3,11 @@ import 'package:cached/src/config.dart';
 import 'package:cached/src/models/param.dart';
 
 class Constructor {
-  const Constructor({
-    required this.params,
-  });
+  const Constructor({required this.params});
 
   factory Constructor.fromElement(ConstructorElement element, Config config) {
     return Constructor(
-      params: element.parameters.map((e) => Param.fromElement(e, config)),
+      params: element.formalParameters.map((e) => Param.fromElement(e, config)),
     );
   }
 

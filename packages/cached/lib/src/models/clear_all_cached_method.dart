@@ -27,11 +27,11 @@ class ClearAllCachedMethod {
     }
 
     return ClearAllCachedMethod(
-      name: element.name,
+      name: element.displayName,
       returnType: element.returnType.getDisplayString(withNullability: true),
-      isAsync: element.isAsynchronous,
+      isAsync: element.firstFragment.isAsynchronous,
       isAbstract: element.isAbstract,
-      params: element.parameters.map((e) => Param.fromElement(e, config)),
+      params: element.formalParameters.map((e) => Param.fromElement(e, config)),
       ttlsToClear: ttlsToClear,
     );
   }
@@ -44,7 +44,7 @@ class ClearAllCachedMethod {
   final Set<String> ttlsToClear;
 
   static DartObject? getAnnotation(MethodElement element) {
-    const methodAnnotationChecker = TypeChecker.fromRuntime(ClearAllCached);
+    const methodAnnotationChecker = TypeChecker.typeNamed(ClearAllCached);
     return methodAnnotationChecker.firstAnnotationOf(element);
   }
 }

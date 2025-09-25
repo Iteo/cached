@@ -55,10 +55,7 @@ abstract class InvalidTarget {
   Future<void> deleteCache() async {}
 }
 
-@ShouldThrow(
-  "[ERROR] `deleteCache` cant be an abstract method",
-  element: false,
-)
+@ShouldThrow("[ERROR] `deleteCache` cant be an abstract method", element: false)
 @withCache
 abstract class CantBeAbstract {
   factory CantBeAbstract() = _CantBeAbstract;
@@ -72,8 +69,7 @@ abstract class CantBeAbstract {
   Future<void> deleteCache();
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$ValidNoTtl {}
 
 class _ValidNoTtl with ValidNoTtl implements _$ValidNoTtl {
@@ -111,8 +107,7 @@ class _ValidNoTtl with ValidNoTtl implements _$ValidNoTtl {
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class ValidNoTtl {
   factory ValidNoTtl() = _ValidNoTtl;
@@ -128,8 +123,7 @@ abstract class ValidNoTtl {
   }
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$ValidTtl {}
 
 class _ValidTtl with ValidTtl implements _$ValidTtl {
@@ -164,8 +158,9 @@ class _ValidTtl with ValidTtl implements _$ValidTtl {
       _getSthDataCached["${id.hashCode}"] = toReturn;
 
       const duration = Duration(seconds: 60);
-      _getSthDataTtl["${id.hashCode}"] =
-          DateTime.now().add(duration).toIso8601String();
+      _getSthDataTtl["${id.hashCode}"] = DateTime.now()
+          .add(duration)
+          .toIso8601String();
 
       return toReturn;
     } else {
@@ -183,8 +178,7 @@ class _ValidTtl with ValidTtl implements _$ValidTtl {
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class ValidTtl {
   factory ValidTtl() = _ValidTtl;
@@ -200,8 +194,7 @@ abstract class ValidTtl {
   }
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$ValidStreamed {}
 
 class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
@@ -269,8 +262,7 @@ class _ValidStreamed with ValidStreamed implements _$ValidStreamed {
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class ValidStreamed {
   factory ValidStreamed() = _ValidStreamed;
@@ -289,8 +281,7 @@ abstract class ValidStreamed {
   }
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$ValidTwoMethods {}
 
 class _ValidTwoMethods with ValidTwoMethods implements _$ValidTwoMethods {
@@ -326,8 +317,9 @@ class _ValidTwoMethods with ValidTwoMethods implements _$ValidTwoMethods {
       _getSthDataCached["${id.hashCode}"] = toReturn;
 
       const duration = Duration(seconds: 60);
-      _getSthDataTtl["${id.hashCode}"] =
-          DateTime.now().add(duration).toIso8601String();
+      _getSthDataTtl["${id.hashCode}"] = DateTime.now()
+          .add(duration)
+          .toIso8601String();
 
       return toReturn;
     } else {
@@ -367,8 +359,7 @@ class _ValidTwoMethods with ValidTwoMethods implements _$ValidTwoMethods {
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class ValidTwoMethods {
   factory ValidTwoMethods() = ValidTwoMethods;
@@ -380,10 +371,7 @@ abstract class ValidTwoMethods {
 
   @Cached()
   Future<String> getSthDataNoTtl(String id) {
-    return Future.delayed(
-      const Duration(milliseconds: 500),
-      () => '',
-    );
+    return Future.delayed(const Duration(milliseconds: 500), () => '');
   }
 
   @DeletesCache(['getSthData', 'getSthDataNoTtl'])
@@ -392,8 +380,7 @@ abstract class ValidTwoMethods {
   }
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$ValidSync {}
 
 class _ValidSync with ValidSync implements _$ValidSync {
@@ -431,8 +418,7 @@ class _ValidSync with ValidSync implements _$ValidSync {
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class ValidSync {
   factory ValidSync() = ValidSync;
@@ -448,8 +434,7 @@ abstract class ValidSync {
   }
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$DeleteCachedDirectPersistentStorage {}
 
 class _DeleteCachedDirectPersistentStorage
@@ -493,8 +478,7 @@ class _DeleteCachedDirectPersistentStorage
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class DeleteCachedDirectPersistentStorage {
   factory DeleteCachedDirectPersistentStorage() =
@@ -509,8 +493,7 @@ abstract class DeleteCachedDirectPersistentStorage {
   Future<void> deleteArtists() async {}
 }
 
-@ShouldGenerate(
-  r'''
+@ShouldGenerate(r'''
 abstract class _$DeleteAllCachedPersistentStorage {}
 
 class _DeleteAllCachedPersistentStorage
@@ -611,8 +594,7 @@ class _DeleteAllCachedPersistentStorage
     return result;
   }
 }
-''',
-)
+''')
 @withCache
 abstract class DeleteAllCachedPersistentStorage {
   factory DeleteAllCachedPersistentStorage() =

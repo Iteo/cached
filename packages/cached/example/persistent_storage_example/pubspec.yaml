@@ -21,4 +21,4 @@ dev_dependencies:
   cached:
     path: "../../"
   linteo: ^1.0.1
-  hive_ce_generator: 1.8.2
+  hive_ce_generator: ^1.9.5

@@ -24,10 +24,7 @@ class CachedMethod extends CachedFunction {
     required super.lazyPersistentStorage,
   });
 
-  factory CachedMethod.fromElement(
-    MethodElement element,
-    Config config,
-  ) {
+  factory CachedMethod.fromElement(MethodElement element, Config config) {
     CachedFunction.assertIsValid(element);
 
     var isDirect = false;
@@ -55,18 +52,18 @@ class CachedMethod extends CachedFunction {
     final returnType = element.returnType.getDisplayString(
       withNullability: true,
     );
-    final params = element.parameters.map(
+    final params = element.formalParameters.map(
       (e) => Param.fromElement(e, config),
     );
 
     final method = CachedMethod(
-      name: element.name,
+      name: element.displayName,
       syncWrite: syncWrite,
       limit: limit,
       ttl: ttl,
       checkIfShouldCacheMethod: localConfig.checkIfShouldCacheMethod,
-      isAsync: element.isAsynchronous,
-      isGenerator: element.isGenerator,
+      isAsync: element.firstFragment.isAsynchronous,
+      isGenerator: element.firstFragment.isGenerator,
       persistentStorage: persistentStorage,
       directPersistentStorage: isDirect,
       params: params,
