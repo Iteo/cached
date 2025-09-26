@@ -15,6 +15,7 @@ Future<void> main() async {
     'Parameters',
     'AnnotatedMethodHasKey',
     'StaticCache',
+    'GenericCache',
   };
 
   final reader = await initializeLibraryReaderForDirectory(

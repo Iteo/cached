@@ -270,19 +270,77 @@ void assertHasSingleParameterWithGivenType(
   }
 
   final firstParameter = element.formalParameters[0];
-  final syncParamType = syncReturnType(
-    firstParameter.type.getDisplayString(withNullability: false),
-  );
+  final paramType = firstParameter.type;
 
   final returnType = expectedType.getDisplayString(withNullability: false);
   final syncExpectedType = syncReturnType(returnType);
 
-  if (syncParamType != syncExpectedType) {
+  final syncParamType = syncReturnType(
+    paramType.getDisplayString(withNullability: false),
+  );
+
+  // Check if types are compatible, considering generic functions
+  if (!_areTypesCompatible(
+    paramType,
+    expectedType,
+    syncParamType,
+    syncExpectedType,
+  )) {
     throw InvalidGenerationSourceError(
       '[ERROR] Parameter: ${firstParameter.name} (of type ${firstParameter.type}) should match type $expectedType.',
       element: element,
     );
   }
+}
+
+bool _areTypesCompatible(
+  DartType paramType,
+  DartType expectedType,
+  String syncParamType,
+  String syncExpectedType,
+) {
+  // Direct string match (existing behavior)
+  if (syncParamType == syncExpectedType) {
+    return true;
+  }
+
+  // For generic functions, check if the parameter type contains type parameters
+  if (_containsTypeParameter(paramType)) {
+    return _isGenericTypeCompatible(syncParamType, syncExpectedType);
+  }
+
+  return false;
+}
+
+bool _containsTypeParameter(DartType type) {
+  if (type.element is TypeParameterElement) {
+    return true;
+  }
+
+  // Check if any type arguments contain type parameters
+  if (type is ParameterizedType) {
+    return type.typeArguments.any(_containsTypeParameter);
+  }
+
+  return false;
+}
+
+bool _isGenericTypeCompatible(
+  String genericTypeString,
+  String concreteTypeString,
+) {
+  // Extract base type names (e.g., "List" from "List<T>" or "List<int>")
+  final genericBase = _extractBaseTypeName(genericTypeString);
+  final concreteBase = _extractBaseTypeName(concreteTypeString);
+
+  // Check if the base types are the same (e.g., List == List)
+  return genericBase == concreteBase;
+}
+
+String _extractBaseTypeName(String typeString) {
+  // Extract base type name (e.g., "List" from "List<T>" or "List<int>")
+  final baseTypeMatch = RegExp('^([^<]+)').firstMatch(typeString);
+  return baseTypeMatch?.group(1) ?? typeString;
 }
 
 void assertNotSyncAsyncMismatch(
