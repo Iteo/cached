@@ -1,3 +1,9 @@
+## 1.8.0
+* Update dependencies to latest versions
+* Fix unsupported generic functions when using conditional caching with `where` parameter
+* Fix cache peek operations not properly respecting TTL (time-to-live) settings
+* Add support for editing cached values
+
 ## 1.7.1
 * Update dependencies
 
