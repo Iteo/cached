@@ -76,9 +76,7 @@ class UpdateCacheMethod {
       );
     }
 
-    final returnType = element.returnType.getDisplayString(
-      withNullability: false,
-    );
+    final returnType = element.returnType.getDisplayString();
 
     final params = element.formalParameters.map(
       (e) => Param.fromElement(e, config),
