@@ -1,3 +1,6 @@
+## 1.8.0
+* Add `UpdateCache()` annotation - allows to update cache value without calling the original method
+
 ## 1.7.1
 * Bump min sdk version to 3.6.0
 

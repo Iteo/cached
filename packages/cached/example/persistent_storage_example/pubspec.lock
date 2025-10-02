@@ -95,14 +95,14 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "1.7.1"
+    version: "1.8.0"
   cached_annotation:
     dependency: "direct main"
     description:
       path: "../../../cached_annotation"
       relative: true
     source: path
-    version: "1.7.1"
+    version: "1.8.0"
   checked_yaml:
     dependency: transitive
     description:

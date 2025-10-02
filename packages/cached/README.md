@@ -68,6 +68,7 @@ Useful when you want to limit use of memory to only hold commonly-used things or
   - [StreamedCache](#streamedcache)
   - [CachePeek](#cachepeek)
   - [DeletesCache](#deletescache)
+  - [UpdateCache](#updatecache)
 - [Persistent storage](#persistent-storage)
 - [Lazy persistent storage](#lazy-persistent-storage)
 - [Direct persistent storage](#direct-persistent-storage)
@@ -549,6 +550,55 @@ Throws an [InvalidGenerationSourceError]
 - if no target method names are specified
 - if specified target methods are invalid
 - if annotated method is abstract
+
+### UpdateCache
+
+Method decorator that flags a method as needing to be processed by the `Cached` code generator for updating cache entries.
+
+The `@UpdateCache` annotation allows you to create methods that update the cache of existing cached methods. When you call an update method, it will both execute the method logic and update the corresponding cache entry with the new result.
+
+The constructor takes one required parameter:
+- `methodName` - The name of the cached method whose cache should be updated
+
+#### Basic Usage
+
+For a cached method:
+
+```dart
+@Cached()
+Future<User> getUser(String id) {
+  return userDataSource.getUser(id);
+}
+```
+
+You can create an update method:
+
+```dart
+@UpdateCache('getUser')
+Future<User> updateUser(String id, User updatedUser) {
+  // Update the user in your data source
+  final result = await userDataSource.updateUser(id, updatedUser);
+  // The cache will be automatically updated with the result
+  return result;
+}
+```
+
+#### Error Handling
+
+If the update method throws an exception, the cache will not be updated, maintaining the previous cached value:
+
+```dart
+@UpdateCache('getUser')
+Future<User> updateUser(String userId, User updatedUser) async {
+  try {
+    final result = await dataSource.updateUser(userId, updatedUser);
+    return result; // Cache updated only on success
+  } catch (e) {
+    // Cache remains unchanged
+    rethrow;
+  }
+}
+```
 
 ## Persistent storage
 Cached library supports usage of any external storage (e.g. Shared Preferences, Hive), by using `@PersistentCached()` annotation:
