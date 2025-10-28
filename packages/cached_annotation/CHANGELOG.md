@@ -1,3 +1,6 @@
+## 1.8.1
+* Downgrade meta package to 1.16.0
+
 ## 1.8.0
 * Add `UpdateCache()` annotation - allows to update cache value without calling the original method
 

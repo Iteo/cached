@@ -1,3 +1,6 @@
+## 1.8.1
+* Downgrade meta package to 1.16.0
+
 ## 1.8.0
 * Update dependencies to latest versions
 * Fix unsupported generic functions when using conditional caching with `where` parameter

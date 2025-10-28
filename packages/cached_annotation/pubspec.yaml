@@ -2,7 +2,7 @@ name: cached_annotation
 description: >
   Annotations for the Cached code-generator.
   This package does nothing without Cached.
-version: 1.8.0
+version: 1.8.1
 repository: https://github.com/Iteo/cached
 issue_tracker: https://github.com/Iteo/cached/issues
 homepage: https://github.com/Iteo/cached
@@ -12,7 +12,7 @@ environment:
   sdk: ">=3.6.0 <4.0.0"
 
 dependencies:
-  meta: ^1.17.0
+  meta: ^1.16.0
 
 dev_dependencies:
   linteo: ^1.0.1
