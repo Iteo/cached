@@ -1,3 +1,6 @@
+## 1.9.0
+* Widen `analyzer` constraint to `^13.0.0` to unblock dependents from upgrading their own dependencies
+
 ## 1.8.1
 * Downgrade meta package to 1.16.0
 
